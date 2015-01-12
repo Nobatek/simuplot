@@ -163,7 +163,7 @@ def AFFPiePlotZoneHeatNeed(ZoneList,MEFData,Nuanc,MplWidget):
     MplWidget.canvas.axes.cla()
     
     MplWidget.canvas.axes.pie(MEFData, labels=ZoneList, colors=Nuanc,
-            autopct='%1.1f%%', shadow=True, startangle=90)
+            autopct='%1.1f%%', shadow=False, startangle=90)
     MplWidget.canvas.axes.axis('equal')
     
     MplWidget.canvas.draw()
@@ -177,7 +177,6 @@ def AFFPiePlotZoneHeatNeed(ZoneList,MEFData,Nuanc,MplWidget):
 def Init_Table_check(Stuff_list,Stuff_Val,QTableWidget):
 
     QTableWidget.setRowCount(len(Stuff_list))
-    QTableWidget.setColumnCount(2)
     
     for i in range(len(Stuff_list)):
         item=QtGui.QTableWidgetItem(Stuff_list[i])
@@ -246,10 +245,11 @@ class Analyse_Simu(object):
 #-------------------------------------------------------------------------------------
 class Tab_Conso_Zone_Pie(Analyse_Simu):
     def __init__(self,Con_Zon_Pie_Trace_Butt,MplWidget,TableWidget):
-        self._ZDico={}
-        self._ZoneList=[]
-        self._MEFData=[]
-        self._Nuanc=[]
+        self._zdico={}
+        self._aff_zone_val=[]
+        self._aff_zone_nom=[]
+        self._aff_zone_nuanc=[]
+        self._list_data=[]
         self._init=True
         
         self._Con_Zon_Pie_Trace_Butt=Con_Zon_Pie_Trace_Butt #Acquisition du boutton pour tracer
@@ -259,15 +259,24 @@ class Tab_Conso_Zone_Pie(Analyse_Simu):
         
     def Trace_Button(self):
         if self._init==True:          
-            self._ZDico=ZoneDict(Analyse_Simu.ListDat)        
-            self._ZoneList,self._MEFData,self._Nuanc=MEFPiePlotZoneHeatNeed(self._ZDico,Analyse_Simu.NuancNBK)
-            AFFPiePlotZoneHeatNeed(self._ZoneList,self._MEFData,self._Nuanc,self._MplWidget)
-            Init_Table_check(self._ZoneList,self._MEFData,self._TableWidget)
+            self._zdico=ZoneDict(Analyse_Simu.ListDat)
+            self._aff_zone_val,self._aff_zone_nom,self._aff_zone_nuanc=MEFPiePlotZoneHeatNeed(self._zdico,Analyse_Simu.NuancNBK)
+            AFFPiePlotZoneHeatNeed(self._aff_zone_val,self._aff_zone_nom,self._aff_zone_nuanc,self._MplWidget)
+            Init_Table_check(self._aff_zone_val,self._aff_zone_nom,self._TableWidget)
             self._init=False
 
         else :
-            for i in range(len(self._ZoneList)):
-                print self._TableWidget.item(i,0)
+            self._list_zone=[]
+            for i in range(len(self._zdico)):
+                if self._TableWidget.item(i,0).checkState() == QtCore.Qt.Checked:
+                    self._list_zone.append(self._zdico[str(self._TableWidget.item(i,0).text())]['Zone Total Internal Total Heating Rate'])
+                    
+            self._list_zone=ZoneDict(self._list_zone)
+            self._aff_zone_val,self._aff_zone_nom,self._aff_zone_nuanc=MEFPiePlotZoneHeatNeed(self._list_zone,Analyse_Simu.NuancNBK)
+            AFFPiePlotZoneHeatNeed(self._aff_zone_val,self._aff_zone_nom,self._aff_zone_nuanc,self._MplWidget)
+
+            
+
 
 
         

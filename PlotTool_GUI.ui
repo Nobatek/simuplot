@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1111</width>
-    <height>730</height>
+    <width>952</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -121,39 +121,63 @@
       <attribute name="title">
        <string>Conso_Zones</string>
       </attribute>
-      <widget class="MplWidget" name="MplWidget" native="true">
-       <property name="geometry">
-        <rect>
-         <x>454</x>
-         <y>1</y>
-         <width>621</width>
-         <height>681</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QPushButton" name="Con_Zon_Pie_Trace_Butt">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>650</y>
-         <width>75</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Tracer</string>
-       </property>
-      </widget>
-      <widget class="QTableView" name="tableView">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>30</y>
-         <width>431</width>
-         <height>291</height>
-        </rect>
-       </property>
-      </widget>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="QTableWidget" name="table_Con_Zon">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderHighlightSections">
+          <bool>true</bool>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Zones</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Consommation [kW]</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+       <item row="0" column="1" rowspan="2">
+        <widget class="MplWidget" name="MplWidget" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QPushButton" name="Con_Zon_Pie_Trace_Butt">
+         <property name="text">
+          <string>Tracer</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>
