@@ -59,9 +59,9 @@ class MplWidget(QtGui.QWidget):
         # set the layout to th vertical box
         self.setLayout(self.vbl)
 
-    def MAJgraph(self):
-        x = np.arange(0.0, 3.0, 0.01)
-        y = np.cos(2*np.pi*x)
-        self.canvas.axes.plot(x, y)
-        self.canvas.draw()
+#     def MAJgraph(self):
+#         x = np.arange(0.0, 3.0, 0.01)
+#         y = np.cos(2*np.pi*x)
+#         self.canvas.axes.plot(x, y)
+#         self.canvas.draw()
 
