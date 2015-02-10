@@ -34,7 +34,7 @@
       <item row="0" column="0">
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QCommandLinkButton" name="Load_Button">
+         <widget class="QCommandLinkButton" name="Browse_Button">
           <property name="text">
            <string>Sélectionner le fichier à analyser</string>
           </property>
@@ -45,7 +45,7 @@
           <item>
            <widget class="QLineEdit" name="File_Path_Text">
             <property name="text">
-             <string>Spécifier un hemin d'accès ...</string>
+             <string>Spécifier un chemin d'accès ...</string>
             </property>
            </widget>
           </item>

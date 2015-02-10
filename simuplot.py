@@ -7,7 +7,9 @@ import signal
 
 from PyQt4 import QtGui, QtCore, uic
 
-from data_tools import Analyse_Simu, Tab_Conso_Zone_Pie
+from config import Config
+from datareader import EnergyPlusDataReader
+from dataplotter import ConsPerZonePieDataPlotter
 
 class SimuPlot(QtGui.QMainWindow):
     
@@ -15,29 +17,29 @@ class SimuPlot(QtGui.QMainWindow):
         
         super(SimuPlot, self).__init__()
 
-        # UI
+        # Get parameters
+        self._config = Config()
+        self._config.read()
+        
+        # Setup UI
         ui = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
         self._ui = uic.loadUi(ui, self)
         
-        # Création des instances de classe
-        # Création de l'instance principale ET de lecture du fichier
-        self.Simu = Analyse_Simu(self._ui.Info_Load,
-                                 self._ui.File_Path_Text,
-                                 self._ui.progressBar) 
-        # Création de l'instance Tab consommation zones Pie
-        self.Ctab_Con_Zon_Pie = Tab_Conso_Zone_Pie( \
+        # Import data
+        self._dr = EnergyPlusDataReader(
+          self._ui.File_Path_Text,
+          self._ui.Info_Load,
+          self._ui.progressBar,
+          self._ui.Browse_Button,
+          self._ui.Ok_Load_Button)
+
+        # Tab 1 : Consumption per zone / Pie
+        self.tab1 = ConsPerZonePieDataPlotter(
             self._ui.Con_Zon_Pie_Trace_Butt,
             self._ui.MplWidget,
-            self._ui.table_Con_Zon) 
-
-        # Tab Fichier
-        # Commande du bouton de recherche(browse)
-        self.Load_Button.clicked.connect(self.Simu.Browse_Button) 
-        # Commande du bouton de chargement
-        self.Ok_Load_Button.clicked.connect(self.Simu.Lect_File) 
-        # Tab Conso Zone Pie
-        # Commande du bouton de chargement
-        self.Con_Zon_Pie_Trace_Butt.clicked.connect(self.Ctab_Con_Zon_Pie.Trace_Button) 
+            self._ui.table_Con_Zon,
+            self._dr,
+            self._config.params['Nuanc'])
 
 if __name__ == "__main__":
     
