@@ -12,7 +12,7 @@ class Config(object):
     def read(self):
         """Currently just a stub"""
 
-        self._params['Nuanc'] = NBK_color_chart
+        self._params['color_chart'] = NBK_color_chart
 
     # TODO: Write config
     def write(self):

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 
-from data_tools import ZoneDict, MEFPiePlotZoneHeatNeed, AFFPiePlotZoneHeatNeed, Init_Table_check
+from data import DataZoneError
 
-class DataPlotter(object):
+class DataPlotter(QtCore.QObject):
     """Virtual class
 
        Useless by itself. Implement in sub-clases
@@ -12,53 +12,120 @@ class DataPlotter(object):
     
     def __init__(self, color_chart):
         
+        super(DataPlotter, self).__init__()
+
         # Get color chart
         self._color_chart = color_chart
 
 class ConsPerZonePieDataPlotter(DataPlotter):
 
-    def __init__(self, Con_Zon_Pie_Trace_Butt, MplWidget, TableWidget, 
-        data_reader, color_chart):
+    @staticmethod
+    def ComputeZoneCons(zone):
+        try:
+            # Get variable HEATING_RATE in zone
+            var = zone.get_variable('HEATING_RATE')
+        except DataZoneError:
+            return None
+        else:
+            try:
+                # Get hourly power data
+                # Hourly power [W] is equivalent to Hourly energy [Wh]
+                vals = var.get_values('HOUR')
+            except KeyError:
+                # TODO: Manage other sampling periods
+                return None
+            else:
+                # Return total consumption [kWh]
+                return vals.sum() / 1000
+        
+    def __init__(self, MplWidget, TableWidget, building, color_chart):
         
         super(ConsPerZonePieDataPlotter, self).__init__(color_chart)
         
-        self._zdico={}
-        self._aff_zone_val=[]
-        self._aff_zone_nom=[]
-        self._aff_zone_nuanc=[]
-        self._data_reader = data_reader
-        self._list_data = None
-        self._init=True
+        # Reference to building isntance
+        self._building = building
         
-        self._Con_Zon_Pie_Trace_Butt=Con_Zon_Pie_Trace_Butt #Acquisition du boutton pour tracer
-        self._MplWidget=MplWidget #Aquisition du Widget graphe
-        self._TableWidget=TableWidget #Acquisition du widget tableau
+        # Chart widget
+        self._MplWidget = MplWidget
+        # Table widget
+        self._table_widget = TableWidget
+
+        # Set column number and add headers
+        self._table_widget.setColumnCount(2)
+        self._table_widget.setHorizontalHeaderLabels(['Zone', 
+                                                      'Consumption [kW]'])
         
-        # Tab Conso Zone Pie
-        # Commande du bouton de chargement
-        self._Con_Zon_Pie_Trace_Butt.clicked.connect(self.trace_button_cbk) 
+        # Refresh plot when zone is clicked/unclicked or sort order changed
+        self._table_widget.itemClicked.connect(self.refresh_plot)
+        self._table_widget.horizontalHeader().sectionClicked.connect( \
+            self.refresh_plot)
 
-    def trace_button_cbk(self):
+    def refresh_data(self):
         
-        self._list_data = self._data_reader.list_dat
+        # Get zones in building
+        zones = self._building.zones
+        
+        # Clear table
+        self._table_widget.clearContents()
+        
+        # Create one empty row per zone
+        self._table_widget.setRowCount(len(zones))
+        
+        # For each zone
+        for i, name in enumerate(zones):
 
-        if self._init == True:          
-            self._zdico = ZoneDict(self._list_data)
-            
-            self._aff_zone_val, self._aff_zone_nom, self._aff_zone_nuanc = MEFPiePlotZoneHeatNeed(self._zdico, self._color_chart)
-            AFFPiePlotZoneHeatNeed(self._aff_zone_val, self._aff_zone_nom, self._aff_zone_nuanc, self._MplWidget)
-            
-            Init_Table_check(self._aff_zone_val, self._aff_zone_nom, self._TableWidget)
-            self._init = False
+            # Compute total consumption
+            # TODO: int or float ? explicit rounding ?
+            cons = int(self.ComputeZoneCons(zones[name]))
 
-        else :
-            self._list_zone = []
-            for i in range(len(self._zdico)):
-                if self._TableWidget.item(i,0).checkState() == QtCore.Qt.Checked:
-                    self._list_zone.append(self._zdico[str(self._TableWidget.item(i,0).text())]['Zone Total Internal Total Heating Rate'])
-                    
-            self._list_zone = ZoneDict(self._list_zone)
+            # Firts column: zone name + checkbox
+            name_item = QtGui.QTableWidgetItem(name)
+
+            name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
+                               QtCore.Qt.ItemIsEnabled)
+
+            # By default, display zone on chart only if value not 0
+            if cons != 0:
+                name_item.setCheckState(QtCore.Qt.Checked)
+            else:
+                name_item.setCheckState(QtCore.Qt.Unchecked)
+
+            # Second column: consumption value
+            val_item = QtGui.QTableWidgetItem()
+            val_item.setData(QtCore.Qt.DisplayRole, cons)
             
-            self._aff_zone_val, self._aff_zone_nom, self._aff_zone_nuanc = MEFPiePlotZoneHeatNeed(self._list_zone, self._color_chart)
-            AFFPiePlotZoneHeatNeed(self._aff_zone_val,self._aff_zone_nom,self._aff_zone_nuanc,self._MplWidget)
+            val_item.setFlags(QtCore.Qt.ItemIsEnabled)
+
+            # Add items to row, column
+            self._table_widget.setItem(i, 0, name_item)
+            self._table_widget.setItem(i, 1, val_item)
+
+        # Sort by value, descending order, and allow user column sorting
+        self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
+        self._table_widget.setSortingEnabled(True)
+
+        # Draw plot
+        self.refresh_plot()
+
+    @QtCore.pyqtSlot()
+    def refresh_plot(self):
+
+        values = []
+        names = []
+        
+        # Get checked rows and corresponding (name, value)
+        for i in range(self._table_widget.rowCount()):
+            if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
+                names.append(self._table_widget.item(i,0).text())
+                values.append(int(self._table_widget.item(i,1).text()))
+        
+        # Clear axes
+        self._MplWidget.canvas.axes.cla()
+    
+        # Create and draw pie chart
+        self._MplWidget.canvas.axes.pie(values, labels=names, 
+            colors=self._color_chart, autopct='%1.1f%%', 
+            shadow=False, startangle=90)
+        self._MplWidget.canvas.axes.axis('equal')
+        self._MplWidget.canvas.draw()
 
