@@ -31,10 +31,6 @@ class DataReader(QtCore.QObject):
         browse_button.clicked.connect(self.browse_button_cbk)
         load_button.clicked.connect(self.load_button_cbk)
 
-    @property
-    def building(self):
-        return self._building
-    
     def browse_button_cbk(self):
         """Browse button callback"""
 
@@ -56,7 +52,10 @@ class DataReader(QtCore.QObject):
         self.read_data_files()
         self._info_load.setText("Done loading data file")
 
-    def read_data_files(self):
+        # Signal data was loaded
+        self.dataLoaded.emit()
+
+def read_data_files(self):
         raise NotImplementedError
 
 class EnergyPlusDataReader(DataReader):
@@ -169,6 +168,7 @@ class EnergyPlusDataReader(DataReader):
                         zone = self._building.add_zone(item_name_str)
                     
                     # Add variable to zone
+                    # TODO: check variable already in zone (different period ?)
                     var = zone.add_variable(data_type)
                 
                 elif item_type_str == 'Site':
@@ -238,9 +238,6 @@ class EnergyPlusDataReader(DataReader):
 
         # TODO: Make it actually progressive. Or remove it...
         self._progress_bar.setProperty("value", 100)
-
-        # Signal data was loaded
-        self.dataLoaded.emit()
 
 class DataReaderError(Exception):
     pass

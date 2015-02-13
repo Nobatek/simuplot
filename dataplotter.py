@@ -10,12 +10,18 @@ class DataPlotter(QtCore.QObject):
        Useless by itself. Implement in sub-clases
     """
     
-    def __init__(self, color_chart):
+    def __init__(self, building, color_chart):
         
         super(DataPlotter, self).__init__()
 
+        # Reference to building isntance
+        self._building = building
+
         # Get color chart
         self._color_chart = color_chart
+
+    def refresh_data(self):
+        raise NotImplementedError
 
 class ConsPerZonePieDataPlotter(DataPlotter):
 
@@ -23,27 +29,18 @@ class ConsPerZonePieDataPlotter(DataPlotter):
     def ComputeZoneCons(zone):
         try:
             # Get variable HEATING_RATE in zone
-            var = zone.get_variable('HEATING_RATE')
+            # Hourly power [W] is equivalent to Hourly energy [Wh]
+            vals = zone.get_variable('HEATING_RATE', 'HOUR')
         except DataZoneError:
+            # TODO: log error
             return None
         else:
-            try:
-                # Get hourly power data
-                # Hourly power [W] is equivalent to Hourly energy [Wh]
-                vals = var.get_values('HOUR')
-            except KeyError:
-                # TODO: Manage other sampling periods
-                return None
-            else:
-                # Return total consumption [kWh]
-                return vals.sum() / 1000
+            # Return total consumption [kWh]
+            return vals.sum() / 1000
         
     def __init__(self, MplWidget, TableWidget, building, color_chart):
         
-        super(ConsPerZonePieDataPlotter, self).__init__(color_chart)
-        
-        # Reference to building isntance
-        self._building = building
+        super(ConsPerZonePieDataPlotter, self).__init__(building, color_chart)
         
         # Chart widget
         self._MplWidget = MplWidget
@@ -53,7 +50,7 @@ class ConsPerZonePieDataPlotter(DataPlotter):
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
-                                                      'Consumption [kW]'])
+                                                      'Consumption [kWh]'])
         
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)

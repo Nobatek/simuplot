@@ -52,7 +52,11 @@ class Variable(object):
         return self._data_type
 
     def get_values(self, period):
-        return self._values[period]
+        try:
+            return self._values[period]
+        except KeyError:
+            raise DataVariablePeriodError('Incorrect sample period: %s' 
+                                          % period)
 
     def set_values_from_list(self, period, val_list):
         """Set val_list as values
@@ -144,11 +148,17 @@ class Zone(object):
     def name(self):
         return self._name
 
-    def get_variable(self, data_type):
+    def get_variable(self, data_type, period):
         try:
-            return self._variables[data_type]
+            var = self._variables[data_type]
         except KeyError:
-            raise DataZoneError('Variable %s not in Zone' % data_type)
+            raise DataZoneError('Variable %s not in Zone %s' % 
+                (data_type, self._name))
+        try:
+            return var.get_values(period)
+        except DataVariablePeriodError:
+            raise DataZoneError('No %s data for %s in Zone %s' % 
+                (period, data_type, self._name))
 
     def add_variable(self, data_type):
 
