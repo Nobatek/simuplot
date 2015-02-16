@@ -48,12 +48,18 @@ class DataReader(QtCore.QObject):
         # Initialize progress bar
         self._progress_bar.setProperty("value", 0)
 
-        # Clean building
+        # Clean Building
         self._building.clean()
         
         # Read file
-        self.read_data_files()
-        self._info_load.setText("Done loading data file")
+        try:
+            self.read_data_files()
+        except DataReaderReadError as e:
+            # Error reading file. Log error and clean Building.
+            self._info_load.setText("Error loading data file: %s" % e)
+            self._building.clean()
+        else:
+            self._info_load.setText("Done loading data file")
 
         # Signal data was loaded
         self.dataLoaded.emit()
@@ -150,7 +156,7 @@ class EnergyPlusDataReader(DataReader):
                 unit_str = match.group('unit')
                 period_str = match.group('period')
             except AttributeError:
-                raise DataReaderReadError("Misformed column head: %s" % head)
+                raise DataReaderReadError('Misformed column head: "%s"' % head)
             
             # Get data type from E+ column header name
             try:
@@ -200,9 +206,7 @@ class EnergyPlusDataReader(DataReader):
                 try:
                     period = self.DataPeriods[period_str]
                 except KeyError:
-                    # Unknown period. Ignore data column.
-                    var = None
-                    period = None
+                    raise DataReaderReadError('Unknown period %s' % period_str)
                 
                 # Store locally in variable list (one var per column)
                 # before final insertion into Variable as a numpy array
