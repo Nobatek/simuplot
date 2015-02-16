@@ -1,17 +1,16 @@
-import os
+# List all plotter widget classes
 
-# Create a list of all plotter widget classes
+# To add a new plotter, add a .py file to the dataplotter directory
+# and add it to the list. The order of the list matters. It is the order
+# of the tabs to be created.
 
-# To add a new plotter, just add a .py file to the dataplotter directory
-# The plotter class should be called Plotter and have 
+# Each plotter should have 
 # - a "name" attribute
 # - a "refresh data" slot
 
-plotters = []
-for filename in os.listdir(os.path.dirname(__file__)):
-    if filename[-3:] == '.py':
-        if filename != '__init__.py' and filename != 'dataplotter.py':
-            plotters.append(__import__(filename[:-3], locals(), globals()).Plotter)
+from consperzonepie import ConsPerZonePie
 
-del os
+plotters = [
+    ConsPerZonePie,
+]
 

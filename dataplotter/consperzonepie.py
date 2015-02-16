@@ -8,7 +8,7 @@ import dataplotter as dp
 
 from data import DataZoneError
 
-class Plotter(dp.DataPlotter):
+class ConsPerZonePie(dp.DataPlotter):
 
     @staticmethod
     def ComputeZoneCons(zone):
@@ -25,7 +25,7 @@ class Plotter(dp.DataPlotter):
         
     def __init__(self, building, color_chart):
         
-        super(Plotter, self).__init__(building, color_chart)
+        super(ConsPerZonePie, self).__init__(building, color_chart)
 
         self._name = "Energy consumption per zone"
         
