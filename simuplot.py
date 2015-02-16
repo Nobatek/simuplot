@@ -10,7 +10,8 @@ from PyQt4 import QtGui, QtCore, uic
 from config import Config
 from data import Building
 from datareader import EnergyPlusDataReader
-from dataplotter import ConsPerZonePieDataPlotter
+
+import dataplotter as dp
 
 class SimuPlot(QtGui.QMainWindow):
     
@@ -26,7 +27,7 @@ class SimuPlot(QtGui.QMainWindow):
         ui = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
         self._ui = uic.loadUi(ui, self)
 
-        # Instanciate a Building
+        # Instantiate a Building
         self._building = Building('My Building')
 
         # Import data
@@ -38,23 +39,12 @@ class SimuPlot(QtGui.QMainWindow):
             self._ui.Browse_Button,
             self._ui.Ok_Load_Button)
 
-        # Tab 1: Consumption per zone / Pie
-        self.tab1 = ConsPerZonePieDataPlotter(
-            self._ui.MplWidget,
-            self._ui.table_Con_Zon,
-            self._building,
-            self._config.params['color_chart'])
-
-        # Catch dataLoaded signal
-        self._dr.dataLoaded.connect(self.data_loaded)
-
-    @QtCore.pyqtSlot()
-    def data_loaded(self):
-        """Executes when data was loaded"""
+        # Instantiate all plotter widgets and add them as new tabs
+        for plot in dp.plotters:
+            p = plot(self._building, self._config.params['color_chart'])
+            self._dr.dataLoaded.connect(p.refresh_data)
+            self._ui.tabWidget.addTab(p, p.name)
         
-        # Refresh data in tabs
-        self.tab1.refresh_data()
-
 if __name__ == "__main__":
     
     app = QtGui.QApplication(sys.argv)

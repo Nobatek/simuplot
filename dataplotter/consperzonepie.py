@@ -1,29 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtCore, QtGui
+import os
+
+from PyQt4 import QtCore, QtGui, uic
+
+import dataplotter as dp
 
 from data import DataZoneError
 
-class DataPlotter(QtCore.QObject):
-    """Virtual class
-
-       Useless by itself. Implement in sub-clases
-    """
-    
-    def __init__(self, building, color_chart):
-        
-        super(DataPlotter, self).__init__()
-
-        # Reference to building isntance
-        self._building = building
-
-        # Get color chart
-        self._color_chart = color_chart
-
-    def refresh_data(self):
-        raise NotImplementedError
-
-class ConsPerZonePieDataPlotter(DataPlotter):
+class Plotter(dp.DataPlotter):
 
     @staticmethod
     def ComputeZoneCons(zone):
@@ -38,14 +23,20 @@ class ConsPerZonePieDataPlotter(DataPlotter):
             # Return total consumption [kWh]
             return vals.sum() / 1000
         
-    def __init__(self, MplWidget, TableWidget, building, color_chart):
+    def __init__(self, building, color_chart):
         
-        super(ConsPerZonePieDataPlotter, self).__init__(building, color_chart)
+        super(Plotter, self).__init__(building, color_chart)
+
+        self._name = "Energy consumption per zone"
         
+        # Setup UI
+        ui = os.path.join(os.path.dirname(__file__), 'consperzonepie.ui')
+        self._ui = uic.loadUi(ui, self)
+
         # Chart widget
-        self._MplWidget = MplWidget
+        self._MplWidget = self._ui.plotW
         # Table widget
-        self._table_widget = TableWidget
+        self._table_widget = self._ui.listW
 
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
@@ -57,6 +48,11 @@ class ConsPerZonePieDataPlotter(DataPlotter):
         self._table_widget.horizontalHeader().sectionClicked.connect( \
             self.refresh_plot)
 
+    @property
+    def name(self):
+        return self._name
+
+    @QtCore.pyqtSlot()
     def refresh_data(self):
         
         # Get zones in building
