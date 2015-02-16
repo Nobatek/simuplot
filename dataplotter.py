@@ -32,8 +32,8 @@ class ConsPerZonePieDataPlotter(DataPlotter):
             # Hourly power [W] is equivalent to Hourly energy [Wh]
             vals = zone.get_variable('HEATING_RATE', 'HOUR')
         except DataZoneError:
-            # TODO: log error
-            return None
+            # TODO: log warning
+            return 0
         else:
             # Return total consumption [kWh]
             return vals.sum() / 1000
