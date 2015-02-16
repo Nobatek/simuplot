@@ -31,18 +31,18 @@
         <item row="0" column="0">
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
-           <widget class="QCommandLinkButton" name="Browse_Button">
-            <property name="text">
-             <string>Sélectionner le fichier à analyser</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QLineEdit" name="File_Path_Text">
               <property name="text">
-               <string>Spécifier un chemin d'accès ...</string>
+               <string>Specify file path...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="Browse_Button">
+              <property name="text">
+               <string>Browse</string>
               </property>
              </widget>
             </item>
@@ -100,7 +100,7 @@
              <enum>QFrame::Plain</enum>
             </property>
             <property name="text">
-             <string>En attente du chargement d'un fichier résultats ...</string>
+             <string>Waiting for data file loading</string>
             </property>
            </widget>
           </item>
