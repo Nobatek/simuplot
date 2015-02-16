@@ -48,6 +48,9 @@ class DataReader(QtCore.QObject):
         # Initialize progress bar
         self._progress_bar.setProperty("value", 0)
 
+        # Clean building
+        self._building.clean()
+        
         # Read file
         self.read_data_files()
         self._info_load.setText("Done loading data file")

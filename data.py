@@ -135,6 +135,10 @@ class Building(object):
         except KeyError:
             raise DataBuildingError('Zone %s not in Building' % name)
 
+    def clean(self):
+        self._zones = {}
+        self._environment = None
+
 class Zone(object):
     """Defines a thermal zone"""
 
@@ -163,7 +167,8 @@ class Zone(object):
     def add_variable(self, data_type):
 
         if data_type in self._variables:
-            raise DataZoneError('Variable %s already in Zone' % data_type)
+            raise DataZoneError('Variable %s already in Zone %s' % 
+                (data_type, self._name))
         else:
             try:
                 var = Variable(data_type)
