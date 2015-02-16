@@ -20,6 +20,9 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
       <widget class="QWidget" name="Load_Tab">
        <attribute name="title">
         <string>Data source</string>
