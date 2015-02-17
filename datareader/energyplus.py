@@ -104,7 +104,9 @@ class EnergyPlus(DataReader):
         except UnicodeDecodeError:
             raise DataReaderReadError("Unauthorized characters in data file")
         
+        # Create CSV reader, store file size to track progress while reading
         csv_reader = csv.reader(csv_file, delimiter=",")
+        file_size = os.path.getsize(file_path)
         
         # Get header line
         header = next(csv_reader)
@@ -231,6 +233,10 @@ class EnergyPlus(DataReader):
             except ValueError:
                 raise DataReaderReadError("Invalid value in line: %s" % row)
 
+            # Update progress bar
+            self._progress_bar.setProperty("value", 
+                                           100 * csv_file.tell() / file_size)
+        
         # Store all temporary value lists into numpy arrays in Variables
         for i, [var, per] in enumerate(variables):
             if var is not None:
@@ -239,7 +245,4 @@ class EnergyPlus(DataReader):
                 except DataVariableValueError:
                     # TODO: log a warning ? display error in status bar ?
                     pass
-
-        # TODO: Make it actually progressive. Or remove it...
-        self._progress_bar.setProperty("value", 100)
 
