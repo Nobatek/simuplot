@@ -24,8 +24,8 @@ class SimuPlot(QtGui.QMainWindow):
         self._config.read()
 
         # Setup UI
-        ui = os.path.join(os.path.dirname(__file__), 'mainwindow.ui')
-        self._ui = uic.loadUi(ui, self)
+        uic.loadUi(os.path.join(os.path.dirname(__file__), 'mainwindow.ui'),
+                   self)
 
         # Instantiate a Building
         self._building = Building('My Building')
@@ -36,16 +36,16 @@ class SimuPlot(QtGui.QMainWindow):
             r = reader(self._building)
             readers.append(r)
             self.comboBox.addItem(r.name)
-            self._ui.stackedWidget.addWidget(r)
+            self.stackedWidget.addWidget(r)
 
         # Connect comboBox activated signal to stackedWidget set index slot
-        self._ui.comboBox.activated.connect( \
-            self._ui.stackedWidget.setCurrentIndex)
+        self.comboBox.activated.connect( \
+            self.stackedWidget.setCurrentIndex)
 
         # Instantiate all plotter widgets and add them as new tabs
         for plotter in dp.plotters:
             p = plotter(self._building, self._config.params['color_chart'])
-            self._ui.tabWidget.addTab(p, p.name)
+            self.tabWidget.addTab(p, p.name)
             # Connect dataLoaded signal of all readers to the plotter
             for r in readers:
                 r.dataLoaded.connect(p.refresh_data)

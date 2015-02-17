@@ -45,17 +45,17 @@ class EnergyPlus(DataReader):
         self._name = 'Energy Plus'
         
         # Setup UI
-        ui = os.path.join(os.path.dirname(__file__), 'energyplus.ui')
-        self._ui = uic.loadUi(ui, self)
+        uic.loadUi(os.path.join(os.path.dirname(__file__), 'energyplus.ui'),
+                   self)
         
         # Path to data file
-        self._file_path_text = self._ui.File_Path_Text
-        self._info_load = self._ui.Info_Load
-        self._progress_bar = self._ui.progressBar
+        self._file_path_text = self.File_Path_Text
+        self._info_load = self.Info_Load
+        self._progress_bar = self.progressBar
 
         # Connect browse and load buttons
-        self._ui.Browse_Button.clicked.connect(self.browse_button_cbk)
-        self._ui.Ok_Load_Button.clicked.connect(self.load_button_cbk)
+        self.Browse_Button.clicked.connect(self.browse_button_cbk)
+        self.Ok_Load_Button.clicked.connect(self.load_button_cbk)
 
     @property
     def name(self):

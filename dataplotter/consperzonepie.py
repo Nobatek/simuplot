@@ -30,13 +30,13 @@ class ConsPerZonePie(DataPlotter):
         self._name = "Energy consumption per zone"
         
         # Setup UI
-        ui = os.path.join(os.path.dirname(__file__), 'consperzonepie.ui')
-        self._ui = uic.loadUi(ui, self)
+        uic.loadUi(os.path.join(os.path.dirname(__file__), 'consperzonepie.ui'),
+            self)
 
         # Chart widget
-        self._MplWidget = self._ui.plotW
+        self._MplWidget = self.plotW
         # Table widget
-        self._table_widget = self._ui.listW
+        self._table_widget = self.listW
 
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
