@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtCore, QtGui
 
 class DataPlotter(QtGui.QWidget):
     """Virtual class
@@ -12,7 +12,7 @@ class DataPlotter(QtGui.QWidget):
         
         super(DataPlotter, self).__init__()
 
-        # Reference to building isntance
+        # Reference to building instance
         self._building = building
 
         # Get color chart

@@ -4,11 +4,11 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-import dataplotter as dp
+from dataplotter import DataPlotter
 
 from data import DataZoneError
 
-class ConsPerZonePie(dp.DataPlotter):
+class ConsPerZonePie(DataPlotter):
 
     @staticmethod
     def ComputeZoneCons(zone):

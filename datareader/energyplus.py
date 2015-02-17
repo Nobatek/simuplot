@@ -1,73 +1,17 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 import csv
 import re
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui, uic
 
-from data import Building, DataBuildingError
+from datareader import DataReader, DataReaderReadError
 
-class DataReader(QtCore.QObject):
-    
-    # This signal is sent when data is successfully loaded
-    # TODO: check what happens in case of load failure
-    dataLoaded = QtCore.pyqtSignal()
-    
-    def __init__(self, building, file_path_text, info_load, progress_bar,
-        browse_button, load_button):
+from data import DataBuildingError
 
-        super(DataReader, self).__init__()
-        
-        # Building isntance
-        self._building = building
-        
-        # Path to data file
-        self._file_path = ''
-        self._file_path_text = file_path_text
-        self._info_load = info_load
-        self._progress_bar = progress_bar
-
-        # Connect browse and load buttons
-        browse_button.clicked.connect(self.browse_button_cbk)
-        load_button.clicked.connect(self.load_button_cbk)
-
-    def browse_button_cbk(self):
-        """Browse button callback"""
-
-        # Launch file selection dialog, get file path,
-        # and print it in file path text widget
-        file_path = QtGui.QFileDialog.getOpenFileName()
-        self._file_path_text.setText(file_path)
-
-    def load_button_cbk(self):
-        """Load button callback"""
-        
-        # Get file path from File_Path_Text widget
-        self._file_path = self._file_path_text.text()
-
-        # Initialize progress bar
-        self._progress_bar.setProperty("value", 0)
-
-        # Clean Building
-        self._building.clean()
-        
-        # Read file
-        try:
-            self.read_data_files()
-        except DataReaderReadError as e:
-            # Error reading file. Log error and clean Building.
-            self._info_load.setText("Error loading data file: %s" % e)
-            self._building.clean()
-        else:
-            self._info_load.setText("Done loading data file")
-
-        # Signal data was loaded
-        self.dataLoaded.emit()
-
-def read_data_files(self):
-        raise NotImplementedError
-
-class EnergyPlusDataReader(DataReader):
+class EnergyPlus(DataReader):
     """Reads Energy Plus data files"""
 
     # Variable type conversion
@@ -94,16 +38,69 @@ class EnergyPlusDataReader(DataReader):
     # TODO: Convert into SI units
     # For now, we'll suppose data is provided in SI unit
 
-    def read_data_files(self):
+    def __init__(self, building):
 
-        # TODO: What about file read errors ?
-        # Log a warning ? launch dialog ? display error in status bar ?
+        super(EnergyPlus, self).__init__(building)
+        
+        self._name = 'Energy Plus'
+        
+        # Setup UI
+        ui = os.path.join(os.path.dirname(__file__), 'energyplus.ui')
+        self._ui = uic.loadUi(ui, self)
+        
+        # Path to data file
+        self._file_path_text = self._ui.File_Path_Text
+        self._info_load = self._ui.Info_Load
+        self._progress_bar = self._ui.progressBar
+
+        # Connect browse and load buttons
+        self._ui.Browse_Button.clicked.connect(self.browse_button_cbk)
+        self._ui.Ok_Load_Button.clicked.connect(self.load_button_cbk)
+
+    @property
+    def name(self):
+        return self._name
+
+    def browse_button_cbk(self):
+        """Browse button callback"""
+
+        # Launch file selection dialog, get file path,
+        # and print it in file path text widget
+        file_path = QtGui.QFileDialog.getOpenFileName()
+        self._file_path_text.setText(file_path)
+
+    def load_button_cbk(self):
+        """Load button callback"""
+        
+        # Get file path from File_Path_Text widget
+        file_path = self._file_path_text.text()
+
+        # Initialize progress bar
+        self._progress_bar.setProperty("value", 0)
+
+        # Clean Building
+        self._building.clean()
+        
+        # Read file
+        try:
+            self.read_data_files(file_path)
+        except DataReaderReadError as e:
+            # Error reading file. Log error and clean Building.
+            self._info_load.setText("Error loading data file: %s" % e)
+            self._building.clean()
+        else:
+            self._info_load.setText("Done loading data file")
+
+        # Signal data was loaded
+        self.dataLoaded.emit()
+
+    def read_data_files(self, file_path):
 
         # Open file
         try:
-            csv_file = open(self._file_path, "rb")
+            csv_file = open(file_path, "rb")
         except IOError:
-            raise DataReaderReadError("Wrong filepath: %s" % self._file_path)
+            raise DataReaderReadError("Wrong filepath: %s" % file_path)
         except UnicodeDecodeError:
             raise DataReaderReadError("Unauthorized characters in data file")
         
@@ -245,10 +242,4 @@ class EnergyPlusDataReader(DataReader):
 
         # TODO: Make it actually progressive. Or remove it...
         self._progress_bar.setProperty("value", 100)
-
-class DataReaderError(Exception):
-    pass
-
-class DataReaderReadError(DataReaderError):
-    pass
 

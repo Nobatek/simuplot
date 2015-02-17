@@ -5,12 +5,12 @@ import os
 import sys
 import signal
 
-from PyQt4 import QtGui, QtCore, uic
+from PyQt4 import QtCore, QtGui, uic
 
 from config import Config
 from data import Building
-from datareader import EnergyPlusDataReader
 
+import datareader as dr
 import dataplotter as dp
 
 class SimuPlot(QtGui.QMainWindow):
@@ -30,20 +30,25 @@ class SimuPlot(QtGui.QMainWindow):
         # Instantiate a Building
         self._building = Building('My Building')
 
-        # Import data
-        self._dr = EnergyPlusDataReader(
-            self._building,
-            self._ui.File_Path_Text,
-            self._ui.Info_Load,
-            self._ui.progressBar,
-            self._ui.Browse_Button,
-            self._ui.Ok_Load_Button)
+        # Instantiate all reader widgets and add them to stacked widget
+        readers = []
+        for reader in dr.readers:
+            r = reader(self._building)
+            readers.append(r)
+            self.comboBox.addItem(r.name)
+            self._ui.stackedWidget.addWidget(r)
+
+        # Connect comboBox activated signal to stackedWidget set index slot
+        self._ui.comboBox.activated.connect( \
+            self._ui.stackedWidget.setCurrentIndex)
 
         # Instantiate all plotter widgets and add them as new tabs
-        for plot in dp.plotters:
-            p = plot(self._building, self._config.params['color_chart'])
-            self._dr.dataLoaded.connect(p.refresh_data)
+        for plotter in dp.plotters:
+            p = plotter(self._building, self._config.params['color_chart'])
             self._ui.tabWidget.addTab(p, p.name)
+            # Connect dataLoaded signal of all readers to the plotter
+            for r in readers:
+                r.dataLoaded.connect(p.refresh_data)
         
 if __name__ == "__main__":
     
