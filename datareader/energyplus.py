@@ -149,7 +149,8 @@ class EnergyPlus(DataReader):
             # Match colum head to extract values
             try:
                 match = pattern.match(head)
-                item_name_str = match.group('item_name')
+                # E+ replaces '_' with '%' in zone names. We want our '_' back.
+                item_name_str = match.group('item_name').replace('%', '_')
                 item_type_str = match.group('item_type')
                 var_str = match.group('var')
                 unit_str = match.group('unit')
