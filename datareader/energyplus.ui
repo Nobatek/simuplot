@@ -40,55 +40,6 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer_4">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Fixed</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>395</width>
-       <height>13</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <widget class="QProgressBar" name="progressBar">
-     <property name="value">
-      <number>0</number>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <spacer name="verticalSpacer_5">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>136</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item>
-    <widget class="QLabel" name="Info_Load">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="text">
-      <string>Waiting for data file loading</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <spacer name="verticalSpacer_6">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -96,7 +47,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>136</height>
+       <height>301</height>
       </size>
      </property>
     </spacer>

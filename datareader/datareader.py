@@ -4,9 +4,15 @@ from PyQt4 import QtCore, QtGui
 
 class DataReader(QtGui.QWidget):
     
-    # This signal is sent when data is successfully loaded
-    # TODO: check what happens in case of load failure
-    dataLoaded = QtCore.pyqtSignal()
+    # Signals
+    # Before loading data
+    loadingData = QtCore.pyqtSignal(str)
+    # When data is successfully loaded
+    dataLoaded = QtCore.pyqtSignal(str)
+    # When an error occurred while loading data
+    dataLoadError = QtCore.pyqtSignal(str)
+    # Data loading progress
+    dataLoadProgress = QtCore.pyqtSignal(int)
     
     def __init__(self, building):
 

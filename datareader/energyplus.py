@@ -50,8 +50,6 @@ class EnergyPlus(DataReader):
         
         # Path to data file
         self._file_path_text = self.File_Path_Text
-        self._info_load = self.Info_Load
-        self._progress_bar = self.progressBar
 
         # Connect browse and load buttons
         self.Browse_Button.clicked.connect(self.browse_button_cbk)
@@ -76,26 +74,28 @@ class EnergyPlus(DataReader):
         file_path = self._file_path_text.text()
 
         # Initialize progress bar
-        self._progress_bar.setProperty("value", 0)
+        self.dataLoadProgress.emit(0)
 
         # Clean Building
         self._building.clean()
         
         # Read file
+        self.loadingData.emit(file_path)
         try:
-            self.read_data_files(file_path)
+            messages = self.read_data_files(file_path)
         except DataReaderReadError as e:
-            # Error reading file. Log error and clean Building.
-            self._info_load.setText("Error loading data file: %s" % e)
+            # Error reading file. Clean Building and signal error.
             self._building.clean()
+            self.dataLoadError.emit("[Error] %s" % e)
         else:
-            self._info_load.setText("Done loading data file")
-
-        # Signal data was loaded
-        self.dataLoaded.emit()
+            # Signal data was loaded
+            # Return last message in queue
+            self.dataLoaded.emit(messages[-1])
 
     def read_data_files(self, file_path):
 
+        messages = ['']
+        
         # Open file
         try:
             csv_file = open(file_path, "rb")
@@ -165,6 +165,7 @@ class EnergyPlus(DataReader):
                 # We don't know that type. Ignore that column.
                 variables.append([None, None])
                 tmp_variables.append(None)
+                messages.append("[Warning] Unknown data type: %s" % var_str)
             else:
                 
                 # If data type is known, check item type
@@ -235,15 +236,16 @@ class EnergyPlus(DataReader):
                 raise DataReaderReadError("Invalid value in line: %s" % row)
 
             # Update progress bar
-            self._progress_bar.setProperty("value", 
-                                           100 * csv_file.tell() / file_size)
+            self.dataLoadProgress.emit(100 * csv_file.tell() / file_size)
         
         # Store all temporary value lists into numpy arrays in Variables
         for i, [var, per] in enumerate(variables):
             if var is not None:
                 try:
-                    var .set_values_from_list(per, tmp_variables[i])
+                    var.set_values_from_list(per, tmp_variables[i])
                 except DataVariableValueError:
                     # TODO: log a warning ? display error in status bar ?
                     pass
+
+        return messages
 
