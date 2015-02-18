@@ -4,7 +4,7 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from dataplotter import DataPlotter
+from dataplotter import DataPlotter, DataPlotterError
 
 from data import DataZoneError
 
@@ -109,8 +109,20 @@ class ConsPerZonePie(DataPlotter):
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
-                names.append(self._table_widget.item(i,0).text())
-                values.append(int(self._table_widget.item(i,1).text()))
+                name = self._table_widget.item(i,0).text()
+                names.append(name)
+                try:
+                    value = int(self._table_widget.item(i,1).text())
+                except AttributeError:
+                    raise DataPlotterError( \
+                        'Invalid cons value type for row %s (%s): %s' %
+                        (i, name, self._table_widget.item(i,1)))
+                except ValueError:
+                    raise DataPlotterError( \
+                        'Invalid cons value for row %s (%s): %s' % 
+                        (i, name, self._table_widget.item(i,1).text()))
+                else:
+                    values.append(value)
         
         # Clear axes
         self._MplWidget.canvas.axes.cla()

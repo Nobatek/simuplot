@@ -31,3 +31,6 @@ class DataPlotter(QtGui.QWidget):
         """Refresh the plot"""
         raise NotImplementedError
 
+class DataPlotterError(Exception):
+    pass
+
