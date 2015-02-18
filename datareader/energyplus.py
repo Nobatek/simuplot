@@ -65,7 +65,8 @@ class EnergyPlus(DataReader):
         # Launch file selection dialog, get file path,
         # and print it in file path text widget
         file_path = QtGui.QFileDialog.getOpenFileName()
-        self._file_path_text.setText(file_path)
+        if file_path != '':
+            self._file_path_text.setText(file_path)
 
     def load_button_cbk(self):
         """Load button callback"""

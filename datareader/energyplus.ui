@@ -19,7 +19,10 @@
      <item>
       <widget class="QLineEdit" name="File_Path_Text">
        <property name="text">
-        <string>Specify file path...</string>
+        <string/>
+       </property>
+       <property name="placeholderText">
+        <string>Specify file path</string>
        </property>
       </widget>
      </item>
