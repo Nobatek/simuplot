@@ -26,6 +26,7 @@ class EnergyPlus(DataReader):
         'Total Internal Total Heating Rate':'HEATING_RATE',
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
+        'People Occupant Count':'PEOPLE_COUNT'
     }
 
     # Sampling period conversion
