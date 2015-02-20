@@ -9,8 +9,10 @@
 # - a "refresh data" slot
 
 from consperzonepie import ConsPerZonePie
+from hqeinconf import HqeInconf
 
 plotters = [
     ConsPerZonePie,
+    HqeInconf,
 ]
 

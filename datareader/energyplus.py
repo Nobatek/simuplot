@@ -26,7 +26,7 @@ class EnergyPlus(DataReader):
         'Total Internal Total Heating Rate':'HEATING_RATE',
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
-        'People Occupant Count':'PEOPLE_COUNT'
+        'Occupant Count':'PEOPLE_COUNT'
     }
 
     # Sampling period conversion
@@ -64,7 +64,7 @@ class EnergyPlus(DataReader):
         """Browse button callback"""
 
         # Launch file selection dialog, get file path,
-        # and print it in file path text widget
+        # and  it in file path text widget
         file_path = QtGui.QFileDialog.getOpenFileName()
         if file_path != '':
             self._file_path_text.setText(file_path)
@@ -119,6 +119,7 @@ class EnergyPlus(DataReader):
         # Use a regular expression pattern to match column heads
         # Warning: this regexp is broken by files with "DistrictHeating"
         pattern = re.compile(r"""
+            ([A-Z]{2,}[ ])?         # Test If any previous object
             (?P<item_name>.*)       # Item name
             :                       # Colon
             (?P<item_type>[^ ]*)    # Item type (Zone, Site, etc)
@@ -130,7 +131,7 @@ class EnergyPlus(DataReader):
             (?P<period>.*?)         # Var periodicity
             \)                      # Closing parenthese
             .*""", re.VERBOSE)
-        
+            
         # Initialize empty variable list
         variables = []
         # Variables store data as numpy arrays. Those can't be appended.
@@ -157,17 +158,20 @@ class EnergyPlus(DataReader):
                 var_str = match.group('var')
                 unit_str = match.group('unit')
                 period_str = match.group('period')
+
             except AttributeError:
                 raise DataReaderReadError('Misformed column head: "%s"' % head)
-            
+
             # Get data type from E+ column header name
             try:
                 data_type = self.DataTypes[var_str]
+				
             except KeyError:
                 # We don't know that type. Ignore that column.
                 variables.append([None, None])
                 tmp_variables.append(None)
                 messages.append("[Warning] Unknown data type: %s" % var_str)
+                
             else:
                 
                 # If data type is known, check item type
@@ -201,6 +205,19 @@ class EnergyPlus(DataReader):
                 elif item_type_str == 'Surface':
                     # Ignore for now
                     var = None
+                    
+                elif item_type_str == 'People':
+
+                    #if zone exists
+                    try:
+                        zone = self._building.get_zone(item_name_str)
+                    
+                    except DataBuildingError:
+                        messages.append("[Warning] Unknown zone name: %s" % item_name_str)
+                    
+                    #add variable to zone
+                    var = zone.add_variable(data_type)
+                
                 else:
                     # What ?
                     var = None
