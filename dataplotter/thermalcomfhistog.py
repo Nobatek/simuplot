@@ -74,6 +74,8 @@ class ThermalComfHistog(DataPlotter):
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
                                                       'Discomfort[%]',
                                                       u'Max temp [°C]'])
+        self._table_widget.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        
         
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)

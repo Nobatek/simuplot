@@ -42,7 +42,9 @@ class ConsPerZonePie(DataPlotter):
         self._table_widget.setColumnCount(2)
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
                                                       'Consumption [kWh]'])
-        
+        self._table_widget.horizontalHeader().setResizeMode( \
+            QtGui.QHeaderView.ResizeToContents)
+ 
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
         self._table_widget.horizontalHeader().sectionClicked.connect( \
