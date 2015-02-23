@@ -14,7 +14,7 @@ from data import DataZoneError
 class ThermalComfHistog(DataPlotter):
 
     @staticmethod
-    def ComputeThermalComf(zone):
+    def ComputeThermalComf(zone, ref_temp):
     
         try:
             # Get variable OPERATIVE_TEMPERATURE in zone
@@ -42,9 +42,9 @@ class ThermalComfHistog(DataPlotter):
             # Determine maximum temperature during occupation
             max_temp = np.amax(occ_temp)
             
-            # Computing % of time when temperature is above 28°C
+            # Computing % of time when temperature is above reference temp
             # according to HQE referential
-            pct_hqe = 100 * np.count_nonzero(occ_temp > 28) / nb_h_occup
+            pct_hqe = 100 * np.count_nonzero(occ_temp > ref_temp) / nb_h_occup
                      
             # Return % and maximum temperature in occupation [°C]
             return round(float(pct_hqe),2), \
@@ -55,6 +55,9 @@ class ThermalComfHistog(DataPlotter):
         super(ThermalComfHistog, self).__init__(building, color_chart)
 
         self._name = "Summer thermal comfort per zone"
+
+        # Reference temperature. Default to 28°C
+        self._ref_temp = 28
         
         # Setup UI
         uic.loadUi(os.path.join(os.path.dirname(__file__), 
@@ -69,8 +72,8 @@ class ThermalComfHistog(DataPlotter):
         # Set column number and add headers
         self._table_widget.setColumnCount(3)
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
-                                                      'Comfort [%]',
-                                                      'Max temp [°C]'])
+                                                      'Discomfort[%]',
+                                                      u'Max temp [°C]'])
         
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
@@ -86,7 +89,7 @@ class ThermalComfHistog(DataPlotter):
         
         # Get zones in building
         zones = self._building.zones
-        
+
         # Clear table
         self._table_widget.clearContents()
         
@@ -97,7 +100,8 @@ class ThermalComfHistog(DataPlotter):
         for i, name in enumerate(zones):
 
             # Compute all comfort and max temperature
-            pct_hqe, max_temp = self.ComputeThermalComf(zones[name])
+            pct_hqe, max_temp = self.ComputeThermalComf(zones[name], 
+                                                        self._ref_temp)
 
             # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
@@ -168,9 +172,9 @@ class ThermalComfHistog(DataPlotter):
         self._MplWidget.canvas.axes.bar(ind,values,facecolor='#FF9933',edgecolor='white')
         
         # add some text for labels, title and axes ticks
-        self._MplWidget.canvas.axes.set_ylabel('% time beyond 28C')
+        self._MplWidget.canvas.axes.set_ylabel( \
+            u'%% time beyond %s°C' % self._ref_temp)
         self._MplWidget.canvas.axes.set_xticklabels( names, ind, rotation=45)
 
-        
         self._MplWidget.canvas.draw()
 
