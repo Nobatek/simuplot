@@ -7,7 +7,7 @@ from PyQt4 import QtCore, QtGui, uic
 
 from numpy import array
 
-from numpy import arange
+from numpy import arange,append,ones
 
 from dataplotter import DataPlotter, DataPlotterError
 
@@ -142,6 +142,10 @@ class HqeInconf(DataPlotter):
         values = []
         names = []
         
+        ph1c=1.5
+        tph1c=3
+
+        
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
@@ -149,6 +153,7 @@ class HqeInconf(DataPlotter):
                 names.append(name)
                 try:
                     value = float(self._table_widget.item(i,1).text())
+                    tmax = float(self._table_widget.item(i,2).text())
                 except AttributeError:
                     raise DataPlotterError( \
                         'Invalid cons value type for row %s (%s): %s' %
@@ -162,15 +167,57 @@ class HqeInconf(DataPlotter):
         
         # Clear axes
         self._MplWidget.canvas.axes.cla()
-    
+        
+        
+        
         # Create and draw bar chart    
         ind=arange(len(values))
+        rectangle=self._MplWidget.canvas.axes.bar(ind,values,edgecolor='white')
         
-        self._MplWidget.canvas.axes.bar(ind,values,facecolor='#FF9933',edgecolor='white')
-        
+        # Create rectangle color map
+        rect_colors = ['#E36C09' if i > tph1c
+                       else
+                       '#7F7F7F' if i > ph1c and i <= tph1c 
+                       else
+                       '#1F497D'
+                       for i in values]
+
+        #Set rectangle color
+        for rec, val in zip(rectangle, rect_colors) :
+            rec.set_color(val)
+            
+        #Adding values on top of rectangles
+        for rect in rectangle:
+            height = rect.get_height()
+            self._MplWidget.canvas.axes.text(rect.get_x()+rect.get_width()/2.,
+                                             1.0 * height,
+                                             '%.1f' % round(height,1),
+                                             size = 'smaller',
+                                             style = 'italic',
+                                             ha='center',
+                                             va='bottom')
+                                             
         # add some text for labels, title and axes ticks
         self._MplWidget.canvas.axes.set_ylabel('% time beyound 28C')
-        self._MplWidget.canvas.axes.set_xticklabels( names, ind, rotation=45)
+        self._MplWidget.canvas.axes.set_xticks(ind+rectangle[0].get_width()/2)
+        self._MplWidget.canvas.axes.set_xticklabels( names, ind, ha='right',rotation=75)
+        
+        #plot 'Tres performant' and 'Performant' values
+        #ind2 create the x vector
+        ind2 = append(ind,len(values)+1)
+        
+        #dr_* create the y vector
+        dr_ph1c = ones(len(ind2)) * ph1c
+        dr_tph1c = ones(len(ind2)) * tph1c
+        
+        #plot lines
+        self._MplWidget.canvas.axes.plot(ind2,dr_tph1c,'--',color='#1F497D',linewidth=2,)
+        self._MplWidget.canvas.axes.plot(ind2,dr_ph1c,'--',color='#A5A5A5',linewidth=2,)
+        
+        #add annotation
+        self._MplWidget.canvas.axes.annotate('%f.1 Tres Performant',
+                                             xy=(5,5),
+                                             ha='right')
 
         
         self._MplWidget.canvas.draw()
