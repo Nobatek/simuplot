@@ -13,6 +13,17 @@ from data import DataZoneError
 
 class ThermalComfHistog(DataPlotter):
 
+    rt_climatic_zone = {'H1a - H1b - H2a - H2b':0.02,
+                          'H1c - H2c':0.025,
+                          'H2d - H3':0.03,
+                       }
+                    
+    hqe_tmax_per_usage = {'bureau - enseignement':28,
+                          'hotel':26,
+                          'commun/circulation commerce et baignade':30,
+                          'entrepôts':35,
+                         }
+
     @staticmethod
     def ComputeThermalComf(zone, ref_temp):
     
