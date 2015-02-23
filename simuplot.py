@@ -31,7 +31,7 @@ class SimuPlot(QtGui.QMainWindow):
         # Setup status bar
         self.setStatusBar(StatusBar())
 
-        # Instantiate a Buildingnh
+        # Instantiate a Building
         self._building = Building('My Building')
 
         # Instantiate all plotter widgets and add them as new tabs

@@ -13,7 +13,7 @@ DataTypes = {
     'HEATING_DEMAND':'kWh',
     'DIFFUSE_SOLAR_RADIATION':'W/m2',
     'DIRECT_SOLAR_RADIATION':'W/m2',
-    'PEOPLE_COUNT':'[]',
+    'PEOPLE_COUNT':'',
 }
 
 DataPeriods = [

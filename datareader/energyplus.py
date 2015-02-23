@@ -64,7 +64,7 @@ class EnergyPlus(DataReader):
         """Browse button callback"""
 
         # Launch file selection dialog, get file path,
-        # and  it in file path text widget
+        # and print it in file path text widget
         file_path = QtGui.QFileDialog.getOpenFileName()
         if file_path != '':
             self._file_path_text.setText(file_path)
@@ -119,7 +119,7 @@ class EnergyPlus(DataReader):
         # Use a regular expression pattern to match column heads
         # Warning: this regexp is broken by files with "DistrictHeating"
         pattern = re.compile(r"""
-            ([A-Z]{2,}[ ])?         # Test If any previous object
+            (.*\ )?                 # Remove any previous object (PEOPLE, etc.)
             (?P<item_name>.*)       # Item name
             :                       # Colon
             (?P<item_type>[^ ]*)    # Item type (Zone, Site, etc)
@@ -131,7 +131,7 @@ class EnergyPlus(DataReader):
             (?P<period>.*?)         # Var periodicity
             \)                      # Closing parenthese
             .*""", re.VERBOSE)
-            
+        
         # Initialize empty variable list
         variables = []
         # Variables store data as numpy arrays. Those can't be appended.
@@ -161,7 +161,7 @@ class EnergyPlus(DataReader):
 
             except AttributeError:
                 raise DataReaderReadError('Misformed column head: "%s"' % head)
-
+            
             # Get data type from E+ column header name
             try:
                 data_type = self.DataTypes[var_str]
@@ -208,14 +208,14 @@ class EnergyPlus(DataReader):
                     
                 elif item_type_str == 'People':
 
-                    #if zone exists
+                    # Create zone if needed
                     try:
                         zone = self._building.get_zone(item_name_str)
-                    
                     except DataBuildingError:
-                        messages.append("[Warning] Unknown zone name: %s" % item_name_str)
+                        zone = self._building.add_zone(item_name_str)
                     
-                    #add variable to zone
+                    # Add variable to zone
+                    # TODO: check variable already in zone (different period ?)
                     var = zone.add_variable(data_type)
                 
                 else:
