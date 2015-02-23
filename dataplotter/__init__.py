@@ -9,10 +9,10 @@
 # - a "refresh data" slot
 
 from consperzonepie import ConsPerZonePie
-from hqeinconf import HqeInconf
+from thermalcomfhistog import ThermalComfHistog
 
 plotters = [
     ConsPerZonePie,
-    HqeInconf,
+    ThermalComfHistog,
 ]
 

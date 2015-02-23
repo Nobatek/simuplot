@@ -11,10 +11,10 @@ from dataplotter import DataPlotter, DataPlotterError
 
 from data import DataZoneError
 
-class HqeInconf(DataPlotter):
+class ThermalComfHistog(DataPlotter):
 
     @staticmethod
-    def ComputeHqeInconf(zone):
+    def ComputeThermalComf(zone):
     
         try:
             # Get variable OPERATIVE_TEMPERATURE in zone
@@ -52,12 +52,13 @@ class HqeInconf(DataPlotter):
 
     def __init__(self, building, color_chart):
         
-        super(HqeInconf, self).__init__(building, color_chart)
+        super(ThermalComfHistog, self).__init__(building, color_chart)
 
         self._name = "Summer thermal comfort per zone"
         
         # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'hqeinconf.ui'),
+        uic.loadUi(os.path.join(os.path.dirname(__file__), 
+                                'thermalcomfhistog.ui'),
             self)
 
         # Chart widget
@@ -96,7 +97,7 @@ class HqeInconf(DataPlotter):
         for i, name in enumerate(zones):
 
             # Compute all comfort and max temperature
-            pct_hqe, max_temp = self.ComputeHqeInconf(zones[name])
+            pct_hqe, max_temp = self.ComputeThermalComf(zones[name])
 
             # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
