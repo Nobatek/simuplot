@@ -262,13 +262,33 @@ class ThermalComfHistog(DataPlotter):
         dr_hqetp = np.ones(len(ind2)) * self._hqetp
         
         #plot lines
-        self._MplWidget.canvas.axes.plot(ind2,dr_hqetp,'--',color='#1F497D',linewidth=2,)
-        self._MplWidget.canvas.axes.plot(ind2,dr_hqep,'--',color='#A5A5A5',linewidth=2,)
+        tp_line = self._MplWidget.canvas.axes.plot(ind2,
+                                                   dr_hqetp,
+                                                   '--',
+                                                   color = '#1F497D',
+                                                   linewidth = 2,
+                                                   label = '%.1f TP level' %self._hqetp)
+                                         
+        p_line = self._MplWidget.canvas.axes.plot(ind2,
+                                                  dr_hqep,
+                                                  '--',
+                                                  color = '#A5A5A5',
+                                                  linewidth = 2,
+                                                  label = '%.1f TP level' %self._hqep)
         
-        #add annotation
-        self._MplWidget.canvas.axes.annotate('%f.1 Tres Performant',
-                                             xy=(5,5),
-                                             ha='right')
+        #adding a legend
+        l = self._MplWidget.canvas.axes.legend()
+        
+        # modifying texts colors
+        #a = l.get_texts()
+        l.texts[0].set_color('#1F497D')
+        l.texts[1].set_color('#A5A5A5')
+        
+        #set style italic
+        l.texts[0].set_style('italic')
+        
+        #setting a title
+        title = self._MplWidget.canvas.axes.set_title('HQE summer thermal comfort')
 
         self._MplWidget.canvas.draw()
 
