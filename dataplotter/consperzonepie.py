@@ -94,7 +94,11 @@ class ConsPerZonePie(DataPlotter):
             # Add items to row, column
             self._table_widget.setItem(i, 0, name_item)
             self._table_widget.setItem(i, 1, val_item)
-
+            
+            #print 'NAME:', name
+            #print 'name_item text()', name_item.text()
+            #print 'table 0 :',self._table_widget.item(i,0).text()
+            #print '\n'
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
         self._table_widget.setSortingEnabled(True)

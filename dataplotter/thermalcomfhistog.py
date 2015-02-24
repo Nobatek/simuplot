@@ -97,7 +97,6 @@ class ThermalComfHistog(DataPlotter):
         self.HQEradioButton.setChecked(True)
         
         # Reference temperature. Default to 28°C
-        print self.HQEspace_comboBox.currentText()
         self._ref_temp = hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
       
         # Refresh plot when zone is clicked/unclicked or sort order changed
@@ -113,6 +112,15 @@ class ThermalComfHistog(DataPlotter):
         self.HQEradioButton.toggled.connect( \
             self.refresh_data)
         
+        #Refresh plot when HQEspace_comboBox is changed
+        if self.HQEradioButton.isChecked() == True :
+            self.HQEspace_comboBox.activated.connect( \
+                self.refresh_data)
+                
+        #Refresh plot when lineEdit is changed
+        self.lineEdit.returnPressed.connect( \
+            self.refresh_data)        
+     
     @property
     def name(self):
         return self._name
@@ -170,15 +178,11 @@ class ThermalComfHistog(DataPlotter):
             self._table_widget.setItem(i, 0, name_item)
             self._table_widget.setItem(i, 1, val_item1)
             self._table_widget.setItem(i, 2, val_item2)
-            
-            print 'NAME:',name
-            print 'table 0 :',self._table_widget.item(i,0).text()
-            print 'table 1 :',self._table_widget.item(i,1).text()
-            print 'table 2 :',self._table_widget.item(i,2).text()
+
 
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
-        self._table_widget.setSortingEnabled(True)
+        #self._table_widget.setSortingEnabled(True)
         
         # Draw plot
         self.refresh_plot()
@@ -209,7 +213,6 @@ class ThermalComfHistog(DataPlotter):
                     values.append(value)
                     
         # Get Performant and Tres Performant Level.
-        print self.RTclimat_comboBox.currentText()
         self._hqep = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][0]
         self._hqetp = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][1]
         
@@ -222,9 +225,9 @@ class ThermalComfHistog(DataPlotter):
                                                     edgecolor='white')
         
         # Create rectangle color map
-        rect_colors = ['#E36C09' if i > self._hqetp
+        rect_colors = ['#E36C09' if i > self._hqep
                        else
-                       '#7F7F7F' if i > self._hqep and i <= self._hqetp 
+                       '#7F7F7F' if i <= self._hqep and i > self._hqetp 
                        else
                        '#1F497D'
                        for i in values]
@@ -252,7 +255,7 @@ class ThermalComfHistog(DataPlotter):
         
         #plot 'Tres performant' and 'Performant' values
         #ind2 create the x vector
-        ind2 = np.append(ind,len(values)+1)
+        ind2 = np.append(ind,len(values))
         
         #dr_* create the y vector
         dr_hqep = np.ones(len(ind2)) * self._hqep
