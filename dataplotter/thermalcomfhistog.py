@@ -18,8 +18,8 @@ rt_climatic_zone = {'H1a - H1b - H2a - H2b':[2,1],
                     
 hqe_tmax_per_usage = {'bureau - enseignement':28,
                       'hotel':26,
-                      'commun/circulation commerce et baignade':30,
-                      'entrepôts':35,
+                      'commun - circulation commerce et baignade':30,
+                      'entrepots':35,
                       }
 
 
@@ -88,9 +88,17 @@ class ThermalComfHistog(DataPlotter):
         #Initialise RTclimat_comboBox
         for dat in rt_climatic_zone:
             self.RTclimat_comboBox.addItem(dat)
+            
+        #Initialise HQEspace_comboBox
+        for dat in hqe_tmax_per_usage :
+            self.HQEspace_comboBox.addItem(dat)
+            
+        # Initialise HQE radio button to checked
+        self.HQEradioButton.setChecked(True)
         
         # Reference temperature. Default to 28°C
-        self._ref_temp = 28
+        print self.HQEspace_comboBox.currentText()
+        self._ref_temp = hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
       
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
@@ -100,7 +108,11 @@ class ThermalComfHistog(DataPlotter):
         # Refresh plot when rt_climatic_zone is changed
         self.RTclimat_comboBox.activated.connect( \
             self.refresh_plot)
-
+            
+        # Refresh plot when one of the two radio button is switched on or off
+        self.HQEradioButton.toggled.connect( \
+            self.refresh_data)
+        
     @property
     def name(self):
         return self._name
@@ -117,12 +129,26 @@ class ThermalComfHistog(DataPlotter):
         # Create one empty row per zone
         self._table_widget.setRowCount(len(zones))
         
+        #Get reference temperature for thermal comfort
+        if self.HQEradioButton.isChecked() == True :
+            self._ref_temp = hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
+        else :
+            self._ref_temp = float(self.lineEdit.text())
+        
+        print 'self._ref_temp', self._ref_temp
+        
+        print type(self._ref_temp)
+        
+        
         # For each zone
         for i, name in enumerate(zones):
 
             # Compute all comfort and max temperature
             pct_hqe, max_temp = self.ComputeThermalComf(zones[name], 
                                                         self._ref_temp)
+            
+            print 'zone',name,'pct_hqe',pct_hqe
+            print 'max_temp',max_temp
 
             # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)

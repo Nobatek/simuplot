@@ -57,7 +57,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
-          <widget class="QRadioButton" name="radioButton">
+          <widget class="QRadioButton" name="HQEradioButton">
            <property name="text">
             <string>HQE study</string>
            </property>
@@ -71,14 +71,18 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QRadioButton" name="radioButton_2">
+          <widget class="QRadioButton" name="CustomradioButton">
            <property name="text">
             <string>Custom study : </string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit"/>
+          <widget class="QLineEdit" name="lineEdit">
+           <property name="text">
+            <string>28</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -146,8 +150,8 @@
    </item>
   </layout>
   <zorder>splitter</zorder>
-  <zorder>radioButton</zorder>
-  <zorder>radioButton_2</zorder>
+  <zorder>HQEradioButton</zorder>
+  <zorder>CustomradioButton</zorder>
   <zorder>lineEdit</zorder>
   <zorder>label</zorder>
   <zorder>label_2</zorder>
