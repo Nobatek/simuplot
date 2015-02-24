@@ -11,18 +11,19 @@ from dataplotter import DataPlotter, DataPlotterError
 
 from data import DataZoneError
 
-class ThermalComfHistog(DataPlotter):
-
-    rt_climatic_zone = {'H1a - H1b - H2a - H2b':0.02,
-                          'H1c - H2c':0.025,
-                          'H2d - H3':0.03,
-                       }
+rt_climatic_zone = {'H1a - H1b - H2a - H2b':[2,1],
+                    'H1c - H2c':[2.5,1.5],
+                    'H2d - H3':[3,2],
+                    }
                     
-    hqe_tmax_per_usage = {'bureau - enseignement':28,
-                          'hotel':26,
-                          'commun/circulation commerce et baignade':30,
-                          'entrepôts':35,
-                         }
+hqe_tmax_per_usage = {'bureau - enseignement':28,
+                      'hotel':26,
+                      'commun/circulation commerce et baignade':30,
+                      'entrepôts':35,
+                      }
+
+
+class ThermalComfHistog(DataPlotter):
 
     @staticmethod
     def ComputeThermalComf(zone, ref_temp):
@@ -66,9 +67,6 @@ class ThermalComfHistog(DataPlotter):
         super(ThermalComfHistog, self).__init__(building, color_chart)
 
         self._name = "Summer thermal comfort per zone"
-
-        # Reference temperature. Default to 28°C
-        self._ref_temp = 28
         
         # Setup UI
         uic.loadUi(os.path.join(os.path.dirname(__file__), 
@@ -87,10 +85,20 @@ class ThermalComfHistog(DataPlotter):
                                                       u'Max temp [°C]'])
         self._table_widget.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         
+        #Initialise RTclimat_comboBox
+        for dat in rt_climatic_zone:
+            self.RTclimat_comboBox.addItem(dat)
         
+        # Reference temperature. Default to 28°C
+        self._ref_temp = 28
+      
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
         self._table_widget.horizontalHeader().sectionClicked.connect( \
+            self.refresh_plot)
+            
+        # Refresh plot when rt_climatic_zone is changed
+        self.RTclimat_comboBox.activated.connect( \
             self.refresh_plot)
 
     @property
@@ -158,9 +166,6 @@ class ThermalComfHistog(DataPlotter):
         values = []
         names = []
         
-        ph1c = 1.5
-        tph1c = 3
-        
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
@@ -179,6 +184,11 @@ class ThermalComfHistog(DataPlotter):
                         (i, name, self._table_widget.item(i,1).text()))
                 else:
                     values.append(value)
+                    
+        # Get Performant and Tres Performant Level.
+        print self.RTclimat_comboBox.currentText()
+        self._hqep = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][0]
+        self._hqetp = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][1]
         
         # Clear axes
         self._MplWidget.canvas.axes.cla()
@@ -189,9 +199,9 @@ class ThermalComfHistog(DataPlotter):
                                                     edgecolor='white')
         
         # Create rectangle color map
-        rect_colors = ['#E36C09' if i > tph1c
+        rect_colors = ['#E36C09' if i > self._hqetp
                        else
-                       '#7F7F7F' if i > ph1c and i <= tph1c 
+                       '#7F7F7F' if i > self._hqep and i <= self._hqetp 
                        else
                        '#1F497D'
                        for i in values]
@@ -222,12 +232,12 @@ class ThermalComfHistog(DataPlotter):
         ind2 = np.append(ind,len(values)+1)
         
         #dr_* create the y vector
-        dr_ph1c = np.ones(len(ind2)) * ph1c
-        dr_tph1c = np.ones(len(ind2)) * tph1c
+        dr_hqep = np.ones(len(ind2)) * self._hqep
+        dr_hqetp = np.ones(len(ind2)) * self._hqetp
         
         #plot lines
-        self._MplWidget.canvas.axes.plot(ind2,dr_tph1c,'--',color='#1F497D',linewidth=2,)
-        self._MplWidget.canvas.axes.plot(ind2,dr_ph1c,'--',color='#A5A5A5',linewidth=2,)
+        self._MplWidget.canvas.axes.plot(ind2,dr_hqetp,'--',color='#1F497D',linewidth=2,)
+        self._MplWidget.canvas.axes.plot(ind2,dr_hqep,'--',color='#A5A5A5',linewidth=2,)
         
         #add annotation
         self._MplWidget.canvas.axes.annotate('%f.1 Tres Performant',
