@@ -134,21 +134,13 @@ class ThermalComfHistog(DataPlotter):
             self._ref_temp = hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
         else :
             self._ref_temp = float(self.lineEdit.text())
-        
-        print 'self._ref_temp', self._ref_temp
-        
-        print type(self._ref_temp)
-        
-        
+
         # For each zone
         for i, name in enumerate(zones):
 
             # Compute all comfort and max temperature
             pct_hqe, max_temp = self.ComputeThermalComf(zones[name], 
                                                         self._ref_temp)
-            
-            print 'zone',name,'pct_hqe',pct_hqe
-            print 'max_temp',max_temp
 
             # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
@@ -178,11 +170,16 @@ class ThermalComfHistog(DataPlotter):
             self._table_widget.setItem(i, 0, name_item)
             self._table_widget.setItem(i, 1, val_item1)
             self._table_widget.setItem(i, 2, val_item2)
+            
+            print 'NAME:',name
+            print 'table 0 :',self._table_widget.item(i,0).text()
+            print 'table 1 :',self._table_widget.item(i,1).text()
+            print 'table 2 :',self._table_widget.item(i,2).text()
 
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
         self._table_widget.setSortingEnabled(True)
-
+        
         # Draw plot
         self.refresh_plot()
 
