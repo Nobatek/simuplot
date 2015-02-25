@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+from __future__ import division
 
 import os
 
 from PyQt4 import QtCore, QtGui, uic
+
+from numpy import array
 
 from dataplotter import DataPlotter, DataPlotterError
 
@@ -20,14 +23,17 @@ class ConsPerZonePie(DataPlotter):
             # TODO: log warning
             return 0
         else:
-            # Return total consumption [kWh]
+            # Return total heat need [kWh]
             return vals.sum() / 1000
         
     def __init__(self, building, color_chart):
         
         super(ConsPerZonePie, self).__init__(building, color_chart)
 
-        self._name = "Energy consumption per zone"
+        self._name = "Energy heat need per zone"
+        
+        # Initialize total building heat need
+        self._build_total_hn = 0
         
         # Setup UI
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'consperzonepie.ui'),
@@ -41,7 +47,7 @@ class ConsPerZonePie(DataPlotter):
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
-                                                      'Consumption [kWh]'])
+                                                      'Heat need [kWh]'])
         self._table_widget.horizontalHeader().setResizeMode( \
             QtGui.QHeaderView.ResizeToContents)
  
@@ -56,6 +62,9 @@ class ConsPerZonePie(DataPlotter):
 
     @QtCore.pyqtSlot()
     def refresh_data(self):
+    
+        # Reset total building heat need
+        self._build_total_hn = 0
         
         # Get zones in building
         zones = self._building.zones
@@ -69,7 +78,7 @@ class ConsPerZonePie(DataPlotter):
         # For each zone
         for i, name in enumerate(zones):
 
-            # Compute total consumption
+            # Compute total heat need
             # TODO: int or float ? explicit rounding ?
             cons = int(self.ComputeZoneCons(zones[name]))
 
@@ -85,7 +94,7 @@ class ConsPerZonePie(DataPlotter):
             else:
                 name_item.setCheckState(QtCore.Qt.Unchecked)
 
-            # Second column: consumption value
+            # Second column: heat need value
             val_item = QtGui.QTableWidgetItem()
             val_item.setData(QtCore.Qt.DisplayRole, cons)
             
@@ -101,8 +110,12 @@ class ConsPerZonePie(DataPlotter):
             #print '\n'
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
-        self._table_widget.setSortingEnabled(True)
+        self._table_widget.setSortingEnabled(True)        
 
+        # Get Building total Heat need :
+        for i in range(self._table_widget.rowCount()):
+            self._build_total_hn += int(self._table_widget.item(i,1).text())
+        
         # Draw plot
         self.refresh_plot()
 
@@ -111,6 +124,7 @@ class ConsPerZonePie(DataPlotter):
 
         values = []
         names = []
+        building_total_hn = 0
         
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
@@ -129,7 +143,10 @@ class ConsPerZonePie(DataPlotter):
                         (i, name, self._table_widget.item(i,1).text()))
                 else:
                     values.append(value)
-        
+            
+        # Make zone heat need non dimensional
+        values = array(values) / self._build_total_hn
+
         # Clear axes
         self._MplWidget.canvas.axes.cla()
     
