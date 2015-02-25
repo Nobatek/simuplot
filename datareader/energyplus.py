@@ -26,7 +26,13 @@ class EnergyPlus(DataReader):
         'Total Internal Total Heating Rate':'HEATING_RATE',
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
-        'People Occupant Count':'PEOPLE_COUNT'
+        'People Occupant Count':'PEOPLE_COUNT',
+        'Zone People Total Heating Rate':'PEOPLE_HEATING',
+        'Zone Lights Total Heating Rate':'LIGHT_HEATING',
+        'Zone Windows Total Transmitted Solar Radiation Rate':'WINDOWS_HEATING',
+        'Zone Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING',
+        'Zone Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING',
+        'Zone Ventilation Total Heat Gain Energy':'VENTILATION_HEATING',
     }
 
     # Sampling period conversion

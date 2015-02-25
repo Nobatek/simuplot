@@ -11,45 +11,77 @@ from dataplotter import DataPlotter, DataPlotterError
 
 from data import DataZoneError
 
-class ConsPerZonePie(DataPlotter):
+periods = {'summer' : [[2879,6553]],
+           'winter' : [[0,2779],[6553,8760]],
+            }
+
+# TODO put this stuff somewhere else
+heat_sources = ['HEATING_RATE',
+                'PEOPLE_HEATING',
+                'LIGHT_HEATING',
+                'WINDOWS_HEATING',
+                'OPAQUE_SURFACE_HEATING',
+                'INFILTRATION_HEATING',
+                'VENTILATION_HEATING',
+                ]            
+
+class HeatGainPie(DataPlotter):
 
     @staticmethod
     def ComputeZoneCons(zone):
+        #Initialize full_year list containing all values
+        total_gain = []
+        
         try:
-            # Get variable HEATING_RATE in zone
-            # Hourly power [W] is equivalent to Hourly energy [Wh]
-            vals = zone.get_variable('HEATING_RATE', 'HOUR')
+            # Get all heat gain variable and store them in an array
+            full_year = array([zone.get_variable(val, 'HOUR')
+                               for val in heat_sources])
+
+            # compute sum for each variable during the period
+            for inter in periods[str(self.PeriodcomboBox.currentText())] :
+                inter_val = full_year[:,inter[0]:inter[1]]
+                total_gain.append(inter_val)
+            
+            total_gain=array(total_gain).sum(axis=0)
+          
         except DataZoneError:
             # TODO: log warning
-            return 0
+            return array([0 for i in total_gain])
         else:
-            # Return total heat need [kWh]
-            return vals.sum() / 1000
+            # Return the array of values in [kWh] and corresponding names
+            return total_gain/1000, names
         
     def __init__(self, building, color_chart):
         
-        super(ConsPerZonePie, self).__init__(building, color_chart)
+        super(HeatGainPie, self).__init__(building, color_chart)
 
-        self._name = "Energy heat need per zone"
-        
-        # Initialize total building heat need
-        self._build_total_hn = 0
+        self._name = "Heat gain sources"
         
         # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'consperzonepie.ui'),
+        uic.loadUi(os.path.join(os.path.dirname(__file__), 'heatgainpie.ui'),
             self)
 
         # Chart widget
         self._MplWidget = self.plotW
+        
         # Table widget
         self._table_widget = self.listW
 
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels(['Zone', 
-                                                      'Heat need [kWh]'])
+        self._table_widget.setHorizontalHeaderLabels(['Heat sources', 
+                                                      'Heat gains [kWh]'])
         self._table_widget.horizontalHeader().setResizeMode( \
             QtGui.QHeaderView.ResizeToContents)
+            
+        # First column: zone name + checkbox
+        for i, val in enumerate(heat_sources) :
+            name_item = QtGui.QTableWidgetItem(val)
+            self._table_widget.setItem(i, 0, name_item)
+            
+        # Set PeriodcomboBox
+        for dat in periods:
+            self.PeriodcomboBox.addItem(dat)
  
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
@@ -62,18 +94,12 @@ class ConsPerZonePie(DataPlotter):
 
     @QtCore.pyqtSlot()
     def refresh_data(self):
-    
-        # Reset total building heat need
-        self._build_total_hn = 0
-        
+            
         # Get zones in building
         zones = self._building.zones
         
         # Clear table
         self._table_widget.clearContents()
-        
-        # Create one empty row per zone
-        self._table_widget.setRowCount(len(zones))
         
         # For each zone
         for i, name in enumerate(zones):
@@ -81,12 +107,6 @@ class ConsPerZonePie(DataPlotter):
             # Compute total heat need
             # TODO: int or float ? explicit rounding ?
             cons = int(self.ComputeZoneCons(zones[name]))
-
-            # Firts column: zone name + checkbox
-            name_item = QtGui.QTableWidgetItem(name)
-
-            name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
-                               QtCore.Qt.ItemIsEnabled)
 
             # By default, display zone on chart only if value not 0
             if cons != 0:
@@ -101,7 +121,6 @@ class ConsPerZonePie(DataPlotter):
             val_item.setFlags(QtCore.Qt.ItemIsEnabled)
 
             # Add items to row, column
-            self._table_widget.setItem(i, 0, name_item)
             self._table_widget.setItem(i, 1, val_item)
             
             #print 'NAME:', name
