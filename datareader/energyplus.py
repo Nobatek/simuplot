@@ -26,7 +26,7 @@ class EnergyPlus(DataReader):
         'Total Internal Total Heating Rate':'HEATING_RATE',
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
-        'Occupant Count':'PEOPLE_COUNT'
+        'People Occupant Count':'PEOPLE_COUNT'
     }
 
     # Sampling period conversion
@@ -119,7 +119,6 @@ class EnergyPlus(DataReader):
         # Use a regular expression pattern to match column heads
         # Warning: this regexp is broken by files with "DistrictHeating"
         pattern = re.compile(r"""
-            (.*\ )?                 # Remove any previous object (PEOPLE, etc.)
             (?P<item_name>.*)       # Item name
             :                       # Colon
             (?P<item_type>[^ ]*)    # Item type (Zone, Site, etc)
