@@ -5,14 +5,17 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from numpy import array
+from numpy import array, zeros, concatenate
 
 from dataplotter import DataPlotter, DataPlotterError
 
+import matplotlib.pyplot as plt
+
 from data import DataZoneError
 
-periods = {'summer' : [[2879,6553]],
-           'winter' : [[0,2779],[6553,8760]],
+periods = {'Annual' : [[0,8760]],
+           'Summer' : [[2879,6553]],
+           'Winter' : [[0,2779],[6553,8760]],
             }
 
 # TODO put this stuff somewhere else
@@ -28,34 +31,50 @@ heat_sources = ['HEATING_RATE',
 class HeatGainPie(DataPlotter):
 
     @staticmethod
-    def ComputeZoneCons(zone):
+    def ComputeHeatGains(zone,study_period):
         #Initialize full_year list containing all values
         total_gain = []
         
         try:
-            # Get all heat gain variable and store them in an array
+            # Get all available heat gain variable names
+            avail_var=zone.get_varlist()
+            avail_var=[val for val in avail_var
+                       if val in heat_sources]
+                       
+            # Get all heat gain variable available and store them in an array
             full_year = array([zone.get_variable(val, 'HOUR')
-                               for val in heat_sources])
-
-            # compute sum for each variable during the period
-            for inter in periods[str(self.PeriodcomboBox.currentText())] :
-                inter_val = full_year[:,inter[0]:inter[1]]
-                total_gain.append(inter_val)
-            
-            total_gain=array(total_gain).sum(axis=0)
-          
+                               for val in avail_var])
+                       
         except DataZoneError:
             # TODO: log warning
-            return array([0 for i in total_gain])
-        else:
-            # Return the array of values in [kWh] and corresponding names
-            return total_gain/1000, names
+            return {hg : None for hg in heat_sources}
+            
+        else:               
+            # compute sum for each variable during the period in [kWh]
+            # compute the sum for each interval in period
+            for inter in periods[study_period] :
+                inter_val = full_year[:,inter[0]:inter[1]]
+                total_gain.append(inter_val.sum(axis=1))
+            
+            #compute period total gain
+            total_gain = array(total_gain).sum(axis=0)/1000
+   
+            # return a dictionary with results
+            return {name : value for name, value in zip(avail_var, total_gain)}
+
+        
+          
+
+
         
     def __init__(self, building, color_chart):
         
         super(HeatGainPie, self).__init__(building, color_chart)
 
         self._name = "Heat gain sources"
+        
+        #define empty dictionary result
+        self._heat_build_zone = {}
         
         # Setup UI
         uic.loadUi(os.path.join(os.path.dirname(__file__), 'heatgainpie.ui'),
@@ -73,8 +92,11 @@ class HeatGainPie(DataPlotter):
                                                       'Heat gains [kWh]'])
         self._table_widget.horizontalHeader().setResizeMode( \
             QtGui.QHeaderView.ResizeToContents)
-            
-        # First column: zone name + checkbox
+        
+        # Set row number
+        self._table_widget.setRowCount(len(heat_sources))
+        
+        # Set row names (heat sources)
         for i, val in enumerate(heat_sources) :
             name_item = QtGui.QTableWidgetItem(val)
             self._table_widget.setItem(i, 0, name_item)
@@ -98,42 +120,36 @@ class HeatGainPie(DataPlotter):
         # Get zones in building
         zones = self._building.zones
         
-        # Clear table
-        self._table_widget.clearContents()
+        # Create a list of zone name sorted by name and add 'Building'
+        list_build_zone = [z for z in zones]
+        list_build_zone.sort()
+        list_build_zone.append('Building')
+
+        # Set combobox with zone name and building
+        self.BuildcomboBox.addItems(list_build_zone)
+        self.BuildcomboBox.setCurrentIndex(list_build_zone.index('Building'))
         
+        # Create dictionary containing dictionary results for each 'zones'
+        self._heat_build_zone = {z : {} for z in list_build_zone}
+        
+        # Get the study period from combobox
+        study_period = str(self.PeriodcomboBox.currentText())
+              
         # For each zone
-        for i, name in enumerate(zones):
-
-            # Compute total heat need
-            # TODO: int or float ? explicit rounding ?
-            cons = int(self.ComputeZoneCons(zones[name]))
-
-            # By default, display zone on chart only if value not 0
-            if cons != 0:
-                name_item.setCheckState(QtCore.Qt.Checked)
-            else:
-                name_item.setCheckState(QtCore.Qt.Unchecked)
-
-            # Second column: heat need value
-            val_item = QtGui.QTableWidgetItem()
-            val_item.setData(QtCore.Qt.DisplayRole, cons)
+        for name in zones :
+            # Compute heat gains for desired study period
+            self._heat_build_zone[name] = self.ComputeHeatGains(zones[name],study_period)
             
-            val_item.setFlags(QtCore.Qt.ItemIsEnabled)
-
-            # Add items to row, column
-            self._table_widget.setItem(i, 1, val_item)
+        # Compute building results
+        # For each heat sources      
+        for hs in heat_sources :
+            #sum all zone value if available
+            hs_sum = sum([self._heat_build_zone[zone][hs] 
+                          for zone in zones
+                          if hs in self._heat_build_zone[zone].keys()])
             
-            #print 'NAME:', name
-            #print 'name_item text()', name_item.text()
-            #print 'table 0 :',self._table_widget.item(i,0).text()
-            #print '\n'
-        # Sort by value, descending order, and allow user column sorting
-        self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
-        self._table_widget.setSortingEnabled(True)        
-
-        # Get Building total Heat need :
-        for i in range(self._table_widget.rowCount()):
-            self._build_total_hn += int(self._table_widget.item(i,1).text())
+            #add it to the Buiding dictionary in self._heat_build_zone
+            self._heat_build_zone['Building'][hs] = hs_sum
         
         # Draw plot
         self.refresh_plot()
@@ -143,40 +159,63 @@ class HeatGainPie(DataPlotter):
 
         values = []
         names = []
-        building_total_hn = 0
         
-        # Get checked rows and corresponding (name, value)
-        for i in range(self._table_widget.rowCount()):
-            if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
-                name = self._table_widget.item(i,0).text()
-                names.append(name)
-                try:
-                    value = int(self._table_widget.item(i,1).text())
-                except AttributeError:
-                    raise DataPlotterError( \
-                        'Invalid cons value type for row %s (%s): %s' %
-                        (i, name, self._table_widget.item(i,1)))
-                except ValueError:
-                    raise DataPlotterError( \
-                        'Invalid cons value for row %s (%s): %s' % 
-                        (i, name, self._table_widget.item(i,1).text()))
-                else:
-                    values.append(value)
+        # Current zone or building displayed
+        cur_zone = str(self.BuildcomboBox.currentText())
+
+        # Display Zone or building value in table 2nd column
+        for row in range(self._table_widget.rowCount()) :
+        
+            # Get current heat source and corresponding value
+            cur_hs = str(self._table_widget.item(row,0).text())
+            cur_hs_value = int(self._heat_build_zone[cur_zone][cur_hs])
             
-        # Make zone heat need non dimensional
-        values = array(values) / self._build_total_hn
+            #Set item value for column
+            val_item = QtGui.QTableWidgetItem()
+            val_item.setData(QtCore.Qt.DisplayRole, cur_hs_value)
+            val_item.setFlags(QtCore.Qt.ItemIsEnabled)
+            
+            self._table_widget.setItem(row, 1, val_item)
+        
+        # Get rows and corresponding (name, value)
+        for i in range(self._table_widget.rowCount()):
+            name = self._table_widget.item(i,0).text()
+            names.append(name)
+            try:
+                value = int(self._table_widget.item(i,1).text())
+            except AttributeError:
+                raise DataPlotterError( \
+                    'Invalid heat gain type for row %s (%s): %s' %
+                    (i, name, self._table_widget.item(i,1)))
+            except ValueError:
+                raise DataPlotterError( \
+                    'Invalid heat gain value for row %s (%s): %s' % 
+                    (i, name, self._table_widget.item(i,1).text()))
+            else:
+                values.append(value)
+        
+        # Make array for colormap
+        cm_array = 0.25*(array(values)/max(values))
+        
+        # Make zone heat gains non dimensional
+        values = array(values) / sum(values)
 
         # Clear axes
         self._MplWidget.canvas.axes.cla()
+        
+        # Create color map
+        cmap = plt.cm.hot
+        colors = cmap(array(cm_array))
     
         # Create pie chart
         self._MplWidget.canvas.axes.pie(values, labels=names, 
-            colors=self._color_chart, autopct='%1.1f%%', 
-            shadow=False, startangle=90)
-        self._MplWidget.canvas.axes.axis('equal')
+            colors=colors, autopct='%1.1f%%', 
+            shadow=False, startangle=90,)
+        self._MplWidget.canvas.axes.axis('equal')        
+
         
         #setting a title
-        title_str = 'Building heat need : %d [kWh]' % self._build_total_hn
+        title_str = 'Building heat gains repartition'
         title = self._MplWidget.canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
