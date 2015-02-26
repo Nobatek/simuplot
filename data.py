@@ -158,6 +158,9 @@ class Zone(object):
     @property
     def name(self):
         return self._name
+        
+    def get_varlist(self):
+        return self._variables.keys()
 
     def get_variable(self, data_type, period):
         try:
@@ -165,6 +168,7 @@ class Zone(object):
         except KeyError:
             raise DataZoneError('Variable %s not in Zone %s' % 
                 (data_type, self._name))
+
         try:
             return var.get_values(period)
         except DataVariablePeriodError:
