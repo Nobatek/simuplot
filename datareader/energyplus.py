@@ -27,12 +27,12 @@ class EnergyPlus(DataReader):
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
         'People Occupant Count':'PEOPLE_COUNT',
-        'Zone People Total Heating Rate':'PEOPLE_HEATING',
-        'Zone Lights Total Heating Rate':'LIGHT_HEATING',
-        'Zone Windows Total Transmitted Solar Radiation Rate':'WINDOWS_HEATING',
-        'Zone Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING',
-        'Zone Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING',
-        'Zone Ventilation Total Heat Gain Energy':'VENTILATION_HEATING',
+        'People Total Heating Rate':'PEOPLE_HEATING',
+        'Lights Total Heating Rate':'LIGHT_HEATING',
+        'Windows Total Transmitted Solar Radiation Rate':'WINDOWS_HEATING',
+        'Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING',
+        'Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING',
+        'Ventilation Total Heat Gain Energy':'VENTILATION_HEATING',
     }
 
     # Sampling period conversion
@@ -173,6 +173,7 @@ class EnergyPlus(DataReader):
 				
             except KeyError:
                 # We don't know that type. Ignore that column.
+                print ' ca deconne laaaaa'
                 variables.append([None, None])
                 tmp_variables.append(None)
                 messages.append("[Warning] Unknown data type: %s" % var_str)
@@ -210,18 +211,6 @@ class EnergyPlus(DataReader):
                 elif item_type_str == 'Surface':
                     # Ignore for now
                     var = None
-                    
-                elif item_type_str == 'People':
-
-                    # Create zone if needed
-                    try:
-                        zone = self._building.get_zone(item_name_str)
-                    except DataBuildingError:
-                        zone = self._building.add_zone(item_name_str)
-                    
-                    # Add variable to zone
-                    # TODO: check variable already in zone (different period ?)
-                    var = zone.add_variable(data_type)
                 
                 else:
                     # What ?
