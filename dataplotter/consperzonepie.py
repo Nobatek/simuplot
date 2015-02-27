@@ -5,7 +5,7 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from numpy import array
+import numpy as np
 
 from dataplotter import DataPlotter, DataPlotterError
 
@@ -104,18 +104,15 @@ class ConsPerZonePie(DataPlotter):
             self._table_widget.setItem(i, 0, name_item)
             self._table_widget.setItem(i, 1, val_item)
             
-            #print 'NAME:', name
-            #print 'name_item text()', name_item.text()
-            #print 'table 0 :',self._table_widget.item(i,0).text()
-            #print '\n'
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
         self._table_widget.setSortingEnabled(True)        
 
-        # Get Building total Heat need :
-        for i in range(self._table_widget.rowCount()):
-            self._build_total_hn += int(self._table_widget.item(i,1).text())
-        
+        # Get Building total heat need :
+        self._build_total_hn = \
+            sum([int(self._table_widget.item(i,1).text()) \
+                for i in range(self._table_widget.rowCount())])
+
         # Draw plot
         self.refresh_plot()
 
@@ -124,7 +121,6 @@ class ConsPerZonePie(DataPlotter):
 
         values = []
         names = []
-        building_total_hn = 0
         
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
@@ -144,16 +140,22 @@ class ConsPerZonePie(DataPlotter):
                 else:
                     values.append(value)
             
-        # Make zone heat need non dimensional
-        values = array(values) / self._build_total_hn
-
         # Clear axes
         self._MplWidget.canvas.axes.cla()
     
-        # Create and draw pie chart
-        self._MplWidget.canvas.axes.pie(values, labels=names, 
+        # Create pie chart
+        # (Make zone heat need non dimensional to avoid pie expansion)
+        self._MplWidget.canvas.axes.pie( \
+            np.array(values) / self._build_total_hn, 
+            labels=names, 
             colors=self._color_chart, autopct='%1.1f%%', 
             shadow=False, startangle=90)
         self._MplWidget.canvas.axes.axis('equal')
+        
+        # Set title
+        title_str = 'Building heat need : %d [kWh]' % self._build_total_hn
+        title = self._MplWidget.canvas.axes.set_title(title_str, y = 1.05)
+        
+        # Draw plot
         self._MplWidget.canvas.draw()
 
