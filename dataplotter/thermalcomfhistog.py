@@ -142,7 +142,7 @@ class ThermalComfHistog(DataPlotter):
         # Get reference temperature for thermal comfort
         if self.HQEradioButton.isChecked():
             self._ref_temp = \
-                hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
+                hqe_tmax_per_usage[unicode(self.HQEspace_comboBox.currentText())]
         else:
             self._ref_temp = self.spinBox.value()
 
