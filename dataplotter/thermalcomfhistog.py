@@ -132,9 +132,10 @@ class ThermalComfHistog(DataPlotter):
         # Get zones in building
         zones = self._building.zones
 
-        # Clear table
+        # Clear table and disable sorting before populating the table
         self._table_widget.clearContents()
-        
+        self._table_widget.setSortingEnabled(False)
+
         # Create one empty row per zone
         self._table_widget.setRowCount(len(zones))
         
@@ -179,8 +180,7 @@ class ThermalComfHistog(DataPlotter):
 
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
-        # TODO: fix sorting
-        # self._table_widget.setSortingEnabled(True)
+        self._table_widget.setSortingEnabled(True)
         
         # Draw plot
         self.refresh_plot()
