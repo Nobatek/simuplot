@@ -69,6 +69,9 @@ class ThermalComfHistog(DataPlotter):
 
         self._name = "Summer thermal comfort per zone"
         
+        # Reference temperature
+        self._ref_temp = None
+
         # Setup UI
         uic.loadUi(os.path.join(os.path.dirname(__file__), 
                                 'thermalcomfhistog.ui'),
@@ -87,21 +90,17 @@ class ThermalComfHistog(DataPlotter):
         self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
         
-        #Initialise RTclimat_comboBox
+        # Initialise RTclimat_comboBox
         for dat in rt_climatic_zone:
             self.RTclimat_comboBox.addItem(dat)
             
-        #Initialise HQEspace_comboBox
+        # Initialise HQEspace_comboBox
         for dat in hqe_tmax_per_usage :
             self.HQEspace_comboBox.addItem(dat)
             
         # Initialise HQE radio button to checked
         self.HQEradioButton.setChecked(True)
         
-        # Reference temperature
-        self._ref_temp = \
-            hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
-      
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
         self._table_widget.horizontalHeader().sectionClicked.connect(
@@ -119,9 +118,9 @@ class ThermalComfHistog(DataPlotter):
         self.HQEspace_comboBox.activated.connect(
             self.refresh_data)
                 
-        # Refresh plot when lineEdit is changed
-        self.lineEdit.returnPressed.connect(
-            self.refresh_data)        
+        # Refresh plot when spinBox value is changed
+        self.spinBox.valueChanged.connect(
+            self.refresh_data)     
      
     @property
     def name(self):
@@ -144,7 +143,7 @@ class ThermalComfHistog(DataPlotter):
             self._ref_temp = \
                 hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
         else:
-            self._ref_temp = float(self.lineEdit.text())
+            self._ref_temp = self.spinBox.value()
 
         # For each zone
         for i, name in enumerate(zones):

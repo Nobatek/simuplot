@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>732</width>
-    <height>546</height>
+    <height>599</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="label_2">
@@ -78,9 +78,18 @@
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit">
-           <property name="text">
-            <string>28</string>
+          <widget class="QSpinBox" name="spinBox">
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="suffix">
+            <string>°C</string>
+           </property>
+           <property name="minimum">
+            <number>-50</number>
+           </property>
+           <property name="value">
+            <number>28</number>
            </property>
           </widget>
          </item>
@@ -149,14 +158,6 @@
     </widget>
    </item>
   </layout>
-  <zorder>splitter</zorder>
-  <zorder>HQEradioButton</zorder>
-  <zorder>CustomradioButton</zorder>
-  <zorder>lineEdit</zorder>
-  <zorder>label</zorder>
-  <zorder>label_2</zorder>
-  <zorder>RTclimat_comboBox</zorder>
-  <zorder>listW</zorder>
  </widget>
  <customwidgets>
   <customwidget>
