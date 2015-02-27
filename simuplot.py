@@ -55,10 +55,24 @@ class SimuPlot(QtGui.QMainWindow):
             r.dataLoaded.connect(self.statusBar().dataLoaded)
             r.dataLoadError.connect(self.statusBar().dataLoadError)
             r.dataLoadProgress.connect(self.statusBar().dataLoadProgress)
+            # Enable or disable tabs depending on load status
+            r.dataLoaded.connect(lambda: self.setPlotTabsEnabled(True))
+            r.dataLoadError.connect(lambda: self.setPlotTabsEnabled(False))
 
         # Connect comboBox activated signal to stackedWidget set index slot
         self.comboBox.activated.connect( \
             self.stackedWidget.setCurrentIndex)
+
+        # Disable all tabs
+        self.setPlotTabsEnabled(False)
+
+    def setPlotTabsEnabled(self, enable):
+        """Enable/disable all plot tabs
+        
+            enable (bool): Disable or enable plot tabs
+        """
+        for i in range(1, self.tabWidget.count()):
+            self.tabWidget.setTabEnabled(i, enable)
 
 if __name__ == "__main__":
     
