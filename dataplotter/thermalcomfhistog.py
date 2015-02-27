@@ -16,11 +16,12 @@ rt_climatic_zone = {'H1a - H1b - H2a - H2b':[2,1],
                     'H2d - H3':[3,2],
                     }
                     
-hqe_tmax_per_usage = {'bureau - enseignement':28,
-                      'hotel':26,
-                      'commun - circulation commerce et baignade':30,
-                      'entrepots':35,
-                      }
+hqe_tmax_per_usage = {
+    u'Bureau - Enseignement':28,
+    u'Hôtel':26,
+    u'Commun - Circulation commerce et baignade':30,
+    u'Entrepôts':35,
+    }
 
 
 class ThermalComfHistog(DataPlotter):
@@ -83,7 +84,8 @@ class ThermalComfHistog(DataPlotter):
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
                                                       'Discomfort[%]',
                                                       u'Max temp [°C]'])
-        self._table_widget.horizontalHeader().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self._table_widget.horizontalHeader().setResizeMode(
+            QtGui.QHeaderView.ResizeToContents)
         
         #Initialise RTclimat_comboBox
         for dat in rt_climatic_zone:
@@ -96,29 +98,29 @@ class ThermalComfHistog(DataPlotter):
         # Initialise HQE radio button to checked
         self.HQEradioButton.setChecked(True)
         
-        # Reference temperature. Default to 28°C
-        self._ref_temp = hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
+        # Reference temperature
+        self._ref_temp = \
+            hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
       
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect( \
+        self._table_widget.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
             
         # Refresh plot when rt_climatic_zone is changed
-        self.RTclimat_comboBox.activated.connect( \
+        self.RTclimat_comboBox.activated.connect(
             self.refresh_plot)
             
-        # Refresh plot when one of the two radio button is switched on or off
-        self.HQEradioButton.toggled.connect( \
+        # Refresh data when one of the two radio button is switched on or off
+        self.HQEradioButton.toggled.connect(
             self.refresh_data)
         
-        #Refresh plot when HQEspace_comboBox is changed
-        if self.HQEradioButton.isChecked() == True :
-            self.HQEspace_comboBox.activated.connect( \
-                self.refresh_data)
+        # Refresh data when HQEspace_comboBox is changed
+        self.HQEspace_comboBox.activated.connect(
+            self.refresh_data)
                 
-        #Refresh plot when lineEdit is changed
-        self.lineEdit.returnPressed.connect( \
+        # Refresh plot when lineEdit is changed
+        self.lineEdit.returnPressed.connect(
             self.refresh_data)        
      
     @property
@@ -137,10 +139,11 @@ class ThermalComfHistog(DataPlotter):
         # Create one empty row per zone
         self._table_widget.setRowCount(len(zones))
         
-        #Get reference temperature for thermal comfort
-        if self.HQEradioButton.isChecked() == True :
-            self._ref_temp = hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
-        else :
+        # Get reference temperature for thermal comfort
+        if self.HQEradioButton.isChecked():
+            self._ref_temp = \
+                hqe_tmax_per_usage[str(self.HQEspace_comboBox.currentText())]
+        else:
             self._ref_temp = float(self.lineEdit.text())
 
         # For each zone
@@ -152,15 +155,11 @@ class ThermalComfHistog(DataPlotter):
 
             # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
-
-            name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
-                               QtCore.Qt.ItemIsEnabled)
-                               
-            # By default, display zone on chart only if value not 0
+            # If comfort values known, make zone checkable and check it
             if pct_hqe != None:
+                name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
+                                   QtCore.Qt.ItemIsEnabled)
                 name_item.setCheckState(QtCore.Qt.Checked)
-            else:
-                name_item.setCheckState(QtCore.Qt.Unchecked)
             
             # Second column: % thermal comfort
             val_item1 = QtGui.QTableWidgetItem()
@@ -179,10 +178,10 @@ class ThermalComfHistog(DataPlotter):
             self._table_widget.setItem(i, 1, val_item1)
             self._table_widget.setItem(i, 2, val_item2)
 
-
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
-        #self._table_widget.setSortingEnabled(True)
+        # TODO: fix sorting
+        # self._table_widget.setSortingEnabled(True)
         
         # Draw plot
         self.refresh_plot()
@@ -190,9 +189,12 @@ class ThermalComfHistog(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
 
-        values = []
+        vals = []
         names = []
         
+        # Clear axes
+        self._MplWidget.canvas.axes.cla()
+
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
@@ -200,40 +202,41 @@ class ThermalComfHistog(DataPlotter):
                 names.append(name)
                 try:
                     value = float(self._table_widget.item(i,1).text())
-                    tmax = float(self._table_widget.item(i,2).text())
                 except AttributeError:
-                    raise DataPlotterError( \
-                        'Invalid cons value type for row %s (%s): %s' %
+                    raise DataPlotterError(
+                        'Invalid discomfort value type for row %s (%s): %s' %
                         (i, name, self._table_widget.item(i,1)))
                 except ValueError:
-                    raise DataPlotterError( \
-                        'Invalid cons value for row %s (%s): %s' % 
+                    raise DataPlotterError(
+                        'Invalid discomfort value for row %s (%s): %s' % 
                         (i, name, self._table_widget.item(i,1).text()))
                 else:
-                    values.append(value)
-                    
-        # Get Performant and Tres Performant Level.
+                    vals.append(value)
+        
+        # If no data in vals, no zone was checked. Do not plot anything.
+        if vals == []:
+            return
+
+        # Store values as np array
+        values = np.array(vals)
+
+        # TODO: shall we display HQE levels if not in HQE mode ?
+
+        # Get "Performant" and "Très Performant" levels
         self._hqep = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][0]
         self._hqetp = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][1]
         
-        # Clear axes
-        self._MplWidget.canvas.axes.cla()
-        
         # Create and draw bar chart    
-        ind = np.arange(len(values))
-        rectangle = self._MplWidget.canvas.axes.bar(ind, values, \
+        ind = np.arange(values.size)
+        rectangle = self._MplWidget.canvas.axes.bar(ind, values,
                                                     edgecolor='white')
         
         # Create rectangle color map
-        rect_colors = ['#E36C09' if i > self._hqep
-                       else
-                       '#7F7F7F' if i <= self._hqep and i > self._hqetp 
-                       else
-                       '#1F497D'
-                       for i in values]
+        rect_colors = np.where(values < self._hqetp, '#1F497D', '#7F7F7F')
+        rect_colors[values > self._hqep] = '#E36C09'
 
         # Set rectangle color
-        for rec, val in zip(rectangle, rect_colors) :
+        for rec, val in zip(rectangle, rect_colors):
             rec.set_color(val)
             
         # Adding values on top of rectangles
@@ -248,47 +251,41 @@ class ThermalComfHistog(DataPlotter):
                                              va='bottom')
                                              
         # Add text for labels, title and axes ticks
-        self._MplWidget.canvas.axes.set_ylabel( \
+        self._MplWidget.canvas.axes.set_ylabel(
             u'%% time beyond %s°C' % self._ref_temp)
-        self._MplWidget.canvas.axes.set_xticks(ind+rectangle[0].get_width()/2)
-        self._MplWidget.canvas.axes.set_xticklabels( names, ind, ha='right',rotation=75)
+        self._MplWidget.canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
+        self._MplWidget.canvas.axes.set_xticklabels(names, ind, 
+                                                    ha='right', rotation=75)
         
-        #plot 'Tres performant' and 'Performant' values
-        #ind2 create the x vector
-        ind2 = np.append(ind,len(values))
-        
-        #dr_* create the y vector
+        # Plot "Très performant" and "Performant" values
+        # Create x vector ind2 and y vectors dr_*
+        ind2 = np.append(ind, values.size)
         dr_hqep = np.ones(len(ind2)) * self._hqep
         dr_hqetp = np.ones(len(ind2)) * self._hqetp
+        # Plot lines
+        self._MplWidget.canvas.axes.plot(ind2,
+                                         dr_hqetp,
+                                         '--',
+                                         color = '#1F497D',
+                                         linewidth = 2,
+                                         label = '%.1f%% TP level' %self._hqetp)
+        self._MplWidget.canvas.axes.plot(ind2,
+                                         dr_hqep,
+                                         '--',
+                                         color = '#A5A5A5',
+                                         linewidth = 2,
+                                         label = '%.1f%% P level' %self._hqep)
         
-        #plot lines
-        tp_line = self._MplWidget.canvas.axes.plot(ind2,
-                                                   dr_hqetp,
-                                                   '--',
-                                                   color = '#1F497D',
-                                                   linewidth = 2,
-                                                   label = '%.1f TP level' %self._hqetp)
-                                         
-        p_line = self._MplWidget.canvas.axes.plot(ind2,
-                                                  dr_hqep,
-                                                  '--',
-                                                  color = '#A5A5A5',
-                                                  linewidth = 2,
-                                                  label = '%.1f TP level' %self._hqep)
-        
-        #adding a legend
+        # Add legend
         l = self._MplWidget.canvas.axes.legend()
         
-        # modifying texts colors
-        #a = l.get_texts()
+        # Modify texts colors and style
         l.texts[0].set_color('#1F497D')
         l.texts[1].set_color('#A5A5A5')
-        
-        #set style italic
         l.texts[0].set_style('italic')
         
-        #setting a title
-        title = self._MplWidget.canvas.axes.set_title('HQE summer thermal comfort')
+        # Set title
+        title = self._MplWidget.canvas.axes.set_title('Summer thermal comfort')
 
         self._MplWidget.canvas.draw()
 
