@@ -104,11 +104,18 @@ class HeatGainPie(DataPlotter):
         # Set PeriodcomboBox
         for dat in periods:
             self.PeriodcomboBox.addItem(dat)
- 
-        # Refresh plot when zone is clicked/unclicked or sort order changed
-        self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect( \
+        
+        # Set combobox with Building
+        #list_build_zone_init = ['Building']
+        #self.BuildcomboBox.addItems(list_build_zone_init)
+        
+        # Refresh plot when BuildcomboBox is modified
+        self.BuildcomboBox.activated.connect( \
             self.refresh_plot)
+            
+        # Refresh data when PeriodcomboBox is activated
+        self.PeriodcomboBox.activated.connect( \
+            self.refresh_data)        
 
     @property
     def name(self):
@@ -127,7 +134,7 @@ class HeatGainPie(DataPlotter):
 
         # Set combobox with zone name and building
         self.BuildcomboBox.addItems(list_build_zone)
-        self.BuildcomboBox.setCurrentIndex(list_build_zone.index('Building'))
+        #self.BuildcomboBox.setCurrentIndex(list_build_zone.index('Building'))
         
         # Create dictionary containing dictionary results for each 'zones'
         self._heat_build_zone = {z : {} for z in list_build_zone}
@@ -139,6 +146,9 @@ class HeatGainPie(DataPlotter):
         for name in zones :
             # Compute heat gains for desired study period
             self._heat_build_zone[name] = self.ComputeHeatGains(zones[name],study_period)
+            print 'zone', name
+            print self._heat_build_zone[name]
+            print '\n'
             
         # Compute building results
         # For each heat sources      
@@ -168,7 +178,10 @@ class HeatGainPie(DataPlotter):
         
             # Get current heat source and corresponding value
             cur_hs = str(self._table_widget.item(row,0).text())
-            cur_hs_value = int(self._heat_build_zone[cur_zone][cur_hs])
+            if cur_hs in self._heat_build_zone[cur_zone].keys() :
+                cur_hs_value = int(self._heat_build_zone[cur_zone][cur_hs])
+            else :
+                cur_hs_value = 0
             
             #Set item value for column
             val_item = QtGui.QTableWidgetItem()
