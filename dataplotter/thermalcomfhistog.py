@@ -190,9 +190,11 @@ class ThermalComfHistog(DataPlotter):
 
         vals = []
         names = []
+
+        canvas = self._MplWidget.canvas
         
         # Clear axes
-        self._MplWidget.canvas.axes.cla()
+        canvas.axes.cla()
 
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
@@ -213,78 +215,74 @@ class ThermalComfHistog(DataPlotter):
                     vals.append(value)
         
         # If no data in vals, no zone was checked. Do not plot anything.
-        if vals == []:
-            return
-
-        # Store values as np array
-        values = np.array(vals)
-
-        # TODO: shall we display HQE levels if not in HQE mode ?
-
-        # Get "Performant" and "Très Performant" levels
-        self._hqep = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][0]
-        self._hqetp = rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][1]
+        if vals != []:
         
-        # Create and draw bar chart    
-        ind = np.arange(values.size)
-        rectangle = self._MplWidget.canvas.axes.bar(ind, values,
-                                                    edgecolor='white')
-        
-        # Create rectangle color map
-        rect_colors = np.where(values < self._hqetp, '#1F497D', '#7F7F7F')
-        rect_colors[values > self._hqep] = '#E36C09'
+            # Store values as np array
+            values = np.array(vals)
 
-        # Set rectangle color
-        for rec, val in zip(rectangle, rect_colors):
-            rec.set_color(val)
+            # TODO: shall we display HQE levels if not in HQE mode ?
+
+            # Get "Performant" and "Très Performant" levels
+            self._hqep = \
+                rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][0]
+            self._hqetp = \
+                rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][1]
             
-        # Adding values on top of rectangles
-        for rect in rectangle:
-            height = rect.get_height()
-            self._MplWidget.canvas.axes.text(rect.get_x()+rect.get_width()/2.,
-                                             1.0 * height,
-                                             '%.1f' % round(height,1),
-                                             size = 'smaller',
-                                             style = 'italic',
-                                             ha='center',
-                                             va='bottom')
-                                             
-        # Add text for labels, title and axes ticks
-        self._MplWidget.canvas.axes.set_ylabel(
-            u'%% time beyond %s°C' % self._ref_temp)
-        self._MplWidget.canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
-        self._MplWidget.canvas.axes.set_xticklabels(names, ind, 
-                                                    ha='right', rotation=75)
-        
-        # Plot "Très performant" and "Performant" values
-        # Create x vector ind2 and y vectors dr_*
-        ind2 = np.append(ind, values.size)
-        dr_hqep = np.ones(len(ind2)) * self._hqep
-        dr_hqetp = np.ones(len(ind2)) * self._hqetp
-        # Plot lines
-        self._MplWidget.canvas.axes.plot(ind2,
-                                         dr_hqetp,
-                                         '--',
-                                         color = '#1F497D',
-                                         linewidth = 2,
-                                         label = '%.1f%% TP level' %self._hqetp)
-        self._MplWidget.canvas.axes.plot(ind2,
-                                         dr_hqep,
-                                         '--',
-                                         color = '#A5A5A5',
-                                         linewidth = 2,
-                                         label = '%.1f%% P level' %self._hqep)
-        
-        # Add legend
-        l = self._MplWidget.canvas.axes.legend()
-        
-        # Modify texts colors and style
-        l.texts[0].set_color('#1F497D')
-        l.texts[1].set_color('#A5A5A5')
-        l.texts[0].set_style('italic')
-        
-        # Set title
-        title = self._MplWidget.canvas.axes.set_title('Summer thermal comfort')
+            # Create and draw bar chart    
+            ind = np.arange(values.size)
+            rectangle = canvas.axes.bar(ind, values, edgecolor='white')
+            
+            # Create rectangle color map
+            rect_colors = np.where(values < self._hqetp, '#1F497D', '#7F7F7F')
+            rect_colors[values > self._hqep] = '#E36C09'
 
-        self._MplWidget.canvas.draw()
+            # Set rectangle color
+            for rec, val in zip(rectangle, rect_colors):
+                rec.set_color(val)
+                
+            # Adding values on top of rectangles
+            for rect in rectangle:
+                height = rect.get_height()
+                canvas.axes.text(rect.get_x()+rect.get_width()/2.,
+                                 1.0 * height,
+                                 '%.1f' % round(height,1),
+                                 size = 'smaller',
+                                 style = 'italic',
+                                 ha='center',
+                                 va='bottom')
+                                                 
+            # Add text for labels, title and axes ticks
+            canvas.axes.set_ylabel(u'%% time beyond %s°C' % self._ref_temp)
+            canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
+            canvas.axes.set_xticklabels(names, ind, ha='right', rotation=75)
+            
+            # Plot "Très performant" and "Performant" values
+            # Create x vector ind2 and y vectors dr_*
+            ind2 = np.append(ind, values.size)
+            dr_hqep = np.ones(len(ind2)) * self._hqep
+            dr_hqetp = np.ones(len(ind2)) * self._hqetp
+            # Plot lines
+            canvas.axes.plot(ind2,
+                             dr_hqetp,
+                             '--',
+                             color = '#1F497D',
+                             linewidth = 2,
+                             label = '%.1f%% TP level' %self._hqetp)
+            canvas.axes.plot(ind2,
+                             dr_hqep,
+                             '--',
+                             color = '#A5A5A5',
+                             linewidth = 2,
+                             label = '%.1f%% P level' %self._hqep)
+            
+            # Add legend
+            l = canvas.axes.legend()
+            l.texts[0].set_color('#1F497D')
+            l.texts[1].set_color('#A5A5A5')
+            l.texts[0].set_style('italic')
+            
+            # Set title
+            title = canvas.axes.set_title('Summer thermal comfort')
+
+        canvas.draw()
 
