@@ -18,7 +18,7 @@ class ConsPerZonePie(DataPlotter):
         try:
             # Get variable HEATING_RATE in zone
             # Hourly power [W] is equivalent to Hourly energy [Wh]
-            vals = zone.get_variable('HEATING_RATE', 'HOUR')
+            vals = zone.get_values('HEATING_RATE', 'HOUR')
         except DataZoneError:
             # TODO: log warning
             return 0
@@ -81,7 +81,7 @@ class ConsPerZonePie(DataPlotter):
 
             # Compute total heat need
             # TODO: int or float ? explicit rounding ?
-            cons = int(self.ComputeZoneCons(zones[name]))
+            cons = int(self.ComputeZoneCons(self._building.get_zone(name)))
 
             # Firts column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)

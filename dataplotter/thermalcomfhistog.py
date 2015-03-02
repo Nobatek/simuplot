@@ -32,8 +32,8 @@ class ThermalComfHistog(DataPlotter):
         try:
             # Get variable OPERATIVE_TEMPERATURE in zone
             # Get PEOPLE_COUNT to determine zone occupation status
-            op_temps = zone.get_variable('OPERATIVE_TEMPERATURE', 'HOUR')
-            nb_people = zone.get_variable('PEOPLE_COUNT','HOUR')
+            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR')
+            nb_people = zone.get_values('PEOPLE_COUNT','HOUR')
         except DataZoneError:
             # TODO: log warning
             # Return None as thermal confort % and None as max temperature
@@ -150,8 +150,8 @@ class ThermalComfHistog(DataPlotter):
         for i, name in enumerate(zones):
 
             # Compute all comfort and max temperature
-            pct_hqe, max_temp = self.ComputeThermalComf(zones[name], 
-                                                        self._ref_temp)
+            pct_hqe, max_temp = self.ComputeThermalComf( \
+                self._building.get_zone(name), self._ref_temp)
 
             # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)

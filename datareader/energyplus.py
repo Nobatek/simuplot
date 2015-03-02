@@ -9,8 +9,6 @@ from PyQt4 import QtCore, QtGui, uic
 
 from datareader import DataReader, DataReaderReadError
 
-from data import DataBuildingError
-
 class EnergyPlus(DataReader):
     """Reads Energy Plus data files"""
 
@@ -178,37 +176,31 @@ class EnergyPlus(DataReader):
                 if item_type_str == 'Zone':
                 
                     # Create zone if needed
-                    try:
-                        zone = self._building.get_zone(item_name_str)
-                    except DataBuildingError:
-                        zone = self._building.add_zone(item_name_str)
+                    if item_name_str in self._building.zones:
+                        item = self._building.get_zone(item_name_str)
+                    else:
+                        item = self._building.add_zone(item_name_str)
                     
-                    # Add variable to zone
-                    # TODO: check variable already in zone (different period ?)
-                    var = zone.add_variable(data_type)
-                
                 elif item_type_str == 'Site':
                     
                     if item_name_str == 'Environment':
                         
                         # Create environment "zone" if needed
-                        env = self._building.get_environment()
-                        if env is None:
-                            env = self._building.add_environment()
+                        item = self._building.get_environment()
+                        if item is None:
+                            item = self._building.add_environment()
                         
-                        # Add variable to environment
-                        var = env.add_variable(data_type)
                     else:
                         # What ?
-                        var = None
+                        item = None
                 
                 elif item_type_str == 'Surface':
                     # Ignore for now
-                    var = None
+                    item = None
                     
                 else:
                     # What ?
-                    var = None
+                    item = None
 
                 # Translate E+ period into DataPeriod
                 try:
@@ -218,7 +210,7 @@ class EnergyPlus(DataReader):
                 
                 # Store locally in variable list (one var per column)
                 # before final insertion into Variable as a numpy array
-                variables.append([var, period])
+                variables.append([item, data_type, period])
                 tmp_variables.append([])
  
         # Go through all lines to store values in each variable
@@ -245,14 +237,12 @@ class EnergyPlus(DataReader):
             # Update progress bar
             self.dataLoadProgress.emit(100 * csv_file.tell() / file_size)
         
-        # Store all temporary value lists into numpy arrays in Variables
-        for i, [var, per] in enumerate(variables):
-            if var is not None:
-                try:
-                    var.set_values_from_list(per, tmp_variables[i])
-                except DataVariableValueError:
-                    # TODO: log a warning ? display error in status bar ?
-                    pass
+        # Store all temporary value lists into numpy arrays in item variables
+        for i, [item, data_type, per] in enumerate(variables):
+            if item is not None:
+                # TODO: check there is not data already 
+                # for this type and period in this zone ?
+                item.set_values_from_list(data_type, per, tmp_variables[i])
 
         return messages
 
