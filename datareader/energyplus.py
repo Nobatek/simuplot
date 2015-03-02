@@ -206,18 +206,6 @@ class EnergyPlus(DataReader):
                     # Ignore for now
                     var = None
                     
-                elif item_type_str == 'People':
-
-                    # Create zone if needed
-                    try:
-                        zone = self._building.get_zone(item_name_str)
-                    except DataBuildingError:
-                        zone = self._building.add_zone(item_name_str)
-                    
-                    # Add variable to zone
-                    # TODO: check variable already in zone (different period ?)
-                    var = zone.add_variable(data_type)
-                
                 else:
                     # What ?
                     var = None
