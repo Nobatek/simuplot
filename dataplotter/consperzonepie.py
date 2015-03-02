@@ -82,6 +82,7 @@ class ConsPerZonePie(DataPlotter):
             # Compute total heat need
             # TODO: int or float ? explicit rounding ?
             cons = int(self.ComputeZoneCons(self._building.get_zone(name)))
+            self._build_total_hn += cons
 
             # Firts column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
@@ -108,11 +109,6 @@ class ConsPerZonePie(DataPlotter):
         # Sort by value, descending order, and allow user column sorting
         self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
         self._table_widget.setSortingEnabled(True)        
-
-        # Get Building total heat need :
-        self._build_total_hn = \
-            sum([int(self._table_widget.item(i,1).text()) \
-                for i in range(self._table_widget.rowCount())])
 
         # Draw plot
         self.refresh_plot()
