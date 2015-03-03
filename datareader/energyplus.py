@@ -24,7 +24,13 @@ class EnergyPlus(DataReader):
         'Total Internal Total Heating Rate':'HEATING_RATE',
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
-        'People Occupant Count':'PEOPLE_COUNT'
+        'People Occupant Count':'PEOPLE_COUNT',
+        'People Total Heating Rate':'PEOPLE_HEATING',
+        'Lights Total Heating Rate':'LIGHT_HEATING',
+        'Windows Total Transmitted Solar Radiation Rate':'WINDOWS_HEATING',
+        'Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING',
+        'Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING',
+        'Ventilation Total Heat Gain Energy':'VENTILATION_HEATING',
     }
 
     # Sampling period conversion
@@ -166,6 +172,7 @@ class EnergyPlus(DataReader):
 				
             except KeyError:
                 # We don't know that type. Ignore that column.
+                print ' ca deconne laaaaa'
                 variables.append([None, None])
                 tmp_variables.append(None)
                 messages.append("[Warning] Unknown data type: %s" % var_str)
@@ -197,7 +204,6 @@ class EnergyPlus(DataReader):
                 elif item_type_str == 'Surface':
                     # Ignore for now
                     item = None
-                    
                 else:
                     # What ?
                     item = None

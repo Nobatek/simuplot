@@ -14,6 +14,12 @@ DataTypes = {
     'DIFFUSE_SOLAR_RADIATION':'W/m2',
     'DIRECT_SOLAR_RADIATION':'W/m2',
     'PEOPLE_COUNT':'',
+    'PEOPLE_HEATING':'[W]',
+    'LIGHT_HEATING':'[W]',
+    'WINDOWS_HEATING':'[W]',
+    'OPAQUE_SURFACE_HEATING':'[W]',
+    'INFILTRATION_HEATING':'[W]',
+    'VENTILATION_HEATING':'[W]',
 }
 
 DataPeriods = [
@@ -170,6 +176,9 @@ class Zone(object):
     @property
     def name(self):
         return self._name
+        
+    def get_varlist(self):
+        return self._variables.keys()
 
     @property
     def variables(self):

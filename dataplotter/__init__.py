@@ -10,9 +10,12 @@
 
 from consperzonepie import ConsPerZonePie
 from thermalcomfhistog import ThermalComfHistog
+from heatgainpie import HeatGainPie
 
 plotters = [
     ConsPerZonePie,
     ThermalComfHistog,
+    HeatGainPie,
+    
 ]
 
