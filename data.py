@@ -150,10 +150,19 @@ class Building(object):
         self._environment = None
 
 class Zone(object):
-    """Defines a thermal zone"""
+    """Define a thermal zone
+    
+       Public attributes:
+       - name (str): name of the Zone
+       - variables (str list): variable types available for the Zone
+
+       Public methods:
+       - get_variable_periods
+       - get_values
+       - set_values_from_list
+       """
 
     def __init__(self, name):
-    
         self._name = name
         self._variables = {}
         #self.surfaces = {}
@@ -167,7 +176,7 @@ class Zone(object):
         """Return variable names"""
         return self._variables.keys()
 
-    def get_variable(self, data_type):
+    def _get_variable(self, data_type):
         """Return variable of type data_type"""
         try:
             return self._variables[data_type]
@@ -175,7 +184,7 @@ class Zone(object):
             raise DataZoneError('Variable %s not in Zone %s' % 
                 (data_type, self._name))
 
-    def add_variable(self, data_type):
+    def _add_variable(self, data_type):
         """Add variable of type data_type"""
         if data_type in self._variables:
             raise DataZoneError('Variable %s already in Zone %s' % 
@@ -189,7 +198,7 @@ class Zone(object):
                 self._variables[data_type] = var
                 return var
         
-    def del_variable(self, data_type):
+    def _del_variable(self, data_type):
 
         try:
             del self._variables[data_type]
@@ -198,7 +207,7 @@ class Zone(object):
 
     def get_variable_periods(self, data_type):
         """Return list of available periods for type data_type"""
-        self.get_variable(data_type).periods
+        self._get_variable(data_type).periods
 
     def get_values(self, data_type, period):
         """Return values of variable of type data_type for period"""
@@ -226,7 +235,7 @@ class Zone(object):
         if data_type in self.variables:
             var = self._variables[data_type]
         else:
-            var = self.add_variable(data_type)
+            var = self._add_variable(data_type)
         
         try:
             var.set_values_from_list(period, val_list)
