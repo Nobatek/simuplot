@@ -18,7 +18,10 @@ class ConsPerZonePie(DataPlotter):
         try:
             # Get variable HEATING_RATE in zone
             # Hourly power [W] is equivalent to Hourly energy [Wh]
-            vals = zone.get_values('HEATING_RATE', 'HOUR')
+            # For now this graph only works for ideal loads
+            # This will need to be changed when adding
+            # more complex heating systems
+            vals = zone.get_values('IDEAL_HEATING', 'HOUR')
         except DataZoneError:
             # TODO: log warning
             return 0
