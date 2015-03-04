@@ -48,7 +48,7 @@ class EnergyPlus(DataReader):
 
     # Strings to remove from item names in column headers
     # Watch the trailing/leading spaces
-    strings_to_remove = [' IDEAL LOAD',
+    strings_to_remove = [' IDEAL LOADS AIR',
                          'PEOPLE ',
                         ]
 
