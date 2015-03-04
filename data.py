@@ -20,6 +20,7 @@ DataTypes = {
     'OPAQUE_SURFACE_HEATING':'W',
     'INFILTRATION_HEATING':'W',
     'VENTILATION_HEATING':'W',
+    'IDEAL_HEATING':'W'
 }
 
 DataPeriods = [

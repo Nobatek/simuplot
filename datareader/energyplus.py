@@ -15,16 +15,22 @@ class EnergyPlus(DataReader):
     # Variable type conversion
     # TODO: Complete. Externalize in some config file ?
     DataTypes = {
+        # Climate
         'Outdoor Air Drybulb Temperature':'AIR_DRYBULB_TEMPERATURE',
-        'Mean Air Temperature':'AIR_DRYBULB_TEMPERATURE',
         'Outdoor Air Wetbulb Temperature':'AIR_WETBULB_TEMPERATURE',
         'Outdoor Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
-        'Mean Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
-        'Operative Temperature':'OPERATIVE_TEMPERATURE',
-        'Total Internal Total Heating Rate':'HEATING_RATE',
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
+        # Zone Ambient
+        'Mean Air Temperature':'AIR_DRYBULB_TEMPERATURE',
+        'Mean Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
+        'Operative Temperature':'OPERATIVE_TEMPERATURE',
+        # Zone system
+        'Ideal Loads Supply Air Total Heating Rate':'IDEAL_HEATING',
+        # Zone behaviour
         'People Occupant Count':'PEOPLE_COUNT',
+        # Zone heat gains
+        'Total Internal Total Heating Rate':'HEATING_RATE',
         'People Total Heating Rate':'PEOPLE_HEATING',
         'Lights Total Heating Rate':'LIGHT_HEATING',
         'Windows Total Transmitted Solar Radiation Rate':'WINDOWS_HEATING',
