@@ -16,6 +16,5 @@ plotters = [
     ConsPerZonePie,
     ThermalComfHistog,
     HeatGainPie,
-    
 ]
 

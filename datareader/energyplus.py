@@ -172,7 +172,6 @@ class EnergyPlus(DataReader):
 				
             except KeyError:
                 # We don't know that type. Ignore that column.
-                print ' ca deconne laaaaa'
                 variables.append([None, None])
                 tmp_variables.append(None)
                 messages.append("[Warning] Unknown data type: %s" % var_str)

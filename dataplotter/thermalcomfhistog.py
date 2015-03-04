@@ -284,5 +284,6 @@ class ThermalComfHistog(DataPlotter):
             # Set title
             title = canvas.axes.set_title('Summer thermal comfort')
 
+        # Draw plot
         canvas.draw()
 
