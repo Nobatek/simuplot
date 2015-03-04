@@ -34,6 +34,12 @@ class EnergyPlus(DataReader):
         'Hourly':'HOUR',
     }
 
+    # Strings to remove from item names in column headers
+    # Watch the trailing/leading spaces
+    strings_to_remove = [' IDEAL LOAD',
+                         'PEOPLE ',
+                        ]
+
     # TODO: Convert into SI units
     # For now, we'll suppose data is provided in SI unit
 
@@ -117,8 +123,7 @@ class EnergyPlus(DataReader):
         # Use a regular expression pattern to match column heads
         # Warning: this regexp is broken by files with "DistrictHeating"
         pattern = re.compile(r"""
-            (.*\ )?                 # Remove any previous object (PEOPLE, etc.)
-            (?P<item_name>.*)       # Item name
+            (?P<item_name>.*)?      # Item name
             :                       # Colon
             (?P<item_type>[^ ]*)    # Item type (Zone, Site, etc)
             \                       # 1 whitespace
@@ -156,6 +161,10 @@ class EnergyPlus(DataReader):
                 var_str = match.group('var')
                 unit_str = match.group('unit')
                 period_str = match.group('period')
+
+                # Remove unwanted strings from name
+                for s in self.strings_to_remove:
+                    item_name_str = item_name_str.replace(s, '')
 
             except AttributeError:
                 raise DataReaderReadError('Misformed column head: "%s"' % head)
