@@ -5,6 +5,11 @@ import os
 import sys
 import signal
 
+# Forbid use of QString
+# http://pyqt.sourceforge.net/Docs/PyQt4/incompatible_apis.html
+import sip
+sip.setapi('QString', 2)
+
 from PyQt4 import QtCore, QtGui, uic
 
 from config import Config
