@@ -95,25 +95,34 @@ class HeatGainPie(DataPlotter):
                                                       'Heat gains [kWh]'])
         self._table_widget.horizontalHeader().setResizeMode( \
             QtGui.QHeaderView.ResizeToContents)
-        
-        # Initialize table with one row per heat source
+            
+        # Initialize table with one row per heat source with checkbox
         self._table_widget.setRowCount(len(heat_sources))
         for i, val in enumerate(heat_sources) :
             name_item = QtGui.QTableWidgetItem(val)
+            name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
+                           QtCore.Qt.ItemIsEnabled)
+            name_item.setCheckState(QtCore.Qt.Checked)
+            
             self._table_widget.setItem(i, 0, name_item)
             
         # Set PeriodcomboBox
         for dat in periods:
             self.PeriodcomboBox.addItem(dat)
-        
-        # Refresh plot when BuildcomboBox is modified
-        self.BuildcomboBox.activated.connect( \
-            self.refresh_plot)
             
         # Refresh data when PeriodcomboBox is activated
         self.PeriodcomboBox.activated.connect( \
-            self.refresh_data)        
+            self.refresh_data)
+            
+        # Refresh plot when BuildcomboBox is modified
+        self.BuildcomboBox.activated.connect( \
+            self.refresh_tab_and_plot)
 
+        # Refresh plot when zone is clicked/unclicked or sort order changed
+        self._table_widget.itemClicked.connect(self.refresh_plot)
+        self._table_widget.horizontalHeader().sectionClicked.connect( \
+            self.refresh_plot)    
+            
     @property
     def name(self):
         return self._name
@@ -148,20 +157,12 @@ class HeatGainPie(DataPlotter):
             self._heat_build_zone['Building'][hs] = \
                 sum([self._heat_build_zone[zone][hs] for zone in zones])
         
-        # Draw plot
-        self.refresh_plot()
+        # Write in Table and draw plot
+        self.refresh_tab_and_plot()
 
     @QtCore.pyqtSlot()
-    def refresh_plot(self):
+    def refresh_tab_and_plot(self):    
 
-        values = []
-        names = []
-        
-        canvas = self._MplWidget.canvas
-        
-        # Clear axes
-        canvas.axes.cla()
-        
         # Current zone or building displayed
         cur_zone = str(self.BuildcomboBox.currentText())
 
@@ -171,20 +172,48 @@ class HeatGainPie(DataPlotter):
             # Get current heat gains for heat source in the zone
             hs_value = int(self._heat_build_zone[cur_zone][hs])
             
-            # Set item value for column
+            # Set item value for 2nd column
             val_item = QtGui.QTableWidgetItem()
             val_item.setData(QtCore.Qt.DisplayRole, hs_value)
             val_item.setFlags(QtCore.Qt.ItemIsEnabled)
             self._table_widget.setItem(i, 1, val_item)
+            
+            # Uncheck heat source name if value is zero
+            name_item = self._table_widget.item(i,0)
+            if hs_value == 0:
+                name_item.setCheckState(QtCore.Qt.Unchecked)
+            else :
+                name_item.setCheckState(QtCore.Qt.Checked)      
         
-            # Store name and value in lists for the plot
-            names.append(hs)
-            values.append(hs_value)
-    
+        # Draw plot
+        self.refresh_plot()
+        
+    @QtCore.pyqtSlot()
+    def refresh_plot(self):
+        
+        name_plot = []
+        value_plot = []
+        sum_value = 0
+        
+        canvas = self._MplWidget.canvas
+        
+        # Clear axes
+        canvas.axes.cla()
+        
+        # Compute heat source sum and 
+        # create plot list removing unchecked values
+        for i in range(self._table_widget.rowCount()):
+            name = self._table_widget.item(i,0).text()
+            value = int(self._table_widget.item(i,1).text())
+            sum_value += value
+            if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
+                name_plot.append(name)
+                value_plot.append(value)
+            
         # Create pie chart
         # (Make zone heat need non dimensional to avoid pie expansion)
-        canvas.axes.pie(np.array(values) / sum(values),
-                        labels=names,
+        canvas.axes.pie(np.array(value_plot) / sum_value,
+                        labels=name_plot,
                         colors=self._color_chart, autopct='%1.1f%%', 
                         shadow=False, startangle=90,)
         canvas.axes.axis('equal')        
