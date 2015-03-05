@@ -119,6 +119,8 @@ class ConsPerZonePie(DataPlotter):
         values = []
         names = []
         
+        canvas = self._MplWidget.canvas
+
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
@@ -138,21 +140,20 @@ class ConsPerZonePie(DataPlotter):
                     values.append(value)
             
         # Clear axes
-        self._MplWidget.canvas.axes.cla()
+        canvas.axes.cla()
     
         # Create pie chart
         # (Make zone heat need non dimensional to avoid pie expansion)
-        self._MplWidget.canvas.axes.pie( \
-            np.array(values) / self._build_total_hn, 
-            labels=names, 
-            colors=self._color_chart, autopct='%1.1f%%', 
-            shadow=False, startangle=90)
-        self._MplWidget.canvas.axes.axis('equal')
+        canvas.axes.pie(np.array(values) / self._build_total_hn, 
+                        labels=names,
+                        colors=self._color_chart, autopct='%1.1f%%', 
+                        shadow=False, startangle=90)
+        canvas.axes.axis('equal')
         
         # Set title
         title_str = 'Building heat need : %d [kWh]' % self._build_total_hn
-        title = self._MplWidget.canvas.axes.set_title(title_str, y = 1.05)
+        title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
-        self._MplWidget.canvas.draw()
+        canvas.draw()
 
