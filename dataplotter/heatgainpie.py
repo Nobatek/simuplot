@@ -180,16 +180,12 @@ class HeatGainPie(DataPlotter):
             # Store name and value in lists for the plot
             names.append(hs)
             values.append(hs_value)
-        
-        # Create color map
-        cm_array = 0.25*(np.array(values)/max(values))
-        colors = plt.cm.hot(np.array(cm_array))
     
         # Create pie chart
         # (Make zone heat need non dimensional to avoid pie expansion)
         canvas.axes.pie(np.array(values) / sum(values),
                         labels=names,
-                        colors=colors, autopct='%1.1f%%', 
+                        colors=self._color_chart, autopct='%1.1f%%', 
                         shadow=False, startangle=90,)
         canvas.axes.axis('equal')        
 
