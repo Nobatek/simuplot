@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string notr="true">SimuPlot</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -65,7 +65,7 @@
      <x>0</x>
      <y>0</y>
      <width>955</width>
-     <height>19</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>
