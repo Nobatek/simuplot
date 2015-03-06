@@ -1,16 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
-import sys
-import signal
 
-# Forbid use of QString
-# http://pyqt.sourceforge.net/Docs/PyQt4/incompatible_apis.html
-import sip
-sip.setapi('QString', 2)
-
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtGui, uic
 
 from config import Config
 from statusbar import StatusBar
@@ -19,19 +11,20 @@ from data import Building
 import datareader as dr
 import dataplotter as dp
 
-class SimuPlot(QtGui.QMainWindow):
+from simuplot import ui_path
+
+class MainWindow(QtGui.QMainWindow):
     
     def __init__(self):
 
-        super(SimuPlot, self).__init__()
+        super(MainWindow, self).__init__()
 
         # Get parameters
         self._config = Config()
         self._config.read()
 
         # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'mainwindow.ui'),
-                   self)
+        uic.loadUi(os.path.join(ui_path, 'mainwindow.ui'), self)
 
         # Setup status bar
         self.setStatusBar(StatusBar())
@@ -78,19 +71,4 @@ class SimuPlot(QtGui.QMainWindow):
         """
         for i in range(1, self.tabWidget.count()):
             self.tabWidget.setTabEnabled(i, enable)
-
-if __name__ == "__main__":
-    
-    app = QtGui.QApplication(sys.argv)
-
-    # Let the interpreter run each 100 ms to catch SIGINT.
-    signal.signal(signal.SIGINT, lambda *args : app.quit())
-    timer = QtCore.QTimer()
-    timer.start(100)
-    timer.timeout.connect(lambda: None)  
-
-    mySW = SimuPlot()
-    mySW.show()
-
-    sys.exit(app.exec_())
 

@@ -4,7 +4,9 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-ui_files_dir = os.path.dirname(__file__)
+from simuplot import ui_path 
+
+ui_files_dir = os.path.join(ui_path, 'dataplotter')
 
 class DataPlotter(QtGui.QWidget):
     """Virtual class

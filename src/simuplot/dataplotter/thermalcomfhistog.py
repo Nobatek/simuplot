@@ -7,7 +7,7 @@ import numpy as np
 
 from dataplotter import DataPlotter, DataPlotterError
 
-from data import DataZoneError
+from simuplot.data import DataZoneError
 
 rt_climatic_zone = {'H1a - H1b - H2a - H2b':[2,1],
                     'H1c - H2c':[2.5,1.5],

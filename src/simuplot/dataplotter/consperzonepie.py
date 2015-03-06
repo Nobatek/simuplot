@@ -7,7 +7,7 @@ import numpy as np
 
 from dataplotter import DataPlotter, DataPlotterError
 
-from data import DataZoneError
+from simuplot.data import DataZoneError
 
 class ConsPerZonePie(DataPlotter):
 
