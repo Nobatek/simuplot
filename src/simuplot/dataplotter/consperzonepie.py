@@ -5,7 +5,7 @@ from PyQt4 import QtCore, QtGui
 
 import numpy as np
 
-from dataplotter import DataPlotter, DataPlotterError
+from .dataplotter import DataPlotter, DataPlotterError
 
 from simuplot.data import DataZoneError
 

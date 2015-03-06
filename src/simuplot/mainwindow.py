@@ -4,14 +4,13 @@ import os
 
 from PyQt4 import QtGui, uic
 
-from config import Config
-from statusbar import StatusBar
-from data import Building
+from . import ui_path
+from . import datareader as dr
+from . import dataplotter as dp
 
-import datareader as dr
-import dataplotter as dp
-
-from simuplot import ui_path
+from .config import Config
+from .statusbar import StatusBar
+from .data import Building
 
 class MainWindow(QtGui.QMainWindow):
     

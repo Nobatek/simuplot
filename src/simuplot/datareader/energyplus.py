@@ -7,7 +7,7 @@ import re
 
 from PyQt4 import QtCore, QtGui
 
-from datareader import DataReader, DataReaderReadError
+from .datareader import DataReader, DataReaderReadError
 
 class EnergyPlus(DataReader):
     """Reads Energy Plus data files"""
