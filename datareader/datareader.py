@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtCore, QtGui
+import os
+
+from PyQt4 import QtCore, QtGui, uic
+
+ui_files_dir = os.path.dirname(__file__)
 
 class DataReader(QtGui.QWidget):
     
@@ -20,7 +24,11 @@ class DataReader(QtGui.QWidget):
         
         # Building isntance
         self._building = building
-        
+
+        # Setup UI
+        ui_file_name = type(self).__name__.lower() + '.ui'
+        uic.loadUi(os.path.join(ui_files_dir, ui_file_name), self)
+
 class DataReaderError(Exception):
     pass
 

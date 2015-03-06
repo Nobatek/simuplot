@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from PyQt4 import QtCore, QtGui
+import os
+
+from PyQt4 import QtCore, QtGui, uic
+
+ui_files_dir = os.path.dirname(__file__)
 
 class DataPlotter(QtGui.QWidget):
     """Virtual class
@@ -17,6 +21,10 @@ class DataPlotter(QtGui.QWidget):
 
         # Get color chart
         self._color_chart = color_chart
+
+        # Setup UI
+        ui_file_name = type(self).__name__.lower() + '.ui'
+        uic.loadUi(os.path.join(ui_files_dir, ui_file_name), self)
 
     @QtCore.pyqtSlot()
     def refresh_data(self):

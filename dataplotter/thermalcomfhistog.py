@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-import os
-
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui
 
 import numpy as np
 
@@ -71,11 +69,6 @@ class ThermalComfHistog(DataPlotter):
         
         # Reference temperature
         self._ref_temp = None
-
-        # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 
-                                'thermalcomfhistog.ui'),
-            self)
 
         # Chart widget
         self._MplWidget = self.plotW

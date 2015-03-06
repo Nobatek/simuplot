@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-import os
-
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui
 
 import numpy as np
 
@@ -35,10 +33,6 @@ class ConsPerZonePie(DataPlotter):
         # Initialize total building heat need
         self._build_total_hn = 0
         
-        # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'consperzonepie.ui'),
-            self)
-
         # Chart widget
         self._MplWidget = self.plotW
         # Table widget

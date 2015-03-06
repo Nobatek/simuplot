@@ -5,7 +5,7 @@ import os
 import csv
 import re
 
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui
 
 from datareader import DataReader, DataReaderReadError
 
@@ -48,10 +48,6 @@ class EnergyPlus(DataReader):
         super(EnergyPlus, self).__init__(building)
         
         self._name = 'Energy Plus'
-        
-        # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'energyplus.ui'),
-                   self)
         
         # Path to data file
         self._file_path_text = self.File_Path_Text
