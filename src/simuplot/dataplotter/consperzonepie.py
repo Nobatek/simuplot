@@ -42,12 +42,12 @@ class ConsPerZonePie(DataPlotter):
         self._table_widget.setColumnCount(2)
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
                                                       'Heat need [kWh]'])
-        self._table_widget.horizontalHeader().setResizeMode( \
+        self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
  
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect( \
+        self._table_widget.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
 
     @property
@@ -123,13 +123,13 @@ class ConsPerZonePie(DataPlotter):
                 try:
                     value = int(self._table_widget.item(i,1).text())
                 except AttributeError:
-                    raise DataPlotterError( \
-                        'Invalid cons value type for row %s (%s): %s' %
-                        (i, name, self._table_widget.item(i,1)))
+                    raise DataPlotterError(
+                        'Invalid cons value type for row {} ({}): {}'
+                        ''.format(i, name, self._table_widget.item(i,1)))
                 except ValueError:
-                    raise DataPlotterError( \
-                        'Invalid cons value for row %s (%s): %s' % 
-                        (i, name, self._table_widget.item(i,1).text()))
+                    raise DataPlotterError(
+                        'Invalid cons value for row {} ({}): {}'
+                        ''.format(i, name, self._table_widget.item(i,1).text()))
                 else:
                     values.append(value)
             
@@ -145,7 +145,7 @@ class ConsPerZonePie(DataPlotter):
         canvas.axes.axis('equal')
         
         # Set title
-        title_str = 'Building heat need : %d [kWh]' % self._build_total_hn
+        title_str = 'Building heat need : {} [kWh]'.format(self._build_total_hn)
         title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot

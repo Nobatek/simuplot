@@ -58,8 +58,7 @@ class ThermalComfHistog(DataPlotter):
             pct_hqe = 100 * np.count_nonzero(occ_temp > ref_temp) / nb_h_occup
                      
             # Return % and maximum temperature in occupation [°C]
-            return round(float(pct_hqe),2), \
-                   round(float(max_temp),1)
+            return round(float(pct_hqe),2), round(float(max_temp),1)
 
     def __init__(self, building, color_chart):
         
@@ -198,12 +197,12 @@ class ThermalComfHistog(DataPlotter):
                     value = float(self._table_widget.item(i,1).text())
                 except AttributeError:
                     raise DataPlotterError(
-                        'Invalid discomfort value type for row %s (%s): %s' %
-                        (i, name, self._table_widget.item(i,1)))
+                        'Invalid discomfort value type for row {} ({}): {}'
+                        ''.format(i, name, self._table_widget.item(i,1)))
                 except ValueError:
                     raise DataPlotterError(
-                        'Invalid discomfort value for row %s (%s): %s' % 
-                        (i, name, self._table_widget.item(i,1).text()))
+                        'Invalid discomfort value for row {} ({}): {}' 
+                        ''.format(i, name, self._table_widget.item(i,1).text()))
                 else:
                     vals.append(value)
         
@@ -238,14 +237,14 @@ class ThermalComfHistog(DataPlotter):
                 height = rect.get_height()
                 canvas.axes.text(rect.get_x()+rect.get_width()/2.,
                                  1.0 * height,
-                                 '%.1f' % round(height,1),
+                                 '{:.1f}'.format(height),
                                  size = 'smaller',
                                  style = 'italic',
                                  ha='center',
                                  va='bottom')
                                                  
             # Add text for labels, title and axes ticks
-            canvas.axes.set_ylabel(u'%% time beyond %s°C' % self._ref_temp)
+            canvas.axes.set_ylabel(u'% time beyond {}°C'.format(self._ref_temp))
             canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
             canvas.axes.set_xticklabels(names, ind, ha='right', rotation=75)
             
@@ -260,13 +259,13 @@ class ThermalComfHistog(DataPlotter):
                              '--',
                              color = '#1F497D',
                              linewidth = 2,
-                             label = '%.1f%% TP level' %self._hqetp)
+                             label = '{:.1f}% TP level'.format(self._hqetp))
             canvas.axes.plot(ind2,
                              dr_hqep,
                              '--',
                              color = '#A5A5A5',
                              linewidth = 2,
-                             label = '%.1f%% P level' %self._hqep)
+                             label = '{:.1f}% P level'.format(self._hqep))
             
             # Add legend
             l = canvas.axes.legend()

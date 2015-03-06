@@ -48,7 +48,7 @@ class StatusBar(QtGui.QStatusBar):
 
     @QtCore.pyqtSlot(str)
     def loadingData(self, string):
-        self._norm_indic.setText('Loading data: %s' % string)
+        self._norm_indic.setText('Loading data: {}'.format(string))
 
     @QtCore.pyqtSlot(str, int)
     def dataLoadProgress(self, value):

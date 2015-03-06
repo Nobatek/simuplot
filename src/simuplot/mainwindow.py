@@ -57,7 +57,7 @@ class MainWindow(QtGui.QMainWindow):
             r.dataLoadError.connect(lambda: self.setPlotTabsEnabled(False))
 
         # Connect comboBox activated signal to stackedWidget set index slot
-        self.comboBox.activated.connect( \
+        self.comboBox.activated.connect(
             self.stackedWidget.setCurrentIndex)
 
         # Disable all tabs
