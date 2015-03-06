@@ -3,11 +3,6 @@
 <context>
     <name>Form</name>
     <message>
-        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="resources/ui/datareader/energyplus.ui" line="25"/>
         <source>Specify file path</source>
         <translation type="unfinished"></translation>
