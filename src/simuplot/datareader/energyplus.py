@@ -54,7 +54,7 @@ class EnergyPlus(DataReader):
 
         # Connect browse and load buttons
         self.Browse_Button.clicked.connect(self.browse_button_cbk)
-        self.Ok_Load_Button.clicked.connect(self.load_button_cbk)
+        self.buttonBox.accepted.connect(self.load_button_cbk)
 
     @property
     def name(self):

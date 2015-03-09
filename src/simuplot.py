@@ -21,6 +21,11 @@ if __name__ == "__main__":
 
     # Use system locale for internationalization
     locale = QtCore.QLocale.system().name()
+    # Load default translator for Qt strings
+    translator_qt = QtCore.QTranslator()
+    translator_qt.load('qt_{}'.format(locale),
+        QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.TranslationsPath))
+    # Load translator for own strings
     translator = QtCore.QTranslator()
     translator.load(os.path.join(i18n_path, 'simuplot_' + locale))
     app.installTranslator(translator);

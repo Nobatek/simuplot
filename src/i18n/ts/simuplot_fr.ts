@@ -13,11 +13,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="resources/ui/datareader/energyplus.ui" line="39"/>
-        <source>Ok</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="27"/>
         <source>Define RT2012 climatic zone</source>
         <translation type="unfinished"></translation>

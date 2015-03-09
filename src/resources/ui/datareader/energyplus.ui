@@ -34,9 +34,15 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Ok_Load_Button">
-       <property name="text">
-        <string>Ok</string>
+      <widget class="QDialogButtonBox" name="buttonBox">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="standardButtons">
+        <set>QDialogButtonBox::Ok</set>
        </property>
       </widget>
      </item>
