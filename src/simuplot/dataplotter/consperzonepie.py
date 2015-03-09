@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-import os
-
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui
 
 import numpy as np
 
-from dataplotter import DataPlotter, DataPlotterError
+from .dataplotter import DataPlotter, DataPlotterError
 
-from data import DataZoneError
+from simuplot.data import DataZoneError
 
 class ConsPerZonePie(DataPlotter):
 
@@ -38,10 +36,6 @@ class ConsPerZonePie(DataPlotter):
         # Initialize total building heat need
         self._build_total_hn = 0
         
-        # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'consperzonepie.ui'),
-            self)
-
         # Chart widget
         self._MplWidget = self.plotW
         # Table widget
@@ -51,12 +45,12 @@ class ConsPerZonePie(DataPlotter):
         self._table_widget.setColumnCount(2)
         self._table_widget.setHorizontalHeaderLabels(['Zone', 
                                                       'Heat need [kWh]'])
-        self._table_widget.horizontalHeader().setResizeMode( \
+        self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
  
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect( \
+        self._table_widget.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
 
     @property
@@ -122,6 +116,8 @@ class ConsPerZonePie(DataPlotter):
         values = []
         names = []
         
+        canvas = self._MplWidget.canvas
+
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
@@ -130,32 +126,31 @@ class ConsPerZonePie(DataPlotter):
                 try:
                     value = int(self._table_widget.item(i,1).text())
                 except AttributeError:
-                    raise DataPlotterError( \
-                        'Invalid cons value type for row %s (%s): %s' %
-                        (i, name, self._table_widget.item(i,1)))
+                    raise DataPlotterError(
+                        'Invalid cons value type for row {} ({}): {}'
+                        ''.format(i, name, self._table_widget.item(i,1)))
                 except ValueError:
-                    raise DataPlotterError( \
-                        'Invalid cons value for row %s (%s): %s' % 
-                        (i, name, self._table_widget.item(i,1).text()))
+                    raise DataPlotterError(
+                        'Invalid cons value for row {} ({}): {}'
+                        ''.format(i, name, self._table_widget.item(i,1).text()))
                 else:
                     values.append(value)
             
         # Clear axes
-        self._MplWidget.canvas.axes.cla()
+        canvas.axes.cla()
     
         # Create pie chart
         # (Make zone heat need non dimensional to avoid pie expansion)
-        self._MplWidget.canvas.axes.pie( \
-            np.array(values) / self._build_total_hn, 
-            labels=names, 
-            colors=self._color_chart, autopct='%1.1f%%', 
-            shadow=False, startangle=90)
-        self._MplWidget.canvas.axes.axis('equal')
+        canvas.axes.pie(np.array(values) / self._build_total_hn, 
+                        labels=names,
+                        colors=self._color_chart, autopct='%1.1f%%', 
+                        shadow=False, startangle=90)
+        canvas.axes.axis('equal')
         
         # Set title
-        title_str = 'Building heat need : %d [kWh]' % self._build_total_hn
-        title = self._MplWidget.canvas.axes.set_title(title_str, y = 1.05)
+        title_str = 'Building heat need : {} [kWh]'.format(self._build_total_hn)
+        title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
-        self._MplWidget.canvas.draw()
+        canvas.draw()
 
