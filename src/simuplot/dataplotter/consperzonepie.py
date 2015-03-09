@@ -19,7 +19,7 @@ class ConsPerZonePie(DataPlotter):
             # For now this graph only works for ideal loads
             # This will need to be changed when adding
             # more complex heating systems
-            vals = zone.get_values('IDEAL_HEATING', 'HOUR')
+            vals = zone.get_values('IDEAL_HEATING_COIL', 'HOUR')
         except DataZoneError:
             # TODO: log warning
             return 0

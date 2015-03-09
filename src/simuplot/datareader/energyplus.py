@@ -25,19 +25,21 @@ class EnergyPlus(DataReader):
         'Mean Air Temperature':'AIR_DRYBULB_TEMPERATURE',
         'Mean Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
         'Operative Temperature':'OPERATIVE_TEMPERATURE',
-        # Zone system
-        #   -ideal heating coil heat needs
-        'Ideal Loads Supply Air Total Heating Rate':'IDEAL_HEATING',
+        # Zone Ideal loads system
+        #   - ideal heating coil heat needs
+        'Ideal Loads Supply Air Total Heating Rate':'IDEAL_HEATING_COIL',
+        #   - Cooling gains from outdoor air plus cooling coil (sensible+latent)
+        'Ideal Loads Zone Total Cooling Rate':'IDEAL_HVAC_COOLING',
+        #   - heating gains from outdoor air plus heating coil (sensible+latent)
+        'Ideal Loads Zone Total Heating Rate':'IDEAL_HVAC_HEATING',
         # Zone behaviour
         'People Occupant Count':'PEOPLE_COUNT',
         # Zone heat gains
-        'Total Internal Total Heating Rate':'HEATING_RATE',
         'People Total Heating Rate':'PEOPLE_HEATING',
         'Lights Total Heating Rate':'LIGHT_HEATING',
         'Windows Total Transmitted Solar Radiation Rate':'WINDOWS_HEATING',
         'Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING',
-        'Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING',
-        'Ventilation Total Heat Gain Energy':'VENTILATION_HEATING',
+        'Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING_NRJ',
     }
 
     # Sampling period conversion
