@@ -26,6 +26,7 @@ class EnergyPlus(DataReader):
         'Mean Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
         'Operative Temperature':'OPERATIVE_TEMPERATURE',
         # Zone system
+        #   -ideal heating coil heat needs
         'Ideal Loads Supply Air Total Heating Rate':'IDEAL_HEATING',
         # Zone behaviour
         'People Occupant Count':'PEOPLE_COUNT',
