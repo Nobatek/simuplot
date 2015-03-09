@@ -32,8 +32,8 @@ class Variable(object):
     
         # Data type
         if data_type not in DataTypes:
-            raise DataVariableTypeError(
-                'Incorrect data type {}'.format(data_type))
+            raise DataVariableTypeError(self.tr(
+                'Incorrect data type {}').format(data_type))
         self._data_type = data_type
         
         # Values for each sampling period
@@ -59,13 +59,13 @@ class Variable(object):
 
     def get_values(self, period):
         if period not in DataPeriods:
-            raise DataVariablePeriodError(
-                'Incorrect sample period {}'.format(period))
+            raise DataVariablePeriodError(self.tr(
+                'Incorrect sample period {}').format(period))
         try:
             return self._values[period]
         except KeyError:
-            raise DataVariableNoValueError(
-                'No value for sample period {}'.format(period))
+            raise DataVariableNoValueError(self.tr(
+                'No value for sample period {}').format(period))
 
     def set_values_from_list(self, period, val_list):
         """Set val_list as values
@@ -73,8 +73,8 @@ class Variable(object):
             val_list: list of numbers in numeric or string format
         """
         if period not in DataPeriods:
-            raise DataVariablePeriodError(
-                'Incorrect sample period {}'.format(period))
+            raise DataVariablePeriodError(self.tr(
+                'Incorrect sample period {}').format(period))
         try:
             self._values[period] = np.array(val_list, float)
         except ValueError as e:
@@ -115,11 +115,13 @@ class Building(object):
         try:
             return self._zones[name]
         except KeyError:
-            raise DataBuildingError('Zone {} not in Building'.format(name))
+            raise DataBuildingError(self.tr(
+                'Zone {} not in Building').format(name))
 
     def add_zone(self, name):
         if name in self._zones:
-            raise DataBuildingError('Zone {} already in Building'.format(name))
+            raise DataBuildingError(self.tr(
+                'Zone {} already in Building').format(name))
         else:
             z = Zone(name)
             self._zones[name] = z
@@ -129,16 +131,18 @@ class Building(object):
         try:
             del self._zones[name]
         except KeyError:
-            raise DataBuildingError('Zone {} not in Building'.format(name))
+            raise DataBuildingError(self.tr(
+                'Zone {} not in Building').format(name))
 
     def get_environment(self):
         return self._environment
 
     def add_environment(self):
         if self._environment is not None:
-            raise DataBuildingError('Environment zone already in Building')
+            raise DataBuildingError(self.tr(
+                'Environment zone already in Building'))
         else:
-            o = Zone('Environment')
+            o = Zone(self.tr('Environment'))
             self._environment = o
             return o
 
@@ -181,14 +185,14 @@ class Zone(object):
         try:
             return self._variables[data_type]
         except KeyError:
-            raise DataZoneError(
-                'Variable {} not in Zone {}'.format(data_type, self._name))
+            raise DataZoneError(self.tr(
+                'Variable {} not in Zone {}').format(data_type, self._name))
 
     def _add_variable(self, data_type):
         """Add variable of type data_type"""
         if data_type in self._variables:
-            raise DataZoneError(
-                'Variable {} already in Zone {}'.format(data_type, self._name))
+            raise DataZoneError(self.tr(
+                'Variable {} already in Zone {}').format(data_type, self._name))
         else:
             try:
                 var = Variable(data_type)
@@ -203,8 +207,8 @@ class Zone(object):
         try:
             del self._variables[data_type]
         except KeyError:
-            raise DataZoneError(
-                'Variable {} not in Zone'.format(data_type))
+            raise DataZoneError(self.tr(
+                'Variable {} not in Zone {}').format(data_type, self._name))
 
     def get_variable_periods(self, data_type):
         """Return list of available periods for type data_type"""
@@ -215,16 +219,16 @@ class Zone(object):
         try:
             var = self._variables[data_type]
         except KeyError:
-            raise DataZoneError(
-                'Variable {} not in Zone {}'.format(data_type, self._name))
+            raise DataZoneError(self.tr(
+                'Variable {} not in Zone {}').format(data_type, self._name))
         try:
             return var.get_values(period)
         except DataVariablePeriodError as e:
-            raise DataZoneError(e + 'while getting values for {} '
-                'in Zone {}'.format(data_type, self._name))
+            raise DataZoneError(e + self.tr('while getting values for {} '
+                'in Zone {}').format(data_type, self._name))
         except DataVariableNoValueError:
-            raise DataZoneError('No {} data for {} '
-                'in Zone {}'.format(period, data_type, self._name))
+            raise DataZoneError(self.tr('No {} data for {} '
+                'in Zone {}').format(period, data_type, self._name))
 
     def set_values_from_list(self, data_type, period, val_list):
         """Set values of variable of type data_type for period
@@ -241,11 +245,13 @@ class Zone(object):
         try:
             var.set_values_from_list(period, val_list)
         except DataVariablePeriodError as e:
-            raise DataZoneError(str(e) + ' while setting values for {} '
-                                'in Zone {}'.format(data_type, self._name))
+            raise DataZoneError(str(e) 
+                                + self.tr(' while setting values for {} '
+                                'in Zone {}').format(data_type, self._name))
         except DataVariableValueError as e:
-            raise DataZoneError(str(e) + ' while setting values for {} '
-                                'in Zone {}'.format(data_type, self._name))
+            raise DataZoneError(str(e) 
+                                + self.tr(' while setting values for {} '
+                                'in Zone {}').format(data_type, self._name))
 
 # class Surface(object):
 #     """Defines an enveloppe element through which heat is loss"""
