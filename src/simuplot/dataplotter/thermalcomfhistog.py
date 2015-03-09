@@ -64,7 +64,7 @@ class ThermalComfHistog(DataPlotter):
         
         super(ThermalComfHistog, self).__init__(building, color_chart)
 
-        self._name = "Summer thermal comfort per zone"
+        self._name = self.tr("Summer thermal comfort per zone")
         
         # Reference temperature
         self._ref_temp = None
@@ -76,9 +76,11 @@ class ThermalComfHistog(DataPlotter):
 
         # Set column number and add headers
         self._table_widget.setColumnCount(3)
-        self._table_widget.setHorizontalHeaderLabels(['Zone', 
-                                                      'Discomfort[%]',
-                                                      u'Max temp [°C]'])
+        self._table_widget.setHorizontalHeaderLabels([
+            self.tr('Zone'),
+            self.tr('Discomfort[%]'),
+            self.trUtf8(u'Max temp [°C]')
+            ])
         self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
         
@@ -142,7 +144,7 @@ class ThermalComfHistog(DataPlotter):
         for i, name in enumerate(zones):
 
             # Compute all comfort and max temperature
-            pct_hqe, max_temp = self.ComputeThermalComf( \
+            pct_hqe, max_temp = self.ComputeThermalComf(
                 self._building.get_zone(name), self._ref_temp)
 
             # First column: zone name + checkbox
@@ -196,13 +198,15 @@ class ThermalComfHistog(DataPlotter):
                 try:
                     value = float(self._table_widget.item(i,1).text())
                 except AttributeError:
-                    raise DataPlotterError(
+                    raise DataPlotterError(self.tr(
                         'Invalid discomfort value type for row {} ({}): {}'
-                        ''.format(i, name, self._table_widget.item(i,1)))
+                        '').format(i, name, 
+                                   self._table_widget.item(i,1)))
                 except ValueError:
-                    raise DataPlotterError(
+                    raise DataPlotterError(self.tr(
                         'Invalid discomfort value for row {} ({}): {}' 
-                        ''.format(i, name, self._table_widget.item(i,1).text()))
+                        '').format(i, name, 
+                                   self._table_widget.item(i,1).text()))
                 else:
                     vals.append(value)
         
@@ -244,7 +248,8 @@ class ThermalComfHistog(DataPlotter):
                                  va='bottom')
                                                  
             # Add text for labels, title and axes ticks
-            canvas.axes.set_ylabel(u'% time beyond {}°C'.format(self._ref_temp))
+            canvas.axes.set_ylabel(self.trUtf8(
+                u'% time beyond {}°C').format(self._ref_temp))
             canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
             canvas.axes.set_xticklabels(names, ind, ha='right', rotation=75)
             
@@ -259,13 +264,15 @@ class ThermalComfHistog(DataPlotter):
                              '--',
                              color = '#1F497D',
                              linewidth = 2,
-                             label = '{:.1f}% TP level'.format(self._hqetp))
+                             label = self.tr(
+                                '{:.1f}% TP level').format(self._hqetp))
             canvas.axes.plot(ind2,
                              dr_hqep,
                              '--',
                              color = '#A5A5A5',
                              linewidth = 2,
-                             label = '{:.1f}% P level'.format(self._hqep))
+                             label = self.tr(
+                                '{:.1f}% P level').format(self._hqep))
             
             # Add legend
             l = canvas.axes.legend()
@@ -274,7 +281,7 @@ class ThermalComfHistog(DataPlotter):
             l.texts[0].set_style('italic')
             
             # Set title
-            title = canvas.axes.set_title('Summer thermal comfort')
+            title = canvas.axes.set_title(self.tr('Summer thermal comfort'))
 
         # Draw plot
         canvas.draw()

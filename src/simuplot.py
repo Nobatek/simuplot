@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 import sys
 import signal
 
@@ -9,13 +10,25 @@ import signal
 import sip
 sip.setapi('QString', 2)
 
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui
 
 from simuplot.mainwindow import MainWindow
+from simuplot import i18n_path 
 
 if __name__ == "__main__":
     
     app = QtGui.QApplication(sys.argv)
+
+    # Use system locale for internationalization
+    locale = QtCore.QLocale.system().name()
+    # Load default translator for Qt strings
+    translator_qt = QtCore.QTranslator()
+    translator_qt.load('qt_{}'.format(locale),
+        QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.TranslationsPath))
+    # Load translator for own strings
+    translator = QtCore.QTranslator()
+    translator.load(os.path.join(i18n_path, 'simuplot_' + locale))
+    app.installTranslator(translator);
 
     # Let the interpreter run each 100 ms to catch SIGINT.
     signal.signal(signal.SIGINT, lambda *args : app.quit())

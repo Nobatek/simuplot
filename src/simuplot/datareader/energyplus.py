@@ -69,7 +69,7 @@ class EnergyPlus(DataReader):
 
         # Connect browse and load buttons
         self.Browse_Button.clicked.connect(self.browse_button_cbk)
-        self.Ok_Load_Button.clicked.connect(self.load_button_cbk)
+        self.buttonBox.accepted.connect(self.load_button_cbk)
 
     @property
     def name(self):
@@ -103,7 +103,7 @@ class EnergyPlus(DataReader):
         except DataReaderReadError as e:
             # Error reading file. Clean Building and signal error.
             self._building.clean()
-            self.dataLoadError.emit("[Error] {}".format(e))
+            self.dataLoadError.emit(self.tr("[Error] {}").format(e))
         else:
             # Signal data was loaded
             # Return last message in queue
@@ -117,9 +117,11 @@ class EnergyPlus(DataReader):
         try:
             csv_file = open(file_path, "rb")
         except IOError:
-            raise DataReaderReadError("Wrong filepath: {}".format(file_path))
+            raise DataReaderReadError(self.tr(
+                "Wrong filepath: {}").format(file_path))
         except UnicodeDecodeError:
-            raise DataReaderReadError("Unauthorized characters in data file")
+            raise DataReaderReadError(self.tr(
+                "Unauthorized characters in data file"))
         
         # Create CSV reader, store file size to track progress while reading
         csv_reader = csv.reader(csv_file, delimiter=",")
@@ -157,9 +159,9 @@ class EnergyPlus(DataReader):
         try:
             header.remove('Date/Time')
         except ValueError :
-            raise DataReaderReadError(
+            raise DataReaderReadError(self.tr(
                 "Invalid file header: {}, E+ file begins with 'Date/Time'"
-                "".format(header))
+                "").format(header))
         
         # Go through all columns heads
         for head in header:
@@ -178,8 +180,8 @@ class EnergyPlus(DataReader):
                     item_name_str = item_name_str.replace(s, '')
 
             except AttributeError:
-                raise DataReaderReadError(
-                    'Misformed column head: "{}"'.format(head))
+                raise DataReaderReadError(self.tr(
+                    'Misformed column head: "{}"').format(head))
             
             # Get data type from E+ column header name
             try:
@@ -189,8 +191,8 @@ class EnergyPlus(DataReader):
                 # We don't know that type. Ignore that column.
                 variables.append([None, None, None])
                 tmp_variables.append(None)
-                messages.append(
-                    '[Warning] Unknown data type: {}'.format(var_str))
+                messages.append(self.tr(
+                    '[Warning] Unknown data type: {}').format(var_str))
                 
             else:
                 
@@ -227,8 +229,8 @@ class EnergyPlus(DataReader):
                 try:
                     period = self.DataPeriods[period_str]
                 except KeyError:
-                    raise DataReaderReadError(
-                        'Unknown period {}'.format(period_str))
+                    raise DataReaderReadError(self.tr(
+                        'Unknown period {}').format(period_str))
                 
                 # Store locally in variable list (one var per column)
                 # before final insertion into Variable as a numpy array
@@ -246,7 +248,8 @@ class EnergyPlus(DataReader):
             # Check correct number of values in the line
             # This is broken if file contains "DistrictHeating"
             if len(vals) != nb_values_per_line:
-                raise DataReaderReadError('Misformed line: {}'.format(row))
+                raise DataReaderReadError(self.tr(
+                    'Misformed line: {}').format(row))
                 
             # Store each value of known type in the line into its list
             try:
@@ -254,8 +257,8 @@ class EnergyPlus(DataReader):
                     if val_list is not None:
                         val_list.append(float(vals[i]))
             except ValueError:
-                raise DataReaderReadError(
-                    'Invalid value in line: {}'.format(row))
+                raise DataReaderReadError(self.tr(
+                    'Invalid value in line: {}').format(row))
 
             # Update progress bar
             self.dataLoadProgress.emit(100 * csv_file.tell() / file_size)
