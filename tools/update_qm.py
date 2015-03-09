@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 from subprocess import call
 
 from projectfile import ProjectFileManager
@@ -20,9 +21,14 @@ class QmFilesUpdater(object):
         # 2 - Update .ts files
         # Assume pylupdate4 is in the path
         # TODO: what about Windows installations ?
-        # TODO: check lrelease is installed
         # TODO: lrelease or lrelease-qt4 ?
-        call(['lrelease', self.pfm.file_path])
+        try:
+            call(['lrelease', self.pfm.file_path])
+        except OSError as e:
+            if e.errno == os.errno.ENOENT:
+                print('[Error] lrelease not found')
+            else:
+                raise OSError(e)
 
         # 3 Remove project file
         self.pfm.delete()
