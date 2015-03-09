@@ -21,7 +21,7 @@ class TsFilesUpdater(object):
         # Assume pylupdate4 is in the path
         # TODO: what about Windows installations ?
         # TODO: check pylupdate4 is installed
-        call(['pylupdate4', self.pfm.file_path])
+        call(['pylupdate4', '-verbose', self.pfm.file_path])
 
         # 3 Remove project file
         self.pfm.delete()
