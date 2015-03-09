@@ -9,7 +9,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from dataplotter import DataPlotter, DataPlotterError
+from .dataplotter import DataPlotter, DataPlotterError
 
 from data import DataZoneError
 
@@ -22,13 +22,12 @@ periods = {'Annual' : [[0,8760]],
            }
 
 # TODO: put this stuff somewhere else
-heat_sources = ['IDEAL_HEATING',
+heat_sources = ['IDEAL_HVAC_HEATING',
                 'PEOPLE_HEATING',
                 'LIGHT_HEATING',
                 'WINDOWS_HEATING',
                 'OPAQUE_SURFACE_HEATING',
-                'INFILTRATION_HEATING',
-                'VENTILATION_HEATING',
+                'INFILTRATION_HEATING_NRJ',
                 ]            
 
 class HeatGainPie(DataPlotter):
@@ -39,7 +38,7 @@ class HeatGainPie(DataPlotter):
         
         Data is returned as a dict:
 
-        {'IDEAL_HEATING':value,
+        {'IDEAL_HVAC_HEATING':value,
          'PEOPLE_HEATING':value,
          ...
         }
@@ -80,8 +79,8 @@ class HeatGainPie(DataPlotter):
         self._heat_build_zone = None
         
         # Setup UI
-        uic.loadUi(os.path.join(os.path.dirname(__file__), 'heatgainpie.ui'),
-            self)
+        #uic.loadUi(os.path.join(os.path.dirname(__file__), 'heatgainpie.ui'),
+        #    self)
 
         # Chart widget
         self._MplWidget = self.plotW
