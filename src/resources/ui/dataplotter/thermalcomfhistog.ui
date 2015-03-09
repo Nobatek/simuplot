@@ -24,7 +24,7 @@
        <item>
         <widget class="QLabel" name="label_2">
          <property name="text">
-          <string>Define RT2012 climatic zone</string>
+          <string>RT2012 climatic zone</string>
          </property>
         </widget>
        </item>
@@ -50,7 +50,7 @@
        <item>
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>Define maximum comfort temperature</string>
+          <string>Maximum comfort temperature</string>
          </property>
         </widget>
        </item>
@@ -73,7 +73,7 @@
          <item>
           <widget class="QRadioButton" name="CustomradioButton">
            <property name="text">
-            <string>Custom study : </string>
+            <string>Custom study</string>
            </property>
           </widget>
          </item>
@@ -83,7 +83,7 @@
             <bool>false</bool>
            </property>
            <property name="suffix">
-            <string>°C</string>
+            <string notr="true">°C</string>
            </property>
            <property name="minimum">
             <number>-50</number>
