@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Form</class>
- <widget class="QWidget" name="Form">
+ <class>ThermalComfHistog</class>
+ <widget class="QWidget" name="ThermalComfHistog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string notr="true">ThermalConfigZone DataPlotter</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
+  <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

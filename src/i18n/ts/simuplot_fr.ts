@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="fr_FR" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="fr_FR">
 <context>
     <name>Building</name>
     <message>
@@ -103,9 +104,6 @@
         <source>Invalid value in line: {}</source>
         <translation>Valeur non valide dans la ligne : {}</translation>
     </message>
-</context>
-<context>
-    <name>Form</name>
     <message>
         <location filename="resources/ui/datareader/energyplus.ui" line="25"/>
         <source>Specify file path</source>
@@ -115,26 +113,6 @@
         <location filename="resources/ui/datareader/energyplus.ui" line="32"/>
         <source>Browse</source>
         <translation>Parcourir</translation>
-    </message>
-    <message>
-        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="62"/>
-        <source>HQE study</source>
-        <translation>Étude HQE</translation>
-    </message>
-    <message>
-        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="27"/>
-        <source>RT2012 climatic zone</source>
-        <translation>Zone climatique RT2012</translation>
-    </message>
-    <message>
-        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="53"/>
-        <source>Maximum comfort temperature</source>
-        <translation>Température maximum de confort</translation>
-    </message>
-    <message>
-        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="76"/>
-        <source>Custom study</source>
-        <translation>Étude personnalisée</translation>
     </message>
 </context>
 <context>
@@ -163,7 +141,7 @@
         <translation>Chargement du fichier de données : {}</translation>
     </message>
 </context>
-<context encoding="UTF-8">
+<context>
     <name>ThermalComfHistog</name>
     <message>
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="67"/>
@@ -205,15 +183,35 @@
         <source>Summer thermal comfort</source>
         <translation>Confort thermique d&apos;été</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="79"/>
         <source>Max temp [°C]</source>
         <translation>Température maximale [°C]</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="251"/>
         <source>% time beyond {}°C</source>
         <translation>% de temps au-delà de {}°C</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="27"/>
+        <source>RT2012 climatic zone</source>
+        <translation>Zone climatique RT2012</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="53"/>
+        <source>Maximum comfort temperature</source>
+        <translation>Température maximum de confort</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="62"/>
+        <source>HQE study</source>
+        <translation>Étude HQE</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="76"/>
+        <source>Custom study</source>
+        <translation>Étude personnalisée</translation>
     </message>
 </context>
 <context>
