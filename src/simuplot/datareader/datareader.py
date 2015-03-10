@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import division
+
 import os
 
 from PyQt4 import QtCore, QtGui, uic
 
 from simuplot import ui_path 
+from simuplot.data import DataTypes
 
 ui_files_dir = os.path.join(ui_path, 'datareader')
+
+def F_to_C(val):
+    return (val - 32) * 5 / 9
+
+def J_to_Wh(val):
+    return val * 2.78e-4
+
+def J_to_kWh(val):
+    return val * 2.78e-7
 
 class DataReader(QtGui.QWidget):
     
@@ -20,6 +32,18 @@ class DataReader(QtGui.QWidget):
     # Data loading progress
     dataLoadProgress = QtCore.pyqtSignal(int)
     
+    # Unit conversions
+    # If expected unit is provided, conversion is identity
+    conversions = {data_type:{data_unit:lambda x:x}
+        for data_type, data_unit in DataTypes.iteritems()}
+    # Otherwise, specify conversion
+    conversions['AIR_DRYBULB_TEMPERATURE']['°F'] = F_to_C
+    conversions['AIR_WETBULB_TEMPERATURE']['°F'] = F_to_C
+    conversions['OPERATIVE_TEMPERATURE']['°F'] = F_to_C
+    # Assume hourly data ->  1 W = 1 Wh
+    # TODO: What if period not HOURLY ?
+    conversions['HEATING_RATE']['J'] = J_to_Wh
+
     def __init__(self, building):
 
         super(DataReader, self).__init__()

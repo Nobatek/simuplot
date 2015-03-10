@@ -5,6 +5,8 @@ import os
 import csv
 import re
 
+import numpy as np
+
 from PyQt4 import QtCore, QtGui
 
 from .datareader import DataReader, DataReaderReadError
@@ -12,7 +14,7 @@ from .datareader import DataReader, DataReaderReadError
 class EnergyPlus(DataReader):
     """Reads Energy Plus data files"""
 
-    # Variable type conversion
+    # Variable type translations
     # TODO: Complete. Externalize in some config file ?
     DataTypes = {
         'Outdoor Air Drybulb Temperature':'AIR_DRYBULB_TEMPERATURE',
@@ -25,6 +27,15 @@ class EnergyPlus(DataReader):
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
         'People Occupant Count':'PEOPLE_COUNT'
+    }
+    # Unit translations
+    DataUnits = {
+        '':'',
+        'C':'°C',
+        'W':'W',
+        'kgWater/kgDryAir':'%',
+        'W/m2':'W/m2',
+        'J':'J',
     }
 
     # Sampling period conversion
@@ -39,9 +50,6 @@ class EnergyPlus(DataReader):
     strings_to_remove = [' IDEAL LOAD',
                          'PEOPLE ',
                         ]
-
-    # TODO: Convert into SI units
-    # For now, we'll suppose data is provided in SI unit
 
     def __init__(self, building):
 
@@ -160,69 +168,78 @@ class EnergyPlus(DataReader):
                 unit_str = match.group('unit')
                 period_str = match.group('period')
 
-                # Remove unwanted strings from name
-                for s in self.strings_to_remove:
-                    item_name_str = item_name_str.replace(s, '')
-
             except AttributeError:
                 raise DataReaderReadError(self.tr(
                     'Misformed column head: "{}"'
                     ).format(head).encode('utf-8'))
             
+            # Remove unwanted strings from name
+            for s in self.strings_to_remove:
+                item_name_str = item_name_str.replace(s, '')
+
             # Get data type from E+ column header name
             try:
                 data_type = self.DataTypes[var_str]
-				
             except KeyError:
                 # We don't know that type. Ignore that column.
-                variables.append([None, None, None])
+                variables.append([None, None, None, None])
                 tmp_variables.append(None)
                 messages.append(self.tr(
                     '[Warning] Unknown data type: {}').format(var_str))
+                continue
+
+            # Get data unit from E+ column header name
+            try:
+                data_unit = self.DataUnits[unit_str]
+            except KeyError:
+                # We don't know that unit. Ignore that column.
+                variables.append([None, None, None, None])
+                tmp_variables.append(None)
+                messages.append(self.tr(
+                    '[Warning] Unknown unit: [{}]').format(unit_str))
+                continue
+
+            # If data type and unit are known, check item type
+            if item_type_str == 'Zone':
+            
+                # Create zone if needed
+                if item_name_str in self._building.zones:
+                    item = self._building.get_zone(item_name_str)
+                else:
+                    item = self._building.add_zone(item_name_str)
                 
-            else:
+            elif item_type_str == 'Site':
                 
-                # If data type is known, check item type
-                if item_type_str == 'Zone':
-                
-                    # Create zone if needed
-                    if item_name_str in self._building.zones:
-                        item = self._building.get_zone(item_name_str)
-                    else:
-                        item = self._building.add_zone(item_name_str)
+                if item_name_str == 'Environment':
                     
-                elif item_type_str == 'Site':
-                    
-                    if item_name_str == 'Environment':
-                        
-                        # Create environment "zone" if needed
-                        item = self._building.get_environment()
-                        if item is None:
-                            item = self._building.add_environment()
-                        
-                    else:
-                        # What ?
-                        item = None
-                
-                elif item_type_str == 'Surface':
-                    # Ignore for now
-                    item = None
+                    # Create environment "zone" if needed
+                    item = self._building.get_environment()
+                    if item is None:
+                        item = self._building.add_environment()
                     
                 else:
                     # What ?
                     item = None
-
-                # Translate E+ period into DataPeriod
-                try:
-                    period = self.DataPeriods[period_str]
-                except KeyError:
-                    raise DataReaderReadError(self.tr(
-                        'Unknown period {}').format(period_str).encode('utf-8'))
+            
+            elif item_type_str == 'Surface':
+                # Ignore for now
+                item = None
                 
-                # Store locally in variable list (one var per column)
-                # before final insertion into Variable as a numpy array
-                variables.append([item, data_type, period])
-                tmp_variables.append([])
+            else:
+                # What ?
+                item = None
+
+            # Translate E+ period into DataPeriod
+            try:
+                period = self.DataPeriods[period_str]
+            except KeyError:
+                raise DataReaderReadError(self.tr(
+                    'Unknown period {}').format(period_str).encode('utf-8'))
+            
+            # Store locally in variable list (one var per column)
+            # before final insertion into Variable as a numpy array
+            variables.append([item, data_type, data_unit, period])
+            tmp_variables.append([])
  
         # Go through all lines to store values in each variable
         nb_values_per_line = len(variables)
@@ -251,11 +268,20 @@ class EnergyPlus(DataReader):
             self.dataLoadProgress.emit(100 * csv_file.tell() / file_size)
         
         # Store all temporary value lists into numpy arrays in item variables
-        for i, [item, data_type, per] in enumerate(variables):
+        for i, [item, data_type, data_unit, per] in enumerate(variables):
             if item is not None:
+                # Unit conversion
+                try:
+                    conv_func = self.conversions[data_type][data_unit]
+                except KeyError:
+                    messages.append(self.tr(
+                        '[Warning] Unexpected unit [{}] for data type {}'
+                        ).format(data_unit, data_type).encode('utf-8'))
+                    continue
+                data_array = conv_func(np.array(tmp_variables[i]))
                 # TODO: check there is not data already 
                 # for this type and period in this zone ?
-                item.set_values_from_list(data_type, per, tmp_variables[i])
+                item.set_values(data_type, per, data_array)
 
         return messages
 

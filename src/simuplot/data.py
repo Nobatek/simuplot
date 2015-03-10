@@ -4,7 +4,6 @@ import numpy as np
 
 from PyQt4 import QtCore
 
-# TODO: unit conversion functions in DataReader
 # TODO: do we need both HEATING_RATE and HEATING_DEMAND ?
 DataTypes = {
     'AIR_DRYBULB_TEMPERATURE':'°C',
@@ -27,7 +26,7 @@ DataPeriods = [
 
 class Variable(QtCore.QObject):
     """Stores an array of values for one physical parameter (temperature,
-       heat demand,...
+       heat demand,...)
     """
 
     def __init__(self, data_type):
@@ -74,7 +73,7 @@ class Variable(QtCore.QObject):
                 'No value for sample period {}'
                 ).format(period).encode('utf-8'))
 
-    def set_values_from_list(self, period, val_list):
+    def set_values(self, period, array):
         """Set val_list as values
             
             val_list: list of numbers in numeric or string format
@@ -83,10 +82,8 @@ class Variable(QtCore.QObject):
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}'
                 ).format(period).encode('utf-8'))
-        try:
-            self._values[period] = np.array(val_list, float)
-        except ValueError as e:
-            raise DataVariableValueError(e)
+        
+        self._values[period] = array
     
 # TODO: Multi-buildings / Multi-versions
 # class Project(QtCore.QObject):
@@ -181,7 +178,7 @@ class Zone(QtCore.QObject):
        Public methods:
        - get_variable_periods
        - get_values
-       - set_values_from_list
+       - set_values
        """
 
     def __init__(self, name):
@@ -257,12 +254,12 @@ class Zone(QtCore.QObject):
                 'No {} data for {} in Zone {}'
                 ).format(period, data_type, self._name).encode('utf-8'))
 
-    def set_values_from_list(self, data_type, period, val_list):
+    def set_values(self, data_type, period, array):
         """Set values of variable of type data_type for period
         
             data_type (str): data type
             period (str): period
-            val_list (list): list of numbers in numeric or string format
+            array (numpy array): array of values
             """
         if data_type in self.variables:
             var = self._variables[data_type]
@@ -270,12 +267,8 @@ class Zone(QtCore.QObject):
             var = self._add_variable(data_type)
         
         try:
-            var.set_values_from_list(period, val_list)
+            var.set_values(period, array)
         except DataVariablePeriodError as e:
-            raise DataZoneError(str(e) + self.tr(
-                ' while setting values for {} in Zone {}'
-                ).format(data_type, self._name).encode('utf-8'))
-        except DataVariableValueError as e:
             raise DataZoneError(str(e) + self.tr(
                 ' while setting values for {} in Zone {}'
                 ).format(data_type, self._name).encode('utf-8'))
@@ -305,10 +298,6 @@ class DataVariableTypeError(DataVariableError):
 
 class DataVariablePeriodError(DataVariableError):
     """Data sample period does not exist"""
-    pass
-
-class DataVariableValueError(DataVariableError):
-    """Value is of wrong type"""
     pass
 
 class DataVariableNoValueError(DataVariableError):
