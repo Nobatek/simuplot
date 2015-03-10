@@ -4,22 +4,22 @@
 <context>
     <name>Building</name>
     <message>
-        <location filename="simuplot/data.py" line="134"/>
+        <location filename="simuplot/data.py" line="141"/>
         <source>Zone {} not in Building</source>
         <translation>Pas de Zone {} dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="123"/>
+        <location filename="simuplot/data.py" line="130"/>
         <source>Zone {} already in Building</source>
         <translation>Zone {} déjà présente dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="142"/>
+        <location filename="simuplot/data.py" line="149"/>
         <source>Environment zone already in Building</source>
         <translation>Zone Environnement déjà présente dans le Building </translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="145"/>
+        <location filename="simuplot/data.py" line="152"/>
         <source>Environment</source>
         <translation>Environnement</translation>
     </message>
@@ -27,32 +27,32 @@
 <context>
     <name>ConsPerZonePie</name>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="31"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="34"/>
         <source>Energy heat need per zone</source>
         <translation>Besoin de chaleur par zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="43"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="46"/>
         <source>Zone</source>
         <translation>Zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="43"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="46"/>
         <source>Heat need [kWh]</source>
         <translation>Besoin de chaleur [kWh]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="126"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="129"/>
         <source>Invalid cons value type for row {} ({}): {}</source>
         <translation>Type de la valeur de conso invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="131"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="134"/>
         <source>Invalid cons value for row {} ({}): {}</source>
         <translation>Valeur de conso invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="150"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="153"/>
         <source>Building heat need: {} [kWh]</source>
         <translation>Besoin de chaleur du bâtiment :{} [kWh]</translation>
     </message>
@@ -60,47 +60,47 @@
 <context>
     <name>EnergyPlus</name>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="91"/>
+        <location filename="simuplot/datareader/energyplus.py" line="106"/>
         <source>[Error] {}</source>
         <translation>[Erreur] {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="105"/>
+        <location filename="simuplot/datareader/energyplus.py" line="120"/>
         <source>Wrong filepath: {}</source>
         <translation>Chemin de fichier incorrect : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="108"/>
+        <location filename="simuplot/datareader/energyplus.py" line="123"/>
         <source>Unauthorized characters in data file</source>
         <translation>Caractère illicite dans le fichier de donnée</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="147"/>
+        <location filename="simuplot/datareader/energyplus.py" line="162"/>
         <source>Invalid file header: {}, E+ file begins with &apos;Date/Time&apos;</source>
         <translation>En-tête de fichier invalide : {}, les fichiers E+ commencent par &apos;Date/Time&apos;</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="168"/>
+        <location filename="simuplot/datareader/energyplus.py" line="183"/>
         <source>Misformed column head: &quot;{}&quot;</source>
         <translation>Tête de colonne mal formée : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="179"/>
+        <location filename="simuplot/datareader/energyplus.py" line="194"/>
         <source>[Warning] Unknown data type: {}</source>
         <translation>[Avertissement] Type de donnée inconnu : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="218"/>
+        <location filename="simuplot/datareader/energyplus.py" line="232"/>
         <source>Unknown period {}</source>
         <translation>Période inconnue {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="237"/>
+        <location filename="simuplot/datareader/energyplus.py" line="251"/>
         <source>Misformed line: {}</source>
         <translation>Ligne mal formée : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="246"/>
+        <location filename="simuplot/datareader/energyplus.py" line="260"/>
         <source>Invalid value in line: {}</source>
         <translation>Valeur non valide dans la ligne : {}</translation>
     </message>
@@ -136,6 +136,44 @@
         <location filename="resources/ui/dataplotter/thermalcomfhistog.ui" line="76"/>
         <source>Custom study</source>
         <translation>Étude personnalisée</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/heatgainpie.ui" line="27"/>
+        <source>Define period :</source>
+        <translation>Période :</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/heatgainpie.ui" line="50"/>
+        <source>Select building or zone :</source>
+        <translation>Sélectionner &apos;bâtiment&apos; ou une zone :</translation>
+    </message>
+</context>
+<context>
+    <name>HeatGainPie</name>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="74"/>
+        <source>Heat gain sources</source>
+        <translation>Sources d&apos;apports</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="87"/>
+        <source>Heat sources</source>
+        <translation>Sources d&apos;apport</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="87"/>
+        <source>Heat gains [kWh]</source>
+        <translation>gain [kWh]</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="150"/>
+        <source>Building</source>
+        <translation>Bâtiment</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="215"/>
+        <source>Building heat gains repartition</source>
+        <translation>Répartition des sources apports</translation>
     </message>
 </context>
 <context>
@@ -202,17 +240,17 @@
 <context>
     <name>Variable</name>
     <message>
-        <location filename="simuplot/data.py" line="35"/>
+        <location filename="simuplot/data.py" line="42"/>
         <source>Incorrect data type {}</source>
         <translation>Type de donnée incorrect {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="76"/>
+        <location filename="simuplot/data.py" line="83"/>
         <source>Incorrect sample period {}</source>
         <translation>Période d&apos;échantillonnage incorrecte {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="67"/>
+        <location filename="simuplot/data.py" line="74"/>
         <source>No value for sample period {}</source>
         <translation>Pas de valeur pour la période déchantillonnage {}</translation>
     </message>
@@ -220,27 +258,27 @@
 <context>
     <name>Zone</name>
     <message>
-        <location filename="simuplot/data.py" line="222"/>
+        <location filename="simuplot/data.py" line="229"/>
         <source>Variable {} not in Zone {}</source>
         <translation>Pas de Variable {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="194"/>
+        <location filename="simuplot/data.py" line="201"/>
         <source>Variable {} already in Zone {}</source>
         <translation>Variable {} déjà dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="230"/>
+        <location filename="simuplot/data.py" line="237"/>
         <source>No {} data for {} in Zone {}</source>
         <translation>Pas de donnée {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="252"/>
+        <location filename="simuplot/data.py" line="259"/>
         <source> while setting values for {} in Zone {}</source>
         <translation>en affectant les valeurs de {} à la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="227"/>
+        <location filename="simuplot/data.py" line="234"/>
         <source>while getting values for {} in Zone {}</source>
         <translation>en lisant les valeurs de {} de la Zone {}</translation>
     </message>

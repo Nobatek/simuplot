@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-import os
-
-from PyQt4 import QtCore, QtGui, uic
+from PyQt4 import QtCore, QtGui
 
 import numpy as np
 
@@ -73,14 +71,10 @@ class HeatGainPie(DataPlotter):
         
         super(HeatGainPie, self).__init__(building, color_chart)
 
-        self._name = "Heat gain sources"
+        self._name = self.tr("Heat gain sources")
         
         # Results dict
         self._heat_build_zone = None
-        
-        # Setup UI
-        #uic.loadUi(os.path.join(os.path.dirname(__file__), 'heatgainpie.ui'),
-        #    self)
 
         # Chart widget
         self._MplWidget = self.plotW
@@ -90,8 +84,8 @@ class HeatGainPie(DataPlotter):
 
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels(['Heat sources', 
-                                                      'Heat gains [kWh]'])
+        self._table_widget.setHorizontalHeaderLabels([self.tr('Heat sources'), 
+                                                      self.tr('Heat gains [kWh]')])
         self._table_widget.horizontalHeader().setResizeMode( \
             QtGui.QHeaderView.ResizeToContents)
             
@@ -136,7 +130,7 @@ class HeatGainPie(DataPlotter):
         # Set combobox with zone names 
         # add 'Building' as a ficticious "all zones" zone
         self.BuildcomboBox.addItems(zones)
-        self.BuildcomboBox.addItem('Building')
+        self.BuildcomboBox.addItem(self.tr('Building'))
         self.BuildcomboBox.setCurrentIndex(self.BuildcomboBox.count() - 1)
         
         # Get the study period from combobox
@@ -163,7 +157,10 @@ class HeatGainPie(DataPlotter):
     def refresh_tab_and_plot(self):    
 
         # Current zone or building displayed
-        cur_zone = str(self.BuildcomboBox.currentText())
+        if self.BuildcomboBox.currentIndex() == self.BuildcomboBox.count() - 1:
+            cur_zone = 'Building'
+        else :
+            cur_zone = self.BuildcomboBox.currentText()
 
         # Display Zone or building value in table 2nd column
         for i, hs in enumerate(heat_sources):
@@ -218,7 +215,7 @@ class HeatGainPie(DataPlotter):
         canvas.axes.axis('equal')        
 
         # Set title
-        title_str = 'Building heat gains repartition'
+        title_str = self.tr('Building heat gains repartition')
         title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
