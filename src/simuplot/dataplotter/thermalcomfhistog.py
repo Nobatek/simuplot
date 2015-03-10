@@ -200,13 +200,13 @@ class ThermalComfHistog(DataPlotter):
                 except AttributeError:
                     raise DataPlotterError(self.tr(
                         'Invalid discomfort value type for row {} ({}): {}'
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1)))
+                        ).format(i, name, self._table_widget.item(i,1)
+                            ).encode('utf-8'))
                 except ValueError:
                     raise DataPlotterError(self.tr(
                         'Invalid discomfort value for row {} ({}): {}' 
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1).text()))
+                        ).format(i, name, self._table_widget.item(i,1).text()
+                            ).encode('utf-8'))
                 else:
                     vals.append(value)
         

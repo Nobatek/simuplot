@@ -3,22 +3,22 @@
 <context>
     <name>Building</name>
     <message>
-        <location filename="simuplot/data.py" line="144"/>
+        <location filename="simuplot/data.py" line="150"/>
         <source>Zone {} not in Building</source>
         <translation>Pas de Zone {} dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="133"/>
+        <location filename="simuplot/data.py" line="138"/>
         <source>Zone {} already in Building</source>
         <translation>Zone {} déjà présente dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="152"/>
+        <location filename="simuplot/data.py" line="159"/>
         <source>Environment zone already in Building</source>
         <translation>Zone Environnement déjà présente dans le Building </translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="155"/>
+        <location filename="simuplot/data.py" line="163"/>
         <source>Environment</source>
         <translation>Environnement</translation>
     </message>
@@ -84,22 +84,22 @@
         <translation>Tête de colonne mal formée : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="179"/>
+        <location filename="simuplot/datareader/energyplus.py" line="180"/>
         <source>[Warning] Unknown data type: {}</source>
         <translation>[Avertissement] Type de donnée inconnu : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="218"/>
+        <location filename="simuplot/datareader/energyplus.py" line="219"/>
         <source>Unknown period {}</source>
         <translation>Période inconnue {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="237"/>
+        <location filename="simuplot/datareader/energyplus.py" line="238"/>
         <source>Misformed line: {}</source>
         <translation>Ligne mal formée : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="246"/>
+        <location filename="simuplot/datareader/energyplus.py" line="247"/>
         <source>Invalid value in line: {}</source>
         <translation>Valeur non valide dans la ligne : {}</translation>
     </message>
@@ -206,12 +206,12 @@
         <translation>Type de donnée incorrect {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="80"/>
+        <location filename="simuplot/data.py" line="83"/>
         <source>Incorrect sample period {}</source>
         <translation>Période d&apos;échantillonnage incorrecte {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="71"/>
+        <location filename="simuplot/data.py" line="73"/>
         <source>No value for sample period {}</source>
         <translation>Pas de valeur pour la période déchantillonnage {}</translation>
     </message>
@@ -219,27 +219,27 @@
 <context>
     <name>Zone</name>
     <message>
-        <location filename="simuplot/data.py" line="235"/>
+        <location filename="simuplot/data.py" line="246"/>
         <source>Variable {} not in Zone {}</source>
         <translation>Pas de Variable {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="207"/>
+        <location filename="simuplot/data.py" line="216"/>
         <source>Variable {} already in Zone {}</source>
         <translation>Variable {} déjà dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="243"/>
+        <location filename="simuplot/data.py" line="256"/>
         <source>No {} data for {} in Zone {}</source>
         <translation>Pas de donnée {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="265"/>
+        <location filename="simuplot/data.py" line="279"/>
         <source> while setting values for {} in Zone {}</source>
         <translation>en affectant les valeurs de {} à la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="240"/>
+        <location filename="simuplot/data.py" line="252"/>
         <source>while getting values for {} in Zone {}</source>
         <translation>en lisant les valeurs de {} de la Zone {}</translation>
     </message>
