@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<!DOCTYPE TS><TS version="2.0" language="fr_FR" sourcelanguage="">
 <context>
     <name>Building</name>
     <message>
-        <location filename="simuplot/data.py" line="134"/>
+        <location filename="simuplot/data.py" line="144"/>
         <source>Zone {} not in Building</source>
         <translation>Pas de Zone {} dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="123"/>
+        <location filename="simuplot/data.py" line="133"/>
         <source>Zone {} already in Building</source>
         <translation>Zone {} déjà présente dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="142"/>
+        <location filename="simuplot/data.py" line="152"/>
         <source>Environment zone already in Building</source>
         <translation>Zone Environnement déjà présente dans le Building </translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="145"/>
+        <location filename="simuplot/data.py" line="155"/>
         <source>Environment</source>
         <translation>Environnement</translation>
     </message>
@@ -146,7 +145,7 @@
         <translation>Source de données</translation>
     </message>
 </context>
-<context>
+<context encoding="UTF-8">
     <name>ThermalComfHistog</name>
     <message>
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="67"/>
@@ -188,12 +187,12 @@
         <source>Summer thermal comfort</source>
         <translation>Confort thermique d&apos;été</translation>
     </message>
-    <message utf8="true">
+    <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="79"/>
         <source>Max temp [°C]</source>
         <translation>Température maximale</translation>
     </message>
-    <message utf8="true">
+    <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="251"/>
         <source>% time beyond {}°C</source>
         <translation>% de temps au-delà de {}°C</translation>
@@ -202,17 +201,17 @@
 <context>
     <name>Variable</name>
     <message>
-        <location filename="simuplot/data.py" line="35"/>
+        <location filename="simuplot/data.py" line="39"/>
         <source>Incorrect data type {}</source>
         <translation>Type de donnée incorrect {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="76"/>
+        <location filename="simuplot/data.py" line="80"/>
         <source>Incorrect sample period {}</source>
         <translation>Période d&apos;échantillonnage incorrecte {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="67"/>
+        <location filename="simuplot/data.py" line="71"/>
         <source>No value for sample period {}</source>
         <translation>Pas de valeur pour la période déchantillonnage {}</translation>
     </message>
@@ -220,27 +219,27 @@
 <context>
     <name>Zone</name>
     <message>
-        <location filename="simuplot/data.py" line="222"/>
+        <location filename="simuplot/data.py" line="235"/>
         <source>Variable {} not in Zone {}</source>
         <translation>Pas de Variable {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="194"/>
+        <location filename="simuplot/data.py" line="207"/>
         <source>Variable {} already in Zone {}</source>
         <translation>Variable {} déjà dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="230"/>
+        <location filename="simuplot/data.py" line="243"/>
         <source>No {} data for {} in Zone {}</source>
         <translation>Pas de donnée {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="252"/>
+        <location filename="simuplot/data.py" line="265"/>
         <source> while setting values for {} in Zone {}</source>
         <translation>en affectant les valeurs de {} à la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="227"/>
+        <location filename="simuplot/data.py" line="240"/>
         <source>while getting values for {} in Zone {}</source>
         <translation>en lisant les valeurs de {} de la Zone {}</translation>
     </message>

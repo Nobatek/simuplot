@@ -2,6 +2,8 @@
 
 import numpy as np
 
+from PyQt4 import QtCore
+
 # TODO: unit conversion functions in DataReader
 # TODO: do we need both HEATING_RATE and HEATING_DEMAND ?
 DataTypes = {
@@ -23,13 +25,15 @@ DataPeriods = [
     'YEAR',
 ]
 
-class Variable(object):
+class Variable(QtCore.QObject):
     """Stores an array of values for one physical parameter (temperature,
        heat demand,...
     """
 
     def __init__(self, data_type):
     
+        super(Variable, self).__init__()
+
         # Data type
         if data_type not in DataTypes:
             raise DataVariableTypeError(self.tr(
@@ -81,23 +85,29 @@ class Variable(object):
             raise DataVariableValueError(e)
     
 # TODO: Multi-buildings / Multi-versions
-# class Project(object):
+# class Project(QtCore.QObject):
 # 
 #     def __init__(self):
 #     
+#         super(Project, self).__init__()
+#
 #         self.variants = {}
 # 
-# class ProjectVariant(object):
+# class ProjectVariant(QtCore.QObject):
 # 
 #     def __init__(self):
 # 
+#         super(ProjectVariant, self).__init__()
+#
 #         self.name = []
 #         self.buildings = {}
 
-class Building(object):
+class Building(QtCore.QObject):
 
     def __init__(self, name):
     
+        super(Building, self).__init__()
+
         self._name = name
         self._zones = {}
         self._environment = None
@@ -153,7 +163,7 @@ class Building(object):
         self._zones = {}
         self._environment = None
 
-class Zone(object):
+class Zone(QtCore.QObject):
     """Define a thermal zone
     
        Public attributes:
@@ -167,6 +177,9 @@ class Zone(object):
        """
 
     def __init__(self, name):
+        
+        super(Zone, self).__init__()
+
         self._name = name
         self._variables = {}
         #self.surfaces = {}
@@ -253,11 +266,13 @@ class Zone(object):
                                 + self.tr(' while setting values for {} '
                                 'in Zone {}').format(data_type, self._name))
 
-# class Surface(object):
+# class Surface(QtCore.QObject):
 #     """Defines an enveloppe element through which heat is loss"""
 # 
 #     def __init__(self, name, surf, surf_type):
 #     
+#         super(Surface, self).__init__()
+#
 #         self._name = name
 #         self._surf = 0
 #         # surf_type can be WALL, ROOF, FLOOR, WINDOW
