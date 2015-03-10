@@ -145,6 +145,24 @@
         <translation>Source de données</translation>
     </message>
 </context>
+<context>
+    <name>StatusBar</name>
+    <message>
+        <location filename="simuplot/statusbar.py" line="33"/>
+        <source>Data loaded</source>
+        <translation>Donnée chargée</translation>
+    </message>
+    <message>
+        <location filename="simuplot/statusbar.py" line="35"/>
+        <source>No data loaded</source>
+        <translation>Aucune donnée chargée</translation>
+    </message>
+    <message>
+        <location filename="simuplot/statusbar.py" line="51"/>
+        <source>Loading data file: {}</source>
+        <translation>Chargement du fichier de données : {}</translation>
+    </message>
+</context>
 <context encoding="UTF-8">
     <name>ThermalComfHistog</name>
     <message>
