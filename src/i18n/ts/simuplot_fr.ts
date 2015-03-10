@@ -190,7 +190,7 @@
     <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="79"/>
         <source>Max temp [°C]</source>
-        <translation>Température maximale</translation>
+        <translation>Température maximale [°C]</translation>
     </message>
     <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="251"/>

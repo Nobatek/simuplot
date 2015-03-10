@@ -79,7 +79,7 @@ class ThermalComfHistog(DataPlotter):
         self._table_widget.setHorizontalHeaderLabels([
             self.tr('Zone'),
             self.tr('Discomfort[%]'),
-            self.trUtf8(u'Max temp [°C]')
+            self.tr('Max temp [°C]')
             ])
         self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
@@ -248,8 +248,8 @@ class ThermalComfHistog(DataPlotter):
                                  va='bottom')
                                                  
             # Add text for labels, title and axes ticks
-            canvas.axes.set_ylabel(self.trUtf8(
-                u'% time beyond {}°C').format(self._ref_temp))
+            canvas.axes.set_ylabel(self.tr(
+                '% time beyond {}°C').format(self._ref_temp))
             canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
             canvas.axes.set_xticklabels(names, ind, ha='right', rotation=75)
             

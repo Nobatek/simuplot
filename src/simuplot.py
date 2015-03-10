@@ -19,6 +19,9 @@ if __name__ == "__main__":
     
     app = QtGui.QApplication(sys.argv)
 
+    # Do we need this ?
+    # QtCore.QTextCodec.setCodecForTr(QtCore.QTextCodec.codecForName("utf-8"))
+
     # Use system locale for internationalization
     locale = QtCore.QLocale.system().name()
     # Load default translator for Qt strings
