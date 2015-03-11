@@ -45,6 +45,10 @@ class ProjectFileManager(object):
         except IOError:
             raise IOError("Can't open project file.")
 
+        # Specify CODEC for the tr() function
+        pf.write('CODECFORTR = UTF-8')
+        pf.write('\n')
+
         # Source files and ui files are stored in different directories
         # with the same directory structure
         subdirs = ['', 'datareader/', 'dataplotter/']
@@ -75,6 +79,7 @@ class ProjectFileManager(object):
         pf.write('TRANSLATIONS = ')
         for l in languages:
             pf.write(join(ts_files_relpath, project + '_' + l + '.ts'))
+        pf.write('\n')
 
         pf.close()
 
