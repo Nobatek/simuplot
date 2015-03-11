@@ -23,8 +23,62 @@ DataPeriods = [
     'YEAR',
 ]
 
+
+class Array(object):
+    """ Store numpy array and return values for time interval
+        or perform calculation
+    """
+    
+    def __init__(self, values):
+        print 'ici !!!!!!!'
+        self._vals = np.array(values)
+    
+    # Return initial array
+    @property
+    def vals(self):
+        return self._vals
+        
+    # Return values for time interval
+    def _get_interval(self, interval = None):
+        if interval == None :
+            return self._vals
+        else :
+            return None
+        
+    # Return sum over the desired periods
+    def _sum_period(self, interval) :
+        return None
+
+    # Return average value over the desired periods
+    def _avg_period(self, interval) :
+        return None
+        
+    # Return typical days for desired periods
+    def _typical_day(self, per=None, start=None, end=None):
+        return None
+        
+    # Return values for period with pre-calculation
+    def get_values(self, interval = None, precalc =None ):        
+        # Extract interval and perform desired pre-calculation
+        # If no pre-calculation required, return corresponding interval
+        if precalc == None :
+            out_array = self._get_interval(interval)
+        
+        elif precalc == 'sum' :
+            out_array = self._sum_period(interval)
+            
+        elif precalc == 'average' :
+            out_array = self._avg_period(interval)
+            
+        elif precalc == 'typical day' :
+            out_array = self._typical_day(interval)
+            
+        return out_array
+
+        
+
 class Variable(object):
-    """Stores an array of values for one physical parameter (temperature,
+    """Stores Arrays objects for one physical parameter (temperature,
        heat demand,...
     """
 
@@ -57,7 +111,7 @@ class Variable(object):
         """Return list of periods for which Variable holds a set of value"""
         return self._values.keys()
 
-    def get_values(self, period):
+    def get_array(self, period):
         if period not in DataPeriods:
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
@@ -67,7 +121,7 @@ class Variable(object):
             raise DataVariableNoValueError(self.tr(
                 'No value for sample period {}').format(period))
 
-    def set_values_from_list(self, period, val_list):
+    def set_array_from_list(self, period, val_list):
         """Set val_list as values
             
             val_list: list of numbers in numeric or string format
@@ -76,7 +130,7 @@ class Variable(object):
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
         try:
-            self._values[period] = np.array(val_list, float)
+            self._values[period] = Array(val_list)
         except ValueError as e:
             raise DataVariableValueError(e)
     
@@ -214,7 +268,7 @@ class Zone(object):
         """Return list of available periods for type data_type"""
         self._get_variable(data_type).periods
 
-    def get_values(self, data_type, period):
+    def get_values(self, data_type, period, interval = None, precalc = None):
         """Return values of variable of type data_type for period"""
         try:
             var = self._variables[data_type]
@@ -222,7 +276,8 @@ class Zone(object):
             raise DataZoneError(self.tr(
                 'Variable {} not in Zone {}').format(data_type, self._name))
         try:
-            return var.get_values(period)
+            array = var.get_array(period)
+            return array.get_values(interval, precalc)
         except DataVariablePeriodError as e:
             raise DataZoneError(e + self.tr('while getting values for {} '
                 'in Zone {}').format(data_type, self._name))
@@ -243,7 +298,7 @@ class Zone(object):
             var = self._add_variable(data_type)
         
         try:
-            var.set_values_from_list(period, val_list)
+            var.set_array_from_list(period, val_list)
         except DataVariablePeriodError as e:
             raise DataZoneError(str(e) 
                                 + self.tr(' while setting values for {} '
