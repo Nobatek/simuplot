@@ -143,10 +143,10 @@ class Array(object):
         else :
             # Return values for desired time interval
             bound = TimeInterval(interval).time_interval(self._period)
-            return self._vals[bound[0], bound[1]]
+            return self._vals[bound[0]: bound[1]]
         
     # Return sum over the desired interval
-    def sum_period(self, interval = None) :
+    def sum_interval(self, interval = None) :
         # If no interval is specified
         # Return sum value for full year
         if interval == None :
@@ -154,10 +154,10 @@ class Array(object):
         else :
             # Return sum values for desired time interval
             bound = TimeInterval(interval).time_interval(self._period)
-            return sum(self._vals[bound[0], bound[1]])
+            return sum(self._vals[bound[0]: bound[1]])
 
     # Return mean value over the desired interval
-    def mean_period(self, interval) :
+    def mean_interval(self, interval) :
         # If no interval is specified
         # Return mean value for full year
         if interval == None :
@@ -165,7 +165,7 @@ class Array(object):
         else :
             # Return mean values for desired time interval
             bound = TimeInterval(interval).time_interval(self._period)
-            return mean(self._vals[bound[0], bound[1]])
+            return mean(self._vals[bound[0]: bound[1]])
         
     # Return typical days for desired interval
     def typical_day(self, per=None, start=None, end=None):
