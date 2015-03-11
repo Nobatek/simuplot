@@ -60,9 +60,9 @@ class ThermalComfHistog(DataPlotter):
             # Return % and maximum temperature in occupation [°C]
             return round(float(pct_hqe),2), round(float(max_temp),1)
 
-    def __init__(self, building, color_chart):
+    def __init__(self, building, color_chart, today):
         
-        super(ThermalComfHistog, self).__init__(building, color_chart)
+        super(ThermalComfHistog, self).__init__(building, color_chart, today)
 
         self._name = self.tr("Summer thermal comfort per zone")
         

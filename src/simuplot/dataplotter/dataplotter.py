@@ -14,7 +14,7 @@ class DataPlotter(QtGui.QWidget):
        Useless by itself. Implement in sub-clases
     """
     
-    def __init__(self, building, color_chart):
+    def __init__(self, building, color_chart, today):
         
         super(DataPlotter, self).__init__()
 
@@ -23,6 +23,9 @@ class DataPlotter(QtGui.QWidget):
 
         # Get color chart
         self._color_chart = color_chart
+        
+        # Get today's date and time
+        self._today = today
 
         # Setup UI
         ui_file_name = type(self).__name__.lower() + '.ui'

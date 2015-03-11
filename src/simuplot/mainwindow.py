@@ -34,7 +34,10 @@ class MainWindow(QtGui.QMainWindow):
         # Instantiate all plotter widgets and add them as new tabs
         plotters = []
         for plotter in dp.plotters:
-            p = plotter(self._building, self._config.params['color_chart'])
+            p = plotter(self._building,
+                        self._config.params['color_chart'],
+                        self._config.params['today'],
+                        )
             plotters.append(p)
             self.tabWidget.addTab(p, p.name)
 
