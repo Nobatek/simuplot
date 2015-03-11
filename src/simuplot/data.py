@@ -156,9 +156,16 @@ class Array(object):
             bound = TimeInterval(interval).time_interval(self._period)
             return sum(self._vals[bound[0], bound[1]])
 
-    # Return average value over the desired interval
-    def avg_period(self, interval) :
-        return None
+    # Return mean value over the desired interval
+    def mean_period(self, interval) :
+        # If no interval is specified
+        # Return mean value for full year
+        if interval == None :
+            return mean(self._vals)
+        else :
+            # Return mean values for desired time interval
+            bound = TimeInterval(interval).time_interval(self._period)
+            return mean(self._vals[bound[0], bound[1]])
         
     # Return typical days for desired interval
     def typical_day(self, per=None, start=None, end=None):
