@@ -16,7 +16,7 @@ class ConsPerZonePie(DataPlotter):
         try:
             # Get variable HEATING_RATE in zone
             # Hourly power [W] is equivalent to Hourly energy [Wh]
-            vals = zone.get_values('HEATING_RATE', 'HOUR')
+            vals = zone.get_values('HEATING_RATE', 'HOUR').get_interval()
         except DataZoneError:
             # TODO: log warning
             return 0

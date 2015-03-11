@@ -30,8 +30,8 @@ class ThermalComfHistog(DataPlotter):
         try:
             # Get variable OPERATIVE_TEMPERATURE in zone
             # Get PEOPLE_COUNT to determine zone occupation status
-            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR')
-            nb_people = zone.get_values('PEOPLE_COUNT','HOUR')
+            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR').get_interval()
+            nb_people = zone.get_values('PEOPLE_COUNT','HOUR').get_interval()
         except DataZoneError:
             # TODO: log warning
             # Return None as thermal confort % and None as max temperature

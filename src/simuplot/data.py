@@ -2,6 +2,8 @@
 
 import numpy as np
 
+import datetime
+
 # TODO: unit conversion functions in DataReader
 # TODO: do we need both HEATING_RATE and HEATING_DEMAND ?
 DataTypes = {
@@ -23,59 +25,39 @@ DataPeriods = [
     'YEAR',
 ]
 
-
 class Array(object):
     """ Store numpy array and return values for time interval
         or perform calculation
     """
     
-    def __init__(self, values):
-        print 'ici !!!!!!!'
+    def __init__(self, values, period):
         self._vals = np.array(values)
-    
+        self._period = period
+
+        
     # Return initial array
     @property
     def vals(self):
         return self._vals
         
     # Return values for time interval
-    def _get_interval(self, interval = None):
+    def get_interval(self, interval = None):
         if interval == None :
             return self._vals
         else :
             return None
         
-    # Return sum over the desired periods
-    def _sum_period(self, interval) :
+    # Return sum over the desired interval
+    def sum_period(self, interval) :
         return None
 
-    # Return average value over the desired periods
-    def _avg_period(self, interval) :
+    # Return average value over the desired interval
+    def avg_period(self, interval) :
         return None
         
-    # Return typical days for desired periods
-    def _typical_day(self, per=None, start=None, end=None):
-        return None
-        
-    # Return values for period with pre-calculation
-    def get_values(self, interval = None, precalc =None ):        
-        # Extract interval and perform desired pre-calculation
-        # If no pre-calculation required, return corresponding interval
-        if precalc == None :
-            out_array = self._get_interval(interval)
-        
-        elif precalc == 'sum' :
-            out_array = self._sum_period(interval)
-            
-        elif precalc == 'average' :
-            out_array = self._avg_period(interval)
-            
-        elif precalc == 'typical day' :
-            out_array = self._typical_day(interval)
-            
-        return out_array
-
-        
+    # Return typical days for desired interval
+    def typical_day(self, per=None, start=None, end=None):
+        return None        
 
 class Variable(object):
     """Stores Arrays objects for one physical parameter (temperature,
@@ -130,7 +112,7 @@ class Variable(object):
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
         try:
-            self._values[period] = Array(val_list)
+            self._values[period] = Array(val_list, period)
         except ValueError as e:
             raise DataVariableValueError(e)
     
@@ -268,7 +250,7 @@ class Zone(object):
         """Return list of available periods for type data_type"""
         self._get_variable(data_type).periods
 
-    def get_values(self, data_type, period, interval = None, precalc = None):
+    def get_values(self, data_type, period):
         """Return values of variable of type data_type for period"""
         try:
             var = self._variables[data_type]
@@ -277,7 +259,7 @@ class Zone(object):
                 'Variable {} not in Zone {}').format(data_type, self._name))
         try:
             array = var.get_array(period)
-            return array.get_values(interval, precalc)
+            return array
         except DataVariablePeriodError as e:
             raise DataZoneError(e + self.tr('while getting values for {} '
                 'in Zone {}').format(data_type, self._name))
