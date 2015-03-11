@@ -25,6 +25,101 @@ DataPeriods = [
     'YEAR',
 ]
 
+class TimeInterval(object):
+    """Object capable of creating and storing one or several time interval
+       from months or days input
+    """
+    
+    def __init__(self, inter) :
+    
+        # Set simulation first day (if Energyplus simulation it s a Sunday)
+        # CAUTION : For now Simuplot works for full year only
+        self._day0 = datetime.datetime(2005,1,1,0,0,0)
+    
+        # Definition of months for non leap year
+        self._year_month = {'Jan':[1,31],
+                            'Feb':[2,28],
+                            'Mar':[3,31],
+                            'Apr':[4,30],
+                            'May':[5,31],
+                            'Jun':[6,30],
+                            'Jul':[7,31],
+                            'Aug':[8,31],
+                            'Sep':[9,30],
+                            'Oct':[10,31],
+                            'Nov':[11,30],
+                            'Dec':[12,31],
+                            }
+                            
+        # Unpack inter string to get begin and end boundaries                    
+        inter_arg_list = inter.split('-')
+        begin = inter_arg_list[0]
+        end = None
+        if len(inter_arg_list) == 2 :
+           end = inter_arg_list[1]
+                
+        # Get month and day for first boundary
+        if begin in self._year_month.keys():
+            b1_month = self._year_month[begin][0]
+            b1_day = 1
+        
+        else :
+            b1_month , b1_day = begin.split('/')
+            
+        # Get month and day for second boundary
+        # if no interval has been input
+        if end == None :
+            b2_month = b1_month
+            
+            # Determine if begin is month or day
+            if begin in self._year_month.keys() :
+                b2_day = self._year_month[begin][1]
+            
+            #  Ending day is the same day
+            else :
+                b2_day = b1_day
+                
+        # If there is a specified ending values
+        elif end in self._year_month.keys() :
+            b2_month = self._year_month[end][0]
+            b2_day = self._year_month[end][1]
+        
+        else :
+            b2_month , b2_day = end.split('/')
+            
+
+        # Set datetime of first boundary
+        b1 = datetime.datetime(2005,
+                               # Month
+                               int(b1_month),
+                               # Day
+                               int(b1_day),
+                               # Hour
+                               0,0,0)
+
+        # Set datetime of second boundary
+        b2 = datetime.datetime(2005,
+                               # Month
+                               int(b2_month),
+                               # Day
+                               int(b2_day),
+                               # Hour
+                               23,0,0)                               
+
+            
+        # Creation of the interval
+        self._b1 = b1 - self._day0
+        self._b2 = b2 - self._day0
+
+    # Return a list containing the time interval boundaries
+    # expressed according to the period
+    def time_interval(self, period):
+        # TODO: create the interval for other periods
+        if period == 'HOUR' :
+            return [self._b1.days * 24 + self._b1.seconds / 3600,
+                    self._b2.days * 24 + self._b2.seconds / 3600]       
+
+
 class Array(object):
     """ Store numpy array and return values for time interval
         or perform calculation
@@ -32,9 +127,8 @@ class Array(object):
     
     def __init__(self, values, period):
         self._vals = np.array(values)
-        self._period = period
-
-        
+        self._period = period        
+    
     # Return initial array
     @property
     def vals(self):
@@ -42,14 +136,25 @@ class Array(object):
         
     # Return values for time interval
     def get_interval(self, interval = None):
+        # If no interval is specified
+        # Return full year
         if interval == None :
             return self._vals
         else :
-            return None
+            # Return values for desired time interval
+            bound = TimeInterval(interval).time_interval(self._period)
+            return self._vals[bound[0], bound[1]]
         
     # Return sum over the desired interval
-    def sum_period(self, interval) :
-        return None
+    def sum_period(self, interval = None) :
+        # If no interval is specified
+        # Return sum value for full year
+        if interval == None :
+            return sum(self._vals)
+        else :
+            # Return sum values for desired time interval
+            bound = TimeInterval(interval).time_interval(self._period)
+            return sum(self._vals[bound[0], bound[1]])
 
     # Return average value over the desired interval
     def avg_period(self, interval) :
