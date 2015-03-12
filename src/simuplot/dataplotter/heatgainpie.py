@@ -7,9 +7,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from .dataplotter import DataPlotter, DataPlotterError
-
-from simuplot.data import DataZoneError
+from .dataplotter import DataPlotter
 
 # TODO: This module is broken if start date is not January 1st
 # The simulation length must be one year, and the period 'HOUR'
@@ -86,7 +84,7 @@ class HeatGainPie(DataPlotter):
         self._table_widget.setColumnCount(2)
         self._table_widget.setHorizontalHeaderLabels([self.tr('Heat sources'), 
                                                       self.tr('Heat gains [kWh]')])
-        self._table_widget.horizontalHeader().setResizeMode( \
+        self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
             
         # Initialize table with one row per heat source with checkbox
@@ -104,16 +102,16 @@ class HeatGainPie(DataPlotter):
             self.PeriodcomboBox.addItem(dat)
             
         # Refresh data when PeriodcomboBox is activated
-        self.PeriodcomboBox.activated.connect( \
+        self.PeriodcomboBox.activated.connect(
             self.refresh_data)
             
         # Refresh plot when BuildcomboBox is modified
-        self.BuildcomboBox.activated.connect( \
+        self.BuildcomboBox.activated.connect(
             self.refresh_tab_and_plot)
 
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect( \
+        self._table_widget.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)    
             
     @property
@@ -187,10 +185,6 @@ class HeatGainPie(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
         
-        name_plot = []
-        value_plot = []
-        sum_value = 0
-        
         canvas = self._MplWidget.canvas
         
         # Clear axes
@@ -198,6 +192,9 @@ class HeatGainPie(DataPlotter):
         
         # Compute heat source sum and 
         # create plot list removing unchecked values
+        name_plot = []
+        value_plot = []
+        sum_value = 0
         for i in range(self._table_widget.rowCount()):
             name = self._table_widget.item(i,0).text()
             value = int(self._table_widget.item(i,1).text())
@@ -205,18 +202,21 @@ class HeatGainPie(DataPlotter):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
                 name_plot.append(name)
                 value_plot.append(value)
-            
-        # Create pie chart
-        # (Make zone heat need non dimensional to avoid pie expansion)
-        canvas.axes.pie(np.array(value_plot) / sum_value,
-                        labels=name_plot,
-                        colors=self._color_chart, autopct='%1.1f%%', 
-                        shadow=False, startangle=90,)
-        canvas.axes.axis('equal')        
 
-        # Set title
-        title_str = self.tr('Building heat gains repartition')
-        title = canvas.axes.set_title(title_str, y = 1.05)
+        # If sum is 0, heat gain are 0. Do not plot anything.
+        if sum_value != 0:
+
+            # Create pie chart
+            # (Make zone heat need non dimensional to avoid pie expansion)
+            canvas.axes.pie(np.array(value_plot) / sum_value,
+                            labels=names_plot,
+                            colors=self._color_chart, autopct='%1.1f%%',
+                            shadow=False, startangle=90,)
+            canvas.axes.axis('equal')
+
+            # Set title
+            title_str = self.tr('Building heat gains repartition')
+            title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
         canvas.draw()
