@@ -112,12 +112,14 @@ class ConsPerZonePie(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
 
-        values = []
-        names = []
-        
         canvas = self._MplWidget.canvas
 
+        # Clear axes
+        canvas.axes.cla()
+
         # Get checked rows and corresponding (name, value)
+        values = []
+        names = []
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
                 name = self._table_widget.item(i,0).text()
@@ -137,21 +139,21 @@ class ConsPerZonePie(DataPlotter):
                 else:
                     values.append(value)
             
-        # Clear axes
-        canvas.axes.cla()
-    
-        # Create pie chart
-        # (Make zone heat need non dimensional to avoid pie expansion)
-        canvas.axes.pie(np.array(values) / self._build_total_hn, 
-                        labels=names,
-                        colors=self._color_chart, autopct='%1.1f%%', 
-                        shadow=False, startangle=90)
-        canvas.axes.axis('equal')
-        
-        # Set title
-        title_str = self.tr(
-            'Building heat need: {} [kWh]').format(self._build_total_hn)
-        title = canvas.axes.set_title(title_str, y = 1.05)
+        # If total heat need is 0, do not plot anything.
+        if self._build_total_hn != 0:
+   
+            # Create pie chart
+            # (Make zone heat need non dimensional to avoid pie expansion)
+            canvas.axes.pie(np.array(values) / self._build_total_hn,
+                            labels=names,
+                            colors=self._color_chart, autopct='%1.1f%%', 
+                            shadow=False, startangle=90)
+            canvas.axes.axis('equal')
+            
+            # Set title
+            title_str = self.tr(
+                'Building heat need: {} [kWh]').format(self._build_total_hn)
+            title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
         canvas.draw()
