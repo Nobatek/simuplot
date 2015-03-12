@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 from .dataplotter import DataPlotter, DataPlotterError
 
-from data import DataZoneError
+from simuplot.data import DataZoneError
 
 # TODO: This module is broken if start date is not January 1st
 # The simulation length must be one year, and the period 'HOUR'

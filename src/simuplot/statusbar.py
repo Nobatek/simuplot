@@ -30,9 +30,9 @@ class StatusBar(QtGui.QStatusBar):
     def _set_data_loaded(self, status):
         """Toggle permanent indicator display"""
         if status:
-            self._perm_indic.setText('Data loaded')
+            self._perm_indic.setText(self.tr('Data loaded'))
         else:
-            self._perm_indic.setText('No data loaded')
+            self._perm_indic.setText(self.tr('No data loaded'))
 
     @QtCore.pyqtSlot(str)
     def dataLoaded(self, string):
@@ -48,7 +48,8 @@ class StatusBar(QtGui.QStatusBar):
 
     @QtCore.pyqtSlot(str)
     def loadingData(self, string):
-        self._norm_indic.setText('Loading data: {}'.format(string))
+        self._norm_indic.setText(self.tr(
+            'Loading data file: {}').format(string))
 
     @QtCore.pyqtSlot(str, int)
     def dataLoadProgress(self, value):

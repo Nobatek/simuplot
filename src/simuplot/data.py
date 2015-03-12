@@ -2,8 +2,8 @@
 
 import numpy as np
 
-# TODO: unit conversion functions in DataReader
-# TODO: do we need both HEATING_RATE and HEATING_DEMAND ?
+from PyQt4 import QtCore
+
 DataTypes = {
     'AIR_DRYBULB_TEMPERATURE':'°C',
     'AIR_WETBULB_TEMPERATURE':'°C',
@@ -30,17 +30,20 @@ DataPeriods = [
     'YEAR',
 ]
 
-class Variable(object):
+class Variable(QtCore.QObject):
     """Stores an array of values for one physical parameter (temperature,
-       heat demand,...
+       heat demand,...)
     """
 
     def __init__(self, data_type):
     
+        super(Variable, self).__init__()
+
         # Data type
         if data_type not in DataTypes:
             raise DataVariableTypeError(self.tr(
-                'Incorrect data type {}').format(data_type))
+                'Incorrect data type {}'
+                ).format(data_type).encode('utf-8'))
         self._data_type = data_type
         
         # Values for each sampling period
@@ -67,44 +70,51 @@ class Variable(object):
     def get_values(self, period):
         if period not in DataPeriods:
             raise DataVariablePeriodError(self.tr(
-                'Incorrect sample period {}').format(period))
+                'Incorrect sample period {}'
+                ).format(period).encode('utf-8'))
         try:
             return self._values[period]
         except KeyError:
             raise DataVariableNoValueError(self.tr(
-                'No value for sample period {}').format(period))
+                'No value for sample period {}'
+                ).format(period).encode('utf-8'))
 
-    def set_values_from_list(self, period, val_list):
+    def set_values(self, period, array):
         """Set val_list as values
             
             val_list: list of numbers in numeric or string format
         """
         if period not in DataPeriods:
             raise DataVariablePeriodError(self.tr(
-                'Incorrect sample period {}').format(period))
-        try:
-            self._values[period] = np.array(val_list, float)
-        except ValueError as e:
-            raise DataVariableValueError(e)
+                'Incorrect sample period {}'
+                ).format(period).encode('utf-8'))
+        
+        self._values[period] = array
     
 # TODO: Multi-buildings / Multi-versions
-# class Project(object):
+# class Project(QtCore.QObject):
 # 
 #     def __init__(self):
 #     
+#         super(Project, self).__init__()
+#
 #         self.variants = {}
 # 
-# class ProjectVariant(object):
+# class ProjectVariant(QtCore.QObject):
 # 
 #     def __init__(self):
 # 
+#         super(ProjectVariant, self).__init__()
+#
 #         self.name = []
 #         self.buildings = {}
 
-class Building(object):
+class Building(QtCore.QObject):
 
     def __init__(self, name):
     
+        super(Building, self).__init__()
+
         self._name = name
         self._zones = {}
         self._environment = None
@@ -123,12 +133,14 @@ class Building(object):
             return self._zones[name]
         except KeyError:
             raise DataBuildingError(self.tr(
-                'Zone {} not in Building').format(name))
+                'Zone {} not in Building'
+                ).format(name).encode('utf-8'))
 
     def add_zone(self, name):
         if name in self._zones:
             raise DataBuildingError(self.tr(
-                'Zone {} already in Building').format(name))
+                'Zone {} already in Building'
+                ).format(name).encode('utf-8'))
         else:
             z = Zone(name)
             self._zones[name] = z
@@ -139,7 +151,8 @@ class Building(object):
             del self._zones[name]
         except KeyError:
             raise DataBuildingError(self.tr(
-                'Zone {} not in Building').format(name))
+                'Zone {} not in Building'
+                ).format(name).encode('utf-8'))
 
     def get_environment(self):
         return self._environment
@@ -147,7 +160,8 @@ class Building(object):
     def add_environment(self):
         if self._environment is not None:
             raise DataBuildingError(self.tr(
-                'Environment zone already in Building'))
+                'Environment zone already in Building'
+                ).encode('utf-8'))
         else:
             o = Zone(self.tr('Environment'))
             self._environment = o
@@ -160,7 +174,7 @@ class Building(object):
         self._zones = {}
         self._environment = None
 
-class Zone(object):
+class Zone(QtCore.QObject):
     """Define a thermal zone
     
        Public attributes:
@@ -170,10 +184,13 @@ class Zone(object):
        Public methods:
        - get_variable_periods
        - get_values
-       - set_values_from_list
+       - set_values
        """
 
     def __init__(self, name):
+        
+        super(Zone, self).__init__()
+
         self._name = name
         self._variables = {}
         #self.surfaces = {}
@@ -181,7 +198,7 @@ class Zone(object):
     @property
     def name(self):
         return self._name
-        
+
     @property
     def variables(self):
         """Return variable names"""
@@ -193,13 +210,15 @@ class Zone(object):
             return self._variables[data_type]
         except KeyError:
             raise DataZoneError(self.tr(
-                'Variable {} not in Zone {}').format(data_type, self._name))
+                'Variable {} not in Zone {}'
+                ).format(data_type, self._name).encode('utf-8'))
 
     def _add_variable(self, data_type):
         """Add variable of type data_type"""
         if data_type in self._variables:
             raise DataZoneError(self.tr(
-                'Variable {} already in Zone {}').format(data_type, self._name))
+                'Variable {} already in Zone {}'
+                ).format(data_type, self._name).encode('utf-8'))
         else:
             try:
                 var = Variable(data_type)
@@ -215,7 +234,8 @@ class Zone(object):
             del self._variables[data_type]
         except KeyError:
             raise DataZoneError(self.tr(
-                'Variable {} not in Zone {}').format(data_type, self._name))
+                'Variable {} not in Zone {}'
+                ).format(data_type, self._name).encode('utf-8'))
 
     def get_variable_periods(self, data_type):
         """Return list of available periods for type data_type"""
@@ -227,22 +247,25 @@ class Zone(object):
             var = self._variables[data_type]
         except KeyError:
             raise DataZoneError(self.tr(
-                'Variable {} not in Zone {}').format(data_type, self._name))
+                'Variable {} not in Zone {}'
+                ).format(data_type, self._name).encode('utf-8'))
         try:
             return var.get_values(period)
         except DataVariablePeriodError as e:
-            raise DataZoneError(e + self.tr('while getting values for {} '
-                'in Zone {}').format(data_type, self._name))
+            raise DataZoneError(e + self.tr(
+                'while getting values for {} in Zone {}'
+                ).format(data_type, self._name).encode('utf-8'))
         except DataVariableNoValueError:
-            raise DataZoneError(self.tr('No {} data for {} '
-                'in Zone {}').format(period, data_type, self._name))
+            raise DataZoneError(self.tr(
+                'No {} data for {} in Zone {}'
+                ).format(period, data_type, self._name).encode('utf-8'))
 
-    def set_values_from_list(self, data_type, period, val_list):
+    def set_values(self, data_type, period, array):
         """Set values of variable of type data_type for period
         
             data_type (str): data type
             period (str): period
-            val_list (list): list of numbers in numeric or string format
+            array (numpy array): array of values
             """
         if data_type in self.variables:
             var = self._variables[data_type]
@@ -250,21 +273,19 @@ class Zone(object):
             var = self._add_variable(data_type)
         
         try:
-            var.set_values_from_list(period, val_list)
+            var.set_values(period, array)
         except DataVariablePeriodError as e:
-            raise DataZoneError(str(e) 
-                                + self.tr(' while setting values for {} '
-                                'in Zone {}').format(data_type, self._name))
-        except DataVariableValueError as e:
-            raise DataZoneError(str(e) 
-                                + self.tr(' while setting values for {} '
-                                'in Zone {}').format(data_type, self._name))
+            raise DataZoneError(str(e) + self.tr(
+                ' while setting values for {} in Zone {}'
+                ).format(data_type, self._name).encode('utf-8'))
 
-# class Surface(object):
+# class Surface(QtCore.QObject):
 #     """Defines an enveloppe element through which heat is loss"""
 # 
 #     def __init__(self, name, surf, surf_type):
 #     
+#         super(Surface, self).__init__()
+#
 #         self._name = name
 #         self._surf = 0
 #         # surf_type can be WALL, ROOF, FLOOR, WINDOW
@@ -283,10 +304,6 @@ class DataVariableTypeError(DataVariableError):
 
 class DataVariablePeriodError(DataVariableError):
     """Data sample period does not exist"""
-    pass
-
-class DataVariableValueError(DataVariableError):
-    """Value is of wrong type"""
     pass
 
 class DataVariableNoValueError(DataVariableError):

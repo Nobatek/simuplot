@@ -14,8 +14,7 @@ class ConsPerZonePie(DataPlotter):
     @staticmethod
     def ComputeZoneCons(zone):
         try:
-            # Get variable HEATING_RATE in zone
-            # Hourly power [W] is equivalent to Hourly energy [Wh]
+            # Get IDEAL_HEATING_COIL values in zone
             # For now this graph only works for ideal loads
             # This will need to be changed when adding
             # more complex heating systems
@@ -128,13 +127,13 @@ class ConsPerZonePie(DataPlotter):
                 except AttributeError:
                     raise DataPlotterError(self.tr(
                         'Invalid cons value type for row {} ({}): {}'
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1)))
+                        ).format(i, name, self._table_widget.item(i,1)
+                            ).encode('utf-8'))
                 except ValueError:
                     raise DataPlotterError(self.tr(
                         'Invalid cons value for row {} ({}): {}'
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1).text()))
+                        ).format(i, name, self._table_widget.item(i,1).text()
+                            ).encode('utf-8'))
                 else:
                     values.append(value)
             
