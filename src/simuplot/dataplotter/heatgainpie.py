@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 
 from .dataplotter import DataPlotter
 
+from simuplot.data import DataZoneError
+
 # TODO: This module is broken if start date is not January 1st
 # The simulation length must be one year, and the period 'HOUR'
 # Should this be made more generic ?
@@ -43,10 +45,10 @@ class HeatGainPie(DataPlotter):
         # Initialize full_year_vals list containing all values for each source
         full_year_vals = []
         for hs in heat_sources:
-            # If heat source not available, "mark it zero, Donnie"
-            if hs in zone.variables:
+            # If hourly heat source data not available, "mark it zero, Donnie"
+            try:
                 full_year_vals.append(zone.get_values(hs, 'HOUR'))
-            else:
+            except DataZoneError:
                 full_year_vals.append(np.zeros(8760))
 
         # Store values as 2D numpy array
@@ -74,10 +76,8 @@ class HeatGainPie(DataPlotter):
         # Results dict
         self._heat_build_zone = None
 
-        # Chart widget
+        # Chart and table widgets
         self._MplWidget = self.plotW
-        
-        # Table widget
         self._table_widget = self.listW
 
         # Set column number and add headers
@@ -126,7 +126,7 @@ class HeatGainPie(DataPlotter):
         zones.sort()
         
         # Set combobox with zone names 
-        # add 'Building' as a ficticious "all zones" zone
+        # and add 'Building' as a ficticious "all zones" zone
         self.BuildcomboBox.addItems(zones)
         self.BuildcomboBox.addItem(self.tr('Building'))
         self.BuildcomboBox.setCurrentIndex(self.BuildcomboBox.count() - 1)
@@ -141,8 +141,8 @@ class HeatGainPie(DataPlotter):
             self._heat_build_zone[name] = \
                 self.ComputeHeatGains(self._building.get_zone(name),
                                       study_period)
-       # Compute heat gain per source for building
-        # by summing all zones
+
+        # Compute heat gain per source for building by summing all zones
         self._heat_build_zone['Building'] = {}
         for hs in heat_sources:
             self._heat_build_zone['Building'][hs] = \
