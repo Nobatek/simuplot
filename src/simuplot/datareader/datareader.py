@@ -40,6 +40,7 @@ class DataReader(QtGui.QWidget):
     conversions['AIR_DRYBULB_TEMPERATURE']['°F'] = F_to_C
     conversions['AIR_WETBULB_TEMPERATURE']['°F'] = F_to_C
     conversions['OPERATIVE_TEMPERATURE']['°F'] = F_to_C
+    conversions['INFILTRATION_HEATING_RATE']['J'] = J_to_Wh
 
     def __init__(self, building):
 

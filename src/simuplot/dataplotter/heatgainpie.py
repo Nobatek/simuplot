@@ -20,12 +20,13 @@ periods = {'Annual' : [[0,8760]],
            }
 
 # TODO: put this stuff somewhere else
-heat_sources = ['IDEAL_HVAC_HEATING',
-                'PEOPLE_HEATING',
-                'LIGHT_HEATING',
-                'WINDOWS_HEATING',
-                'OPAQUE_SURFACE_HEATING',
-                'INFILTRATION_HEATING_NRJ',
+heat_sources = ['HEATING_RATE',
+                'PEOPLE_HEATING_RATE',
+                'LIGHTING_HEATING_RATE',
+                'EQUIPMENT_HEATING_RATE',
+                'WINDOWS_HEATING_RATE',
+                'OPAQUE_SURFACE_HEATING_RATE',
+                'INFILTRATION_HEATING_RATE',
                 ]            
 
 class HeatGainPie(DataPlotter):
@@ -36,7 +37,7 @@ class HeatGainPie(DataPlotter):
         
         Data is returned as a dict:
 
-        {'IDEAL_HVAC_HEATING':value,
+        {'HEATING_RATE':value,
          'PEOPLE_HEATING':value,
          ...
         }

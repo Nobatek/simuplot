@@ -14,7 +14,7 @@ from .datareader import DataReader, DataReaderReadError
 class EnergyPlus(DataReader):
     """Reads Energy Plus data files"""
 
-    # Variable type translations
+    # Data type translations
     # TODO: Complete. Externalize in some config file ?
     DataTypes = {
         # Climate
@@ -23,25 +23,23 @@ class EnergyPlus(DataReader):
         'Outdoor Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
         'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
         'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
-        # Zone Ambient
+        # Zone
         'Mean Air Temperature':'AIR_DRYBULB_TEMPERATURE',
         'Mean Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
         'Operative Temperature':'OPERATIVE_TEMPERATURE',
-        # Zone Ideal loads system
-        #   - ideal heating coil heat needs
-        'Ideal Loads Supply Air Total Heating Rate':'IDEAL_HEATING_COIL',
-        #   - Cooling gains from outdoor air plus cooling coil (sensible+latent)
-        'Ideal Loads Zone Total Cooling Rate':'IDEAL_HVAC_COOLING',
-        #   - heating gains from outdoor air plus heating coil (sensible+latent)
-        'Ideal Loads Zone Total Heating Rate':'IDEAL_HVAC_HEATING',
+        # Zone loads
+        'Ideal Loads Supply Air Total Heating Rate':'HEATING_RATE',
+        'Ideal Loads Supply Air Total Cooling Rate':'COOLING_RATE',
         # Zone behaviour
         'People Occupant Count':'PEOPLE_COUNT',
         # Zone heat gains
-        'People Total Heating Rate':'PEOPLE_HEATING',
-        'Lights Total Heating Rate':'LIGHT_HEATING',
-        'Windows Total Transmitted Solar Radiation Rate':'WINDOWS_HEATING',
-        'Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING',
-        'Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING_NRJ',
+        'People Total Heating Rate':'PEOPLE_HEATING_RATE',
+        'Lights Total Heating Rate':'LIGHTING_HEATING_RATE',
+        # TODO: Gas, Hot Water, Steam, Other Equipment
+        'Electric Equipment Total Heating Rate':'EQUIPMENT_HEATING_RATE',
+        'Windows Total Heat Gain Rate':'WINDOWS_HEATING_RATE',
+        'Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING_RATE',
+        'Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING_RATE',
     }
     # Unit translations
     DataUnits = {
