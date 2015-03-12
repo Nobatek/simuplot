@@ -72,7 +72,7 @@ class HeatGainPie(DataPlotter):
         
         super(HeatGainPie, self).__init__(building, color_chart)
 
-        self._name = self.tr("Heat gain sources")
+        self._name = self.tr("Heat gains per source")
         
         # Results dict
         self._heat_build_zone = None
@@ -83,8 +83,8 @@ class HeatGainPie(DataPlotter):
 
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels([self.tr('Heat sources'), 
-                                                      self.tr('Heat gains [kWh]')])
+        self._table_widget.setHorizontalHeaderLabels(
+            [self.tr('Heat sources'), self.tr('Heat gains [kWh]')])
         self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
             
@@ -216,7 +216,7 @@ class HeatGainPie(DataPlotter):
             canvas.axes.axis('equal')
 
             # Set title
-            title_str = self.tr('Building heat gains repartition')
+            title_str = self.tr('Heat gains repartition')
             title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
