@@ -209,7 +209,7 @@ class HeatGainPie(DataPlotter):
             # Create pie chart
             # (Make zone heat need non dimensional to avoid pie expansion)
             canvas.axes.pie(np.array(value_plot) / sum_value,
-                            labels=names_plot,
+                            labels=name_plot,
                             colors=self._color_chart, autopct='%1.1f%%',
                             shadow=False, startangle=90,)
             canvas.axes.axis('equal')
