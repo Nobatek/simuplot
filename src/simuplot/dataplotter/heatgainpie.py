@@ -11,13 +11,16 @@ from .dataplotter import DataPlotter
 
 from simuplot.data import DataZoneError
 
+# Une translate() to translate strings outside of QObject instances
+translate = QtCore.QCoreApplication.translate
+
 # TODO: This module is broken if start date is not January 1st
 # The simulation length must be one year, and the period 'HOUR'
 # Should this be made more generic ?
-periods = {'Annual' : [[0,8760]],
-           'Summer' : [[2879,6553]],
-           'Winter' : [[0,2779],[6553,8760]],
-           }
+periods = [(translate('HeatGainPie', 'Year'), [[0,8760]]),
+           (translate('HeatGainPie', 'Summer'), [[2879,6553]]),
+           (translate('HeatGainPie', 'Winter'), [[0,2779],[6553,8760]]),
+           ]
 
 # TODO: put this stuff somewhere else
 heat_sources = ['HEATING_RATE',
@@ -59,7 +62,7 @@ class HeatGainPie(DataPlotter):
         # summing all intervals of the period
         # (Thanks to 2D array, all sources are processed at once)
         gain_per_source = np.zeros(len(heat_sources))
-        for inter in periods[study_period]:
+        for inter in study_period:
             # Extract values for interval
             inter_val = full_year[:,inter[0]:inter[1]]
             # Sum gain for interval and add it to total
@@ -99,9 +102,9 @@ class HeatGainPie(DataPlotter):
             self._table_widget.setItem(i, 0, name_item)
             
         # Set PeriodcomboBox
-        for dat in periods:
-            self.PeriodcomboBox.addItem(dat)
-            
+        for per in periods:
+            self.PeriodcomboBox.addItem(self.tr(per[0]))
+
         # Refresh data when PeriodcomboBox is activated
         self.PeriodcomboBox.activated.connect(
             self.refresh_data)
@@ -133,7 +136,7 @@ class HeatGainPie(DataPlotter):
         self.BuildcomboBox.setCurrentIndex(self.BuildcomboBox.count() - 1)
         
         # Get the study period from combobox
-        study_period = str(self.PeriodcomboBox.currentText())
+        study_period = periods[self.PeriodcomboBox.currentIndex()][1]
 
         # Compute heat gain per source in each zone
         self._heat_build_zone = {}

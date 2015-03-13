@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<!DOCTYPE TS><TS version="2.0" language="fr_FR" sourcelanguage="">
 <context>
     <name>Building</name>
     <message>
@@ -126,7 +125,32 @@
     </message>
 </context>
 <context>
-    <name>Form</name>
+    <name>HeatGainPie</name>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="89"/>
+        <source>Heat sources</source>
+        <translation>Sources d&apos;apport</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="89"/>
+        <source>Heat gains [kWh]</source>
+        <translation>gain [kWh]</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="135"/>
+        <source>Building</source>
+        <translation>Bâtiment</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="78"/>
+        <source>Heat gains per source</source>
+        <translation>Gains par source</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="222"/>
+        <source>Heat gains repartition</source>
+        <translation>Répartition des gains</translation>
+    </message>
     <message>
         <location filename="resources/ui/dataplotter/heatgainpie.ui" line="29"/>
         <source>Period</source>
@@ -137,33 +161,20 @@
         <source>Zone or whole building</source>
         <translation>Zone ou bâtiment entier</translation>
     </message>
-</context>
-<context>
-    <name>HeatGainPie</name>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="86"/>
-        <source>Heat sources</source>
-        <translation>Sources d&apos;apport</translation>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="20"/>
+        <source>Year</source>
+        <translation>Année complète</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="86"/>
-        <source>Heat gains [kWh]</source>
-        <translation>gain [kWh]</translation>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="21"/>
+        <source>Summer</source>
+        <translation>Été</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="132"/>
-        <source>Building</source>
-        <translation>Bâtiment</translation>
-    </message>
-    <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="75"/>
-        <source>Heat gains per source</source>
-        <translation>Gains par source</translation>
-    </message>
-    <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="219"/>
-        <source>Heat gains repartition</source>
-        <translation>Répartition des gains</translation>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="22"/>
+        <source>Winter</source>
+        <translation>Hiver</translation>
     </message>
 </context>
 <context>
@@ -192,7 +203,7 @@
         <translation>Chargement du fichier de données : {}</translation>
     </message>
 </context>
-<context>
+<context encoding="UTF-8">
     <name>ThermalComfHistog</name>
     <message>
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="67"/>
@@ -234,12 +245,12 @@
         <source>Summer thermal comfort</source>
         <translation>Confort thermique d&apos;été</translation>
     </message>
-    <message utf8="true">
+    <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="79"/>
         <source>Max temp [°C]</source>
         <translation>Température maximale [°C]</translation>
     </message>
-    <message utf8="true">
+    <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="251"/>
         <source>% time beyond {}°C</source>
         <translation>% de temps au-delà de {}°C</translation>
