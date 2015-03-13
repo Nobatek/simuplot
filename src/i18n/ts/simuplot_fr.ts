@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="fr_FR" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="fr_FR">
 <context>
     <name>Building</name>
     <message>
@@ -127,27 +128,27 @@
 <context>
     <name>HeatGainPie</name>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="89"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="87"/>
         <source>Heat sources</source>
         <translation>Sources d&apos;apport</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="89"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="87"/>
         <source>Heat gains [kWh]</source>
         <translation>gain [kWh]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="135"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="133"/>
         <source>Building</source>
         <translation>Bâtiment</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="78"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="67"/>
         <source>Heat gains per source</source>
         <translation>Gains par source</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="222"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="220"/>
         <source>Heat gains repartition</source>
         <translation>Répartition des gains</translation>
     </message>
@@ -162,17 +163,17 @@
         <translation>Zone ou bâtiment entier</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="20"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="73"/>
         <source>Year</source>
         <translation>Année complète</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="21"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="74"/>
         <source>Summer</source>
         <translation>Été</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="22"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="75"/>
         <source>Winter</source>
         <translation>Hiver</translation>
     </message>
@@ -203,7 +204,7 @@
         <translation>Chargement du fichier de données : {}</translation>
     </message>
 </context>
-<context encoding="UTF-8">
+<context>
     <name>ThermalComfHistog</name>
     <message>
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="67"/>
@@ -245,12 +246,12 @@
         <source>Summer thermal comfort</source>
         <translation>Confort thermique d&apos;été</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="79"/>
         <source>Max temp [°C]</source>
         <translation>Température maximale [°C]</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="251"/>
         <source>% time beyond {}°C</source>
         <translation>% de temps au-delà de {}°C</translation>
