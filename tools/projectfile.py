@@ -78,7 +78,7 @@ class ProjectFileManager(object):
         # TRANSLATIONS
         pf.write('TRANSLATIONS = ')
         for l in languages:
-            pf.write(join(ts_files_relpath, project + '_' + l + '.ts'))
+            pf.write(join(ts_files_relpath, project + '_' + l + '.ts '))
         pf.write('\n')
 
         pf.close()
