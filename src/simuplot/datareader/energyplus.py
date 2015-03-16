@@ -159,7 +159,7 @@ class EnergyPlus(DataReader):
         # Use a regular expression pattern to match column heads
         # Warning: this regexp is broken by files with "DistrictHeating"
         pattern = re.compile(r"""
-            (?P<item_name>.*)?      # Item name
+            (?P<item_name>.*)       # Item name
             :                       # Colon
             (?P<item_type>[^ ]*)    # Item type (Zone, Site, etc)
             \                       # 1 whitespace
