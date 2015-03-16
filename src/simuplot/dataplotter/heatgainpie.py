@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 
 from .dataplotter import DataPlotter
 
-from simuplot.data import DataZoneError
+from simuplot.data import DataTypes, DataZoneError
 
 # TODO: This module is broken if start date is not January 1st
 # The simulation length must be one year, and the period 'HOUR'
@@ -27,7 +27,7 @@ heat_sources = ['HEATING_RATE',
                 'LIGHTING_HEATING_RATE',
                 'EQUIPMENT_HEATING_RATE',
                 'WINDOWS_HEATING_RATE',
-                'OPAQUE_SURFACE_HEATING_RATE',
+                'OPAQUE_SURFACES_HEATING_RATE',
                 'INFILTRATION_HEATING_RATE',
                 ]            
 
@@ -93,7 +93,10 @@ class HeatGainPie(DataPlotter):
         # Initialize table with one row per heat source with checkbox
         self._table_widget.setRowCount(len(heat_sources))
         for i, val in enumerate(heat_sources) :
-            name_item = QtGui.QTableWidgetItem(val)
+            # DataTypes is a dict of type:(unit, string)
+            hs_name = QtCore.QCoreApplication.translate(
+                'Data', DataTypes[val][1])
+            name_item = QtGui.QTableWidgetItem(hs_name)
             name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                            QtCore.Qt.ItemIsEnabled)
             name_item.setCheckState(QtCore.Qt.Checked)

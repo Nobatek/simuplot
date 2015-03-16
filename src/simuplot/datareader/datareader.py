@@ -34,8 +34,9 @@ class DataReader(QtGui.QWidget):
     
     # Unit conversions
     # If expected unit is provided, conversion is identity
-    conversions = {data_type:{data_unit:lambda x:x}
-        for data_type, data_unit in DataTypes.iteritems()}
+    # DataTypes is a dict of type:(unit, string)
+    conversions = {data_type:{data_props[0]:lambda x:x}
+        for data_type, data_props in DataTypes.iteritems()}
     # Otherwise, specify conversion
     conversions['AIR_DRYBULB_TEMPERATURE']['°F'] = F_to_C
     conversions['AIR_WETBULB_TEMPERATURE']['°F'] = F_to_C

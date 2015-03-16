@@ -4,22 +4,22 @@
 <context>
     <name>Building</name>
     <message>
-        <location filename="simuplot/data.py" line="152"/>
+        <location filename="simuplot/data.py" line="169"/>
         <source>Zone {} not in Building</source>
         <translation>Pas de Zone {} dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="140"/>
+        <location filename="simuplot/data.py" line="157"/>
         <source>Zone {} already in Building</source>
         <translation>Zone {} déjà présente dans le Building</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="161"/>
+        <location filename="simuplot/data.py" line="178"/>
         <source>Environment zone already in Building</source>
         <translation>Zone Environnement déjà présente dans le Building </translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="165"/>
+        <location filename="simuplot/data.py" line="182"/>
         <source>Environment</source>
         <translation>Environnement</translation>
     </message>
@@ -58,49 +58,122 @@
     </message>
 </context>
 <context>
+    <name>Data</name>
+    <message>
+        <location filename="simuplot/data.py" line="11"/>
+        <source>Air dry-bulb temperature</source>
+        <translation>Température sèche</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="13"/>
+        <source>Air wet-bulb temperature</source>
+        <translation>Température humide</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="15"/>
+        <source>Relative humidity</source>
+        <translation>Humidité relative</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="17"/>
+        <source>Operative temperature</source>
+        <translation>Température opérative</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="19"/>
+        <source>Diffuse solar radiation</source>
+        <translation>Radiation solaire diffuse</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="21"/>
+        <source>Direct solar radiation</source>
+        <translation>Radiation solaire directe</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="23"/>
+        <source>Heating rate</source>
+        <translation>Chauffage</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="25"/>
+        <source>Cooling rate</source>
+        <translation>Rafraîchissement</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="29"/>
+        <source>People heating rate</source>
+        <translation>Apports par les occupants</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="31"/>
+        <source>Lighting heating rate</source>
+        <translation>Apports par l&apos;éclairage</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="33"/>
+        <source>Equipment heating rate</source>
+        <translation>Apports par les équipements</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="35"/>
+        <source>Windows heating rate</source>
+        <translation>Apports par les fenêtres</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="37"/>
+        <source>Opaque surfaces heating rate</source>
+        <translation>Apports par les surfaces opaques</translation>
+    </message>
+    <message>
+        <location filename="simuplot/data.py" line="39"/>
+        <source>Infiltrations heating rate</source>
+        <translation>Apports par les infiltrations</translation>
+    </message>
+</context>
+<context>
     <name>EnergyPlus</name>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="112"/>
+        <location filename="simuplot/datareader/energyplus.py" line="129"/>
         <source>[Error] {}</source>
         <translation>[Erreur] {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="126"/>
+        <location filename="simuplot/datareader/energyplus.py" line="143"/>
         <source>Wrong filepath: {}</source>
         <translation>Chemin de fichier incorrect : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="129"/>
+        <location filename="simuplot/datareader/energyplus.py" line="146"/>
         <source>Unauthorized characters in data file</source>
         <translation>Caractère illicite dans le fichier de donnée</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="168"/>
+        <location filename="simuplot/datareader/energyplus.py" line="185"/>
         <source>Invalid file header: {}, E+ file begins with &apos;Date/Time&apos;</source>
         <translation>En-tête de fichier invalide : {}, les fichiers E+ commencent par &apos;Date/Time&apos;</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="185"/>
+        <location filename="simuplot/datareader/energyplus.py" line="202"/>
         <source>Misformed column head: &quot;{}&quot;</source>
         <translation>Tête de colonne mal formée : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="200"/>
+        <location filename="simuplot/datareader/energyplus.py" line="217"/>
         <source>[Warning] Unknown data type: {}</source>
         <translation>[Avertissement] Type de donnée inconnu : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="248"/>
+        <location filename="simuplot/datareader/energyplus.py" line="265"/>
         <source>Unknown period {}</source>
         <translation>Période inconnue {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="267"/>
+        <location filename="simuplot/datareader/energyplus.py" line="284"/>
         <source>Misformed line: {}</source>
         <translation>Ligne mal formée : {}</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="276"/>
+        <location filename="simuplot/datareader/energyplus.py" line="293"/>
         <source>Invalid value in line: {}</source>
         <translation>Valeur non valide dans la ligne : {}</translation>
     </message>
@@ -115,12 +188,12 @@
         <translation>Parcourir</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="211"/>
+        <location filename="simuplot/datareader/energyplus.py" line="228"/>
         <source>[Warning] Unknown unit: [{}]</source>
         <translation>[Avertissement] Unité inconnue [{}]</translation>
     </message>
     <message>
-        <location filename="simuplot/datareader/energyplus.py" line="289"/>
+        <location filename="simuplot/datareader/energyplus.py" line="306"/>
         <source>[Warning] Unexpected unit [{}] for data type {}</source>
         <translation>[Avertissement] Unité inattendue [{}] pour le type de donnée {}</translation>
     </message>
@@ -135,10 +208,10 @@
     <message>
         <location filename="simuplot/dataplotter/heatgainpie.py" line="88"/>
         <source>Heat gains [kWh]</source>
-        <translation>gain [kWh]</translation>
+        <translation>Gain [kWh]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="134"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="137"/>
         <source>Building</source>
         <translation>Bâtiment</translation>
     </message>
@@ -148,7 +221,7 @@
         <translation>Gains par source</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="221"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="224"/>
         <source>Heat gains repartition</source>
         <translation>Répartition des gains</translation>
     </message>
@@ -280,17 +353,17 @@
 <context>
     <name>Variable</name>
     <message>
-        <location filename="simuplot/data.py" line="43"/>
+        <location filename="simuplot/data.py" line="60"/>
         <source>Incorrect data type {}</source>
         <translation>Type de donnée incorrect {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="87"/>
+        <location filename="simuplot/data.py" line="104"/>
         <source>Incorrect sample period {}</source>
         <translation>Période d&apos;échantillonnage incorrecte {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="77"/>
+        <location filename="simuplot/data.py" line="94"/>
         <source>No value for sample period {}</source>
         <translation>Pas de valeur pour la période déchantillonnage {}</translation>
     </message>
@@ -298,27 +371,27 @@
 <context>
     <name>Zone</name>
     <message>
-        <location filename="simuplot/data.py" line="248"/>
+        <location filename="simuplot/data.py" line="265"/>
         <source>Variable {} not in Zone {}</source>
         <translation>Pas de Variable {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="218"/>
+        <location filename="simuplot/data.py" line="235"/>
         <source>Variable {} already in Zone {}</source>
         <translation>Variable {} déjà dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="258"/>
+        <location filename="simuplot/data.py" line="275"/>
         <source>No {} data for {} in Zone {}</source>
         <translation>Pas de donnée {} dans la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="277"/>
+        <location filename="simuplot/data.py" line="294"/>
         <source> while setting values for {} in Zone {}</source>
         <translation>en affectant les valeurs de {} à la Zone {}</translation>
     </message>
     <message>
-        <location filename="simuplot/data.py" line="254"/>
+        <location filename="simuplot/data.py" line="271"/>
         <source>while getting values for {} in Zone {}</source>
         <translation>en lisant les valeurs de {} de la Zone {}</translation>
     </message>

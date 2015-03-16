@@ -18,28 +18,45 @@ class EnergyPlus(DataReader):
     # TODO: Complete. Externalize in some config file ?
     DataTypes = {
         # Climate
-        'Outdoor Air Drybulb Temperature':'AIR_DRYBULB_TEMPERATURE',
-        'Outdoor Air Wetbulb Temperature':'AIR_WETBULB_TEMPERATURE',
-        'Outdoor Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
-        'Diffuse Solar Radiation Rate per Area':'DIFFUSE_SOLAR_RADIATION',
-        'Direct Solar Radiation Rate per Area':'DIRECT_SOLAR_RADIATION',
+        'Outdoor Air Drybulb Temperature':
+            'AIR_DRYBULB_TEMPERATURE',
+        'Outdoor Air Wetbulb Temperature':
+            'AIR_WETBULB_TEMPERATURE',
+        'Outdoor Air Humidity Ratio':
+            'AIR_HUMIDITY_RATIO',
+        'Diffuse Solar Radiation Rate per Area':
+            'DIFFUSE_SOLAR_RADIATION',
+        'Direct Solar Radiation Rate per Area':
+            'DIRECT_SOLAR_RADIATION',
         # Zone
-        'Mean Air Temperature':'AIR_DRYBULB_TEMPERATURE',
-        'Mean Air Humidity Ratio':'AIR_HUMIDITY_RATIO',
-        'Operative Temperature':'OPERATIVE_TEMPERATURE',
+        'Mean Air Temperature':
+            'AIR_DRYBULB_TEMPERATURE',
+        'Mean Air Humidity Ratio':
+            'AIR_HUMIDITY_RATIO',
+        'Operative Temperature':
+            'OPERATIVE_TEMPERATURE',
         # Zone loads
-        'Ideal Loads Supply Air Total Heating Rate':'HEATING_RATE',
-        'Ideal Loads Supply Air Total Cooling Rate':'COOLING_RATE',
+        'Ideal Loads Supply Air Total Heating Rate':
+            'HEATING_RATE',
+        'Ideal Loads Supply Air Total Cooling Rate':
+            'COOLING_RATE',
         # Zone behaviour
-        'People Occupant Count':'PEOPLE_COUNT',
+        'People Occupant Count':
+            'PEOPLE_COUNT',
         # Zone heat gains
-        'People Total Heating Rate':'PEOPLE_HEATING_RATE',
-        'Lights Total Heating Rate':'LIGHTING_HEATING_RATE',
+        'People Total Heating Rate':
+            'PEOPLE_HEATING_RATE',
+        'Lights Total Heating Rate':
+            'LIGHTING_HEATING_RATE',
         # TODO: Gas, Hot Water, Steam, Other Equipment
-        'Electric Equipment Total Heating Rate':'EQUIPMENT_HEATING_RATE',
-        'Windows Total Heat Gain Rate':'WINDOWS_HEATING_RATE',
-        'Opaque Surface Inside Faces Total Conduction Heat Gain Rate':'OPAQUE_SURFACE_HEATING_RATE',
-        'Infiltration Total Heat Gain Energy':'INFILTRATION_HEATING_RATE',
+        'Electric Equipment Total Heating Rate':
+            'EQUIPMENT_HEATING_RATE',
+        'Windows Total Heat Gain Rate':
+            'WINDOWS_HEATING_RATE',
+        'Opaque Surface Inside Faces Total Conduction Heat Gain Rate':
+            'OPAQUE_SURFACES_HEATING_RATE',
+        'Infiltration Total Heat Gain Energy':
+            'INFILTRATION_HEATING_RATE',
     }
     # Unit translations
     DataUnits = {

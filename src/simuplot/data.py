@@ -4,22 +4,39 @@ import numpy as np
 
 from PyQt4 import QtCore
 
+from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
+
 DataTypes = {
-    'AIR_DRYBULB_TEMPERATURE':'°C',
-    'AIR_WETBULB_TEMPERATURE':'°C',
-    'AIR_HUMIDITY_RATIO':'%',
-    'OPERATIVE_TEMPERATURE':'°C',
-    'DIFFUSE_SOLAR_RADIATION':'W/m2',
-    'DIRECT_SOLAR_RADIATION':'W/m2',
-    'HEATING_RATE':'W',
-    'COOLING_RATE':'W',
-    'PEOPLE_COUNT':'',
-    'PEOPLE_HEATING_RATE':'W',
-    'LIGHTING_HEATING_RATE':'W',
-    'EQUIPMENT_HEATING_RATE':'W',
-    'WINDOWS_HEATING_RATE':'W',
-    'OPAQUE_SURFACE_HEATING_RATE':'W',
-    'INFILTRATION_HEATING_RATE':'W',
+    'AIR_DRYBULB_TEMPERATURE':
+        ('°C', translate('Data', 'Air dry-bulb temperature')),
+    'AIR_WETBULB_TEMPERATURE':
+        ('°C', translate('Data', 'Air wet-bulb temperature')),
+    'AIR_HUMIDITY_RATIO':
+        ('%', translate('Data', 'Relative humidity')),
+    'OPERATIVE_TEMPERATURE':
+        ('°C', translate('Data', 'Operative temperature')),
+    'DIFFUSE_SOLAR_RADIATION':
+        ('W/m2', translate('Data', 'Diffuse solar radiation')),
+    'DIRECT_SOLAR_RADIATION':
+        ('W/m2', translate('Data', 'Direct solar radiation')),
+    'HEATING_RATE':
+        ('W', translate('Data', 'Heating rate')),
+    'COOLING_RATE':
+        ('W', translate('Data', 'Cooling rate')),
+    'PEOPLE_COUNT':
+        ('', translate('Data', 'People count')),
+    'PEOPLE_HEATING_RATE':
+        ('W', translate('Data', 'People heating rate')),
+    'LIGHTING_HEATING_RATE':
+        ('W', translate('Data', 'Lighting heating rate')),
+    'EQUIPMENT_HEATING_RATE':
+        ('W', translate('Data', 'Equipment heating rate')),
+    'WINDOWS_HEATING_RATE':
+        ('W', translate('Data', 'Windows heating rate')),
+    'OPAQUE_SURFACES_HEATING_RATE':
+        ('W', translate('Data', 'Opaque surfaces heating rate')),
+    'INFILTRATION_HEATING_RATE':
+        ('W', translate('Data', 'Infiltrations heating rate')),
 }
 
 DataPeriods = [
