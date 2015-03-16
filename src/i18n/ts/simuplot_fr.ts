@@ -128,27 +128,27 @@
 <context>
     <name>HeatGainPie</name>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="87"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="88"/>
         <source>Heat sources</source>
         <translation>Sources d&apos;apport</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="87"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="88"/>
         <source>Heat gains [kWh]</source>
         <translation>gain [kWh]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="133"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="134"/>
         <source>Building</source>
         <translation>Bâtiment</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="67"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="77"/>
         <source>Heat gains per source</source>
         <translation>Gains par source</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="220"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="221"/>
         <source>Heat gains repartition</source>
         <translation>Répartition des gains</translation>
     </message>
@@ -163,17 +163,17 @@
         <translation>Zone ou bâtiment entier</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="73"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="19"/>
         <source>Year</source>
         <translation>Année complète</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="74"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="20"/>
         <source>Summer</source>
         <translation>Été</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="75"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="21"/>
         <source>Winter</source>
         <translation>Hiver</translation>
     </message>
