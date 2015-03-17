@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import numpy as np
 
 from PyQt4 import QtCore
@@ -268,9 +270,10 @@ class Zone(QtCore.QObject):
         try:
             return var.get_values(period)
         except DataVariablePeriodError as e:
-            raise DataZoneError(e + self.tr(
-                'while getting values for {} in Zone {}'
-                ).format(data_type, self._name).encode('utf-8'))
+            unic_e = str(e).decode('utf-8')
+            raise DataZoneError(self.tr(
+                '{} while getting values for {} in Zone {}'
+                ).format(unic_e, data_type, self._name).encode('utf-8'))
         except DataVariableNoValueError:
             raise DataZoneError(self.tr(
                 'No {} data for {} in Zone {}'
@@ -291,9 +294,10 @@ class Zone(QtCore.QObject):
         try:
             var.set_values(period, array)
         except DataVariablePeriodError as e:
-            raise DataZoneError(str(e) + self.tr(
-                ' while setting values for {} in Zone {}'
-                ).format(data_type, self._name).encode('utf-8'))
+            unic_e = str(e).decode('utf-8')
+            raise DataZoneError(self.tr(
+                '{} while setting values for {} in Zone {}'
+                ).format(unic_e, data_type, self._name).encode('utf-8'))
 
 # class Surface(QtCore.QObject):
 #     """Defines an enveloppe element through which heat is loss"""

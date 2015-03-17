@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # List all plotter widget classes
 
 # To add a new plotter, add a .py file to the dataplotter directory
@@ -7,6 +9,8 @@
 # Each plotter should have 
 # - a "name" attribute
 # - a "refresh data" slot
+
+from __future__ import unicode_literals
 
 from consperzonepie import ConsPerZonePie
 from thermalcomfhistog import ThermalComfHistog

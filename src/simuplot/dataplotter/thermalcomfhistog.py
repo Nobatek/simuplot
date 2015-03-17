@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
 from __future__ import division
 
 from PyQt4 import QtCore, QtGui
@@ -15,10 +17,10 @@ rt_climatic_zone = {'H1a - H1b - H2a - H2b':[2,1],
                     }
                     
 hqe_tmax_per_usage = {
-    u'Bureau - Enseignement':28,
-    u'Hôtel':26,
-    u'Commun - Circulation commerce et baignade':30,
-    u'Entrepôts':35,
+    'Bureau - Enseignement':28,
+    'Hôtel':26,
+    'Commun - Circulation commerce et baignade':30,
+    'Entrepôts':35,
     }
 
 

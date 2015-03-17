@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
 from __future__ import division
 
 from PyQt4 import QtCore, QtGui
@@ -42,14 +44,14 @@ class ConsPerZonePie(DataPlotter):
 
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels([self.tr('Zone'), 
-                                                      self.tr('Heat need [kWh]')])
-        self._table_widget.horizontalHeader().setResizeMode( \
+        self._table_widget.setHorizontalHeaderLabels(
+            [self.tr('Zone'), self.tr('Heat need [kWh]')])
+        self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
  
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect( \
+        self._table_widget.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
 
     @property

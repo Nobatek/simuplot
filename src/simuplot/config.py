@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 NBK_color_chart = 16 * ['#E36C09','#7F7F7F','#1F497D','#A5A5A5','#F79646','#FAC08F']
 
 class Config(object):

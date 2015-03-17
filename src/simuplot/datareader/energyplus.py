@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import os
 
 import csv
@@ -126,7 +128,8 @@ class EnergyPlus(DataReader):
         except DataReaderReadError as e:
             # Error reading file. Clean Building and signal error.
             self._building.clean()
-            self.dataLoadError.emit(self.tr("[Error] {}").format(e))
+            unic_e = str(e).decode('utf-8')
+            self.dataLoadError.emit(self.tr("[Error] {}").format(unic_e))
         else:
             # Signal data was loaded
             # Return last message in queue
@@ -147,12 +150,10 @@ class EnergyPlus(DataReader):
                 "Unauthorized characters in data file").encode('utf-8'))
         
         # Create CSV reader, store file size to track progress while reading
-        csv_reader = csv.reader(csv_file, delimiter=",")
+        # TODO: Unicode files ? (https://docs.python.org/2/library/csv.html)
+        csv_reader = csv.reader(csv_file, delimiter=b",")
         file_size = os.path.getsize(file_path)
         
-        # Get header line
-        header = next(csv_reader)
-    
         # Except for the first ('Date/Time'), 
         # each column head should be of the form
         # ZONE_NAME:Variable Name [Unit](Periodicity)
@@ -177,14 +178,17 @@ class EnergyPlus(DataReader):
         # During the reading, store data in simple lists.
         tmp_variables = []
         
+        # Get header line
+        header = [unicode(h, 'utf-8') for h in next(csv_reader)]
+    
         # Remove first column header ('Date/Time')
         # Incidentally check the file is an E+ file
         try:
             header.remove('Date/Time')
         except ValueError :
             raise DataReaderReadError(self.tr(
-                "Invalid file header: {}, E+ file begins with 'Date/Time'"
-                ).format(header).encode('utf-8'))
+                "Invalid file header: '{},...', E+ file begins with 'Date/Time'"
+                ).format(header[0]).encode('utf-8'))
         
         # Go through all columns heads
         for head in header:
@@ -277,6 +281,8 @@ class EnergyPlus(DataReader):
 
             # Skip first column ('Date/Time')
             vals = row[1:]
+            # No need to encode as UTF-8 considering following operations
+            #vals = [unicode(c, 'utf-8') for c in row[1:]]
 
             # Check correct number of values in the line
             # This is broken if file contains "DistrictHeating"
@@ -305,7 +311,7 @@ class EnergyPlus(DataReader):
                 except KeyError:
                     messages.append(self.tr(
                         '[Warning] Unexpected unit [{}] for data type {}'
-                        ).format(data_unit, data_type).encode('utf-8'))
+                        ).format(data_unit, data_type))
                     continue
                 data_array = conv_func(np.array(tmp_variables[i]))
                 # TODO: check there is not data already 
