@@ -13,8 +13,9 @@
 from __future__ import unicode_literals
 from __future__ import division
 from __future__ import print_function
+from __future__ import absolute_import
 
-from energyplus import EnergyPlus
+from .energyplus import EnergyPlus
 
 readers = [
     EnergyPlus,
