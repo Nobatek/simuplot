@@ -15,6 +15,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+from .dataplotter import DataPlotter
 from .consperzonepie import ConsPerZonePie
 from .thermalcomfhistog import ThermalComfHistog
 from .heatgainpie import HeatGainPie

@@ -45,7 +45,7 @@ if __name__ == "__main__":
     timer.start(100)
     timer.timeout.connect(lambda: None)  
 
-    mySW = MainWindow()
+    mySW = MainWindow(app)
     mySW.show()
 
     sys.exit(app.exec_())

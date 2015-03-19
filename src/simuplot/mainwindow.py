@@ -19,9 +19,12 @@ from .data import Building
 
 class MainWindow(QtGui.QMainWindow):
     
-    def __init__(self):
+    def __init__(self, app):
 
         super(MainWindow, self).__init__()
+
+        # Application
+        self._app = app
 
         # Get parameters
         self._config = Config()
@@ -45,6 +48,9 @@ class MainWindow(QtGui.QMainWindow):
             # Connect signals to status bar
             p.warning.connect(self.statusBar().warning)
 
+        # Disable all plotter tabs
+        self.setPlotTabsEnabled(False)
+
         # Instantiate all reader widgets and add them to stacked widget
         for reader in dr.readers:
             r = reader(self._building)
@@ -67,14 +73,31 @@ class MainWindow(QtGui.QMainWindow):
         self.comboBox.activated.connect(
             self.stackedWidget.setCurrentIndex)
 
-        # Disable all tabs
-        self.setPlotTabsEnabled(False)
+        # Connect menu signals
+        self.actionCopyPlotToClipboard.triggered.connect(
+            self.copyPlotToClipboard)
 
     def setPlotTabsEnabled(self, enable):
         """Enable/disable all plot tabs
         
             enable (bool): Disable or enable plot tabs
         """
-        for i in range(1, self.tabWidget.count()):
-            self.tabWidget.setTabEnabled(i, enable)
+        for i in range(self.tabWidget.count()):
+
+            w = self.tabWidget.currentWidget()
+
+            if isinstance(w, dp.DataPlotter):
+                self.tabWidget.setTabEnabled(i, enable)
+
+    def copyPlotToClipboard(self):
+        """Copy currently displayed plot to Clipboard"""
+
+        w = self.tabWidget.currentWidget()
+
+        # Current tab is not a plotter
+        if not isinstance(w, dp.DataPlotter):
+            return
+
+        pixmap = QtGui.QPixmap.grabWidget(w.plotW.canvas)
+        self._app.clipboard().setPixmap(pixmap)
 
