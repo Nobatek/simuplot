@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals
 from __future__ import division
+from __future__ import print_function
 
 from PyQt4 import QtCore, QtGui
 

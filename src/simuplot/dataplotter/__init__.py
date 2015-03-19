@@ -11,6 +11,8 @@
 # - a "refresh data" slot
 
 from __future__ import unicode_literals
+from __future__ import division
+from __future__ import print_function
 
 from consperzonepie import ConsPerZonePie
 from thermalcomfhistog import ThermalComfHistog
