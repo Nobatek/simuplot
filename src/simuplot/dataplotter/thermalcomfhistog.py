@@ -25,44 +25,7 @@ hqe_tmax_per_usage = {
     'Entrepôts':35,
     }
 
-
 class ThermalComfHistog(DataPlotter):
-
-    @staticmethod
-    def ComputeThermalComf(zone, ref_temp):
-    
-        try:
-            # Get variable OPERATIVE_TEMPERATURE in zone
-            # Get PEOPLE_COUNT to determine zone occupation status
-            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR')
-            nb_people = zone.get_values('PEOPLE_COUNT','HOUR')
-        except DataZoneError:
-            # TODO: log warning
-            # Return None as thermal confort % and None as max temperature
-            return None, None
-        else:
-            
-            # Create 0/1 presence scenario from nb_people
-            io_people = np.where(nb_people > 0, 1, 0)
-
-            # If occupation is always 0 (zone always empty),
-            # return None as thermal confort % and None as max temperature
-            nb_h_occup = np.count_nonzero(io_people)
-            if nb_h_occup == 0:
-                return None, None
-                             
-            # Create array of temperatures during occupation
-            occ_temp = io_people * op_temps
-            
-            # Determine maximum temperature during occupation
-            max_temp = np.amax(occ_temp)
-            
-            # Computing % of time when temperature is above reference temp
-            # according to HQE referential
-            pct_hqe = 100 * np.count_nonzero(occ_temp > ref_temp) / nb_h_occup
-                     
-            # Return % and maximum temperature in occupation [°C]
-            return round(float(pct_hqe),2), round(float(max_temp),1)
 
     def __init__(self, building, color_chart):
         
@@ -123,6 +86,41 @@ class ThermalComfHistog(DataPlotter):
     @property
     def name(self):
         return self._name
+
+    def ComputeThermalComf(self, zone, ref_temp):
+    
+        try:
+            # Get variable OPERATIVE_TEMPERATURE in zone
+            # Get PEOPLE_COUNT to determine zone occupation status
+            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR')
+            nb_people = zone.get_values('PEOPLE_COUNT','HOUR')
+        except DataZoneError:
+            # TODO: log warning
+            # Return None as thermal confort % and None as max temperature
+            return None, None
+        else:
+            
+            # Create 0/1 presence scenario from nb_people
+            io_people = np.where(nb_people > 0, 1, 0)
+
+            # If occupation is always 0 (zone always empty),
+            # return None as thermal confort % and None as max temperature
+            nb_h_occup = np.count_nonzero(io_people)
+            if nb_h_occup == 0:
+                return None, None
+                             
+            # Create array of temperatures during occupation
+            occ_temp = io_people * op_temps
+            
+            # Determine maximum temperature during occupation
+            max_temp = np.amax(occ_temp)
+            
+            # Computing % of time when temperature is above reference temp
+            # according to HQE referential
+            pct_hqe = 100 * np.count_nonzero(occ_temp > ref_temp) / nb_h_occup
+                     
+            # Return % and maximum temperature in occupation [°C]
+            return round(float(pct_hqe),2), round(float(max_temp),1)
 
     @QtCore.pyqtSlot()
     def refresh_data(self):

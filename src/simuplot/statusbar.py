@@ -61,3 +61,7 @@ class StatusBar(QtGui.QStatusBar):
         self._progress_bar.show()
         self._progress_bar.setValue(value)
 
+    @QtCore.pyqtSlot(unicode)
+    def warning(self, string):
+        self._norm_indic.setText(string)
+

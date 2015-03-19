@@ -19,6 +19,9 @@ class DataPlotter(QtGui.QWidget):
        Useless by itself. Implement in sub-clases
     """
     
+    # Signals
+    warning = QtCore.pyqtSignal(unicode)
+
     def __init__(self, building, color_chart):
         
         super(DataPlotter, self).__init__()

@@ -15,21 +15,6 @@ from simuplot.data import DataZoneError
 
 class ConsPerZonePie(DataPlotter):
 
-    @staticmethod
-    def ComputeZoneCons(zone):
-        try:
-            # Get HEATING_RATE values in zone
-            # For now this graph only works for ideal loads
-            # This will need to be changed when adding
-            # more complex heating systems
-            vals = zone.get_values('HEATING_RATE', 'HOUR')
-        except DataZoneError:
-            # TODO: log warning
-            return 0
-        else:
-            # Return total heat need [kWh]
-            return vals.sum() / 1000
-        
     def __init__(self, building, color_chart):
         
         super(ConsPerZonePie, self).__init__(building, color_chart)
@@ -60,6 +45,20 @@ class ConsPerZonePie(DataPlotter):
     def name(self):
         return self._name
 
+    def ComputeZoneCons(self, zone):
+        try:
+            # Get HEATING_RATE values in zone
+            # For now this graph only works for ideal loads
+            # This will need to be changed when adding
+            # more complex heating systems
+            vals = zone.get_values('HEATING_RATE', 'HOUR')
+        except DataZoneError:
+            # TODO: log warning
+            return 0
+        else:
+            # Return total heat need [kWh]
+            return vals.sum() / 1000
+        
     @QtCore.pyqtSlot()
     def refresh_data(self):
     

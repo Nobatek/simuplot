@@ -37,43 +37,6 @@ heat_sources = ['HEATING_RATE',
 
 class HeatGainPie(DataPlotter):
 
-    @staticmethod
-    def ComputeHeatGains(zone, study_period):
-        """Return heat gain for each source for the study period
-        
-        Data is returned as a dict:
-
-        {'HEATING_RATE':value,
-         'PEOPLE_HEATING':value,
-         ...
-        }
-        """
-        
-        # Initialize full_year_vals list containing all values for each source
-        full_year_vals = []
-        for hs in heat_sources:
-            # If hourly heat source data not available, "mark it zero, Donnie"
-            try:
-                full_year_vals.append(zone.get_values(hs, 'HOUR'))
-            except DataZoneError:
-                full_year_vals.append(np.zeros(8760))
-
-        # Store values as 2D numpy array
-        full_year = np.array(full_year_vals)
-
-        # Compute total gain [kWH] for each heat source
-        # summing all intervals of the period
-        # (Thanks to 2D array, all sources are processed at once)
-        gain_per_source = np.zeros(len(heat_sources))
-        for inter in study_period:
-            # Extract values for interval
-            inter_val = full_year[:,inter[0]:inter[1]]
-            # Sum gain for interval and add it to total
-            gain_per_source += inter_val.sum(axis=1)
-        
-        # Return results as a dictionary, with energy in [kWh]
-        return dict(zip(heat_sources, gain_per_source / 1000))
-
     def __init__(self, building, color_chart):
         
         super(HeatGainPie, self).__init__(building, color_chart)
@@ -127,6 +90,51 @@ class HeatGainPie(DataPlotter):
     @property
     def name(self):
         return self._name
+
+    def ComputeHeatGains(self, zone, study_period):
+        """Return heat gain for each source for the study period
+        
+        Data is returned as a dict:
+
+        {'HEATING_RATE':value,
+         'PEOPLE_HEATING':value,
+         ...
+        }
+        """
+        
+        # Initialize full_year_vals list containing all values for each source
+        full_year_vals = []
+        for hs in heat_sources:
+            # If hourly heat source data not available, "mark it zero, Donnie"
+            try:
+                vals = zone.get_values(hs, 'HOUR')
+            except DataZoneError:
+                vals = np.zeros(8760)
+            else:
+                # Only hourly year-long simulation data allowed
+                if vals.size != 8760:
+                    'test'
+                    self.warning.emit(self.tr(
+                        'Hourly {} data for Zone {} is not one year long'
+                        ).format(hs, zone.name))
+                    vals = np.zeros(8760)
+            full_year_vals.append(vals)
+
+        # Store values as 2D numpy array
+        full_year = np.array(full_year_vals)
+
+        # Compute total gain [kWH] for each heat source
+        # summing all intervals of the period
+        # (Thanks to 2D array, all sources are processed at once)
+        gain_per_source = np.zeros(len(heat_sources))
+        for inter in study_period:
+            # Extract values for interval
+            inter_val = full_year[:,inter[0]:inter[1]]
+            # Sum gain for interval and add it to total
+            gain_per_source += inter_val.sum(axis=1)
+        
+        # Return results as a dictionary, with energy in [kWh]
+        return dict(zip(heat_sources, gain_per_source / 1000))
 
     @QtCore.pyqtSlot()
     def refresh_data(self):

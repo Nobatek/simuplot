@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="fr_FR" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="fr_FR">
 <context>
     <name>Building</name>
     <message>
@@ -26,32 +27,32 @@
 <context>
     <name>ConsPerZonePie</name>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="37"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="22"/>
         <source>Energy heat need per zone</source>
         <translation>Besoin de chaleur par zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="49"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="34"/>
         <source>Zone</source>
         <translation>Zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="49"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="34"/>
         <source>Heat need [kWh]</source>
         <translation>Besoin de chaleur [kWh]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="134"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="133"/>
         <source>Invalid cons value type for row {} ({}): {}</source>
         <translation>Type de la valeur de conso invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="138"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="137"/>
         <source>Invalid cons value for row {} ({}): {}</source>
         <translation>Valeur de conso invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/consperzonepie.py" line="156"/>
+        <location filename="simuplot/dataplotter/consperzonepie.py" line="155"/>
         <source>Building heat need: {} [kWh]</source>
         <translation>Besoin de chaleur du bâtiment :{} [kWh]</translation>
     </message>
@@ -205,27 +206,27 @@
 <context>
     <name>HeatGainPie</name>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="92"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="55"/>
         <source>Heat sources</source>
         <translation>Sources d&apos;apport</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="92"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="55"/>
         <source>Heat gains [kWh]</source>
         <translation>Gain [kWh]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="141"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="149"/>
         <source>Building</source>
         <translation>Bâtiment</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="81"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="44"/>
         <source>Heat gains per source</source>
         <translation>Gains par source</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="228"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="236"/>
         <source>Heat gains repartition</source>
         <translation>Répartition des gains</translation>
     </message>
@@ -254,6 +255,11 @@
         <source>Winter</source>
         <translation>Hiver</translation>
     </message>
+    <message>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="117"/>
+        <source>Hourly {} data for Zone {} is not one year long</source>
+        <translation>La donnée horaire {} pour la Zone {} ne représente pas une année complète </translation>
+    </message>
 </context>
 <context>
     <name>MainWindow</name>
@@ -281,55 +287,55 @@
         <translation>Chargement du fichier de données : {}</translation>
     </message>
 </context>
-<context encoding="UTF-8">
+<context>
     <name>ThermalComfHistog</name>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="71"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="34"/>
         <source>Summer thermal comfort per zone</source>
         <translation>Confort thermique d&apos;été par zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="83"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="46"/>
         <source>Zone</source>
         <translation>Zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="83"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="46"/>
         <source>Discomfort[%]</source>
         <translation>Inconfort [%]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="205"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="203"/>
         <source>Invalid discomfort value type for row {} ({}): {}</source>
         <translation>Type de la valeur d&apos;inconfort invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="209"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="207"/>
         <source>Invalid discomfort value for row {} ({}): {}</source>
         <translation>Valeur d&apos;inconfort invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="264"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="262"/>
         <source>{:.1f}% TP level</source>
         <translation>{:.1f}% niveau TP</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="271"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="269"/>
         <source>{:.1f}% P level</source>
         <translation>{:.1f}% niveau P</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="286"/>
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="284"/>
         <source>Summer thermal comfort</source>
         <translation>Confort thermique d&apos;été</translation>
     </message>
-    <message encoding="UTF-8">
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="83"/>
+    <message utf8="true">
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="46"/>
         <source>Max temp [°C]</source>
         <translation>Température maximale [°C]</translation>
     </message>
-    <message encoding="UTF-8">
-        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="253"/>
+    <message utf8="true">
+        <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="251"/>
         <source>% time beyond {}°C</source>
         <translation>% de temps au-delà de {}°C</translation>
     </message>
