@@ -39,24 +39,24 @@ class StatusBar(QtGui.QStatusBar):
         else:
             self._perm_indic.setText(self.tr('No data loaded'))
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.pyqtSlot(unicode)
     def dataLoaded(self, string):
         self._set_data_loaded(True)
         self._norm_indic.setText(string)
         self._progress_bar.hide()
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.pyqtSlot(unicode)
     def dataLoadError(self, string):
         self._set_data_loaded(False)
         self._norm_indic.setText(string)
         self._progress_bar.hide()
 
-    @QtCore.pyqtSlot(str)
+    @QtCore.pyqtSlot(unicode)
     def loadingData(self, string):
         self._norm_indic.setText(self.tr(
             'Loading data file: {}').format(string))
 
-    @QtCore.pyqtSlot(str, int)
+    @QtCore.pyqtSlot(int)
     def dataLoadProgress(self, value):
         self._progress_bar.show()
         self._progress_bar.setValue(value)

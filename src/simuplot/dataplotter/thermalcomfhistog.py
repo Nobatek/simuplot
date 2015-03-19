@@ -221,10 +221,10 @@ class ThermalComfHistog(DataPlotter):
             # TODO: shall we display HQE levels if not in HQE mode ?
 
             # Get "Performant" and "Très Performant" levels
-            self._hqep = \
-                rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][0]
-            self._hqetp = \
-                rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][1]
+            self._hqep = rt_climatic_zone[unicode(
+                self.RTclimat_comboBox.currentText())][0]
+            self._hqetp = rt_climatic_zone[unicode(
+                self.RTclimat_comboBox.currentText())][1]
             
             # Create and draw bar chart    
             ind = np.arange(values.size)

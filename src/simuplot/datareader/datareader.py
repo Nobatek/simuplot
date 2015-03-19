@@ -27,11 +27,11 @@ class DataReader(QtGui.QWidget):
     
     # Signals
     # Before loading data
-    loadingData = QtCore.pyqtSignal(str)
+    loadingData = QtCore.pyqtSignal(unicode)
     # When data is successfully loaded
-    dataLoaded = QtCore.pyqtSignal(str)
+    dataLoaded = QtCore.pyqtSignal(unicode)
     # When an error occurred while loading data
-    dataLoadError = QtCore.pyqtSignal(str)
+    dataLoadError = QtCore.pyqtSignal(unicode)
     # Data loading progress
     dataLoadProgress = QtCore.pyqtSignal(int)
     

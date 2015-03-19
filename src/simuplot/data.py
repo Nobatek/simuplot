@@ -77,7 +77,7 @@ class Variable(QtCore.QObject):
         # start at "01/01  01:00:00"
         # self.date_start = None
         
-    def __str__(self):
+    def __unicode__(self):
         return 'Variable "{}": {}'.format(self._data_type, self._values)
     
     @property
@@ -193,8 +193,8 @@ class Zone(QtCore.QObject):
     """Define a thermal zone
     
        Public attributes:
-       - name (str): name of the Zone
-       - variables (str list): variable types available for the Zone
+       - name (unicode): name of the Zone
+       - variables (unicode list): variable types available for the Zone
 
        Public methods:
        - get_variable_periods
@@ -278,8 +278,8 @@ class Zone(QtCore.QObject):
     def set_values(self, data_type, period, array):
         """Set values of variable of type data_type for period
         
-            data_type (str): data type
-            period (str): period
+            data_type (unicode): data type
+            period (unicode): period
             array (numpy array): array of values
             """
         if data_type in self.variables:
