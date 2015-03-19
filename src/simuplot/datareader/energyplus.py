@@ -286,6 +286,10 @@ class EnergyPlus(DataReader):
             # if would only slow down the processing
             #vals = [unicode(c, 'utf-8') for c in row[1:]]
 
+            # Ignore empty line ("It's alright, no big deal")
+            if vals == []:
+                continue
+
             # Check correct number of values in the line
             # This is broken if file contains "DistrictHeating"
             if len(vals) != nb_values_per_line:
