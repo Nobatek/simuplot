@@ -7,7 +7,7 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from simuplot import ui_path 
+from simuplot import ui_path, SimuplotError
 from simuplot.data import DataTypes
 
 ui_files_dir = os.path.join(ui_path, 'datareader')
@@ -55,7 +55,7 @@ class DataReader(QtGui.QWidget):
         ui_file_name = type(self).__name__.lower() + '.ui'
         uic.loadUi(os.path.join(ui_files_dir, ui_file_name), self)
 
-class DataReaderError(Exception):
+class DataReaderError(SimuplotError):
     pass
 
 class DataReaderReadError(DataReaderError):

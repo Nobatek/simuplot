@@ -6,7 +6,7 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from simuplot import ui_path 
+from simuplot import ui_path, SimuplotError
 
 ui_files_dir = os.path.join(ui_path, 'dataplotter')
 
@@ -43,6 +43,6 @@ class DataPlotter(QtGui.QWidget):
         """Refresh the plot"""
         raise NotImplementedError
 
-class DataPlotterError(Exception):
+class DataPlotterError(SimuplotError):
     pass
 

@@ -8,6 +8,8 @@ from PyQt4 import QtCore
 
 from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
+from simuplot import SimuplotError
+
 DataTypes = {
     'AIR_DRYBULB_TEMPERATURE':
         ('°C', translate('Data', 'Air dry-bulb temperature')),
@@ -60,8 +62,7 @@ class Variable(QtCore.QObject):
         # Data type
         if data_type not in DataTypes:
             raise DataVariableTypeError(self.tr(
-                'Incorrect data type {}'
-                ).format(data_type).encode('utf-8'))
+                'Incorrect data type {}').format(data_type))
         self._data_type = data_type
         
         # Values for each sampling period
@@ -88,14 +89,12 @@ class Variable(QtCore.QObject):
     def get_values(self, period):
         if period not in DataPeriods:
             raise DataVariablePeriodError(self.tr(
-                'Incorrect sample period {}'
-                ).format(period).encode('utf-8'))
+                'Incorrect sample period {}').format(period))
         try:
             return self._values[period]
         except KeyError:
             raise DataVariableNoValueError(self.tr(
-                'No value for sample period {}'
-                ).format(period).encode('utf-8'))
+                'No value for sample period {}').format(period))
 
     def set_values(self, period, array):
         """Set val_list as values
@@ -104,8 +103,7 @@ class Variable(QtCore.QObject):
         """
         if period not in DataPeriods:
             raise DataVariablePeriodError(self.tr(
-                'Incorrect sample period {}'
-                ).format(period).encode('utf-8'))
+                'Incorrect sample period {}').format(period))
         
         self._values[period] = array
     
@@ -151,14 +149,12 @@ class Building(QtCore.QObject):
             return self._zones[name]
         except KeyError:
             raise DataBuildingError(self.tr(
-                'Zone {} not in Building'
-                ).format(name).encode('utf-8'))
+                'Zone {} not in Building').format(name))
 
     def add_zone(self, name):
         if name in self._zones:
             raise DataBuildingError(self.tr(
-                'Zone {} already in Building'
-                ).format(name).encode('utf-8'))
+                'Zone {} already in Building').format(name))
         else:
             z = Zone(name)
             self._zones[name] = z
@@ -169,8 +165,7 @@ class Building(QtCore.QObject):
             del self._zones[name]
         except KeyError:
             raise DataBuildingError(self.tr(
-                'Zone {} not in Building'
-                ).format(name).encode('utf-8'))
+                'Zone {} not in Building').format(name))
 
     def get_environment(self):
         return self._environment
@@ -178,8 +173,7 @@ class Building(QtCore.QObject):
     def add_environment(self):
         if self._environment is not None:
             raise DataBuildingError(self.tr(
-                'Environment zone already in Building'
-                ).encode('utf-8'))
+                'Environment zone already in Building'))
         else:
             o = Zone(self.tr('Environment'))
             self._environment = o
@@ -229,14 +223,14 @@ class Zone(QtCore.QObject):
         except KeyError:
             raise DataZoneError(self.tr(
                 'Variable {} not in Zone {}'
-                ).format(data_type, self._name).encode('utf-8'))
+                ).format(data_type, self._name))
 
     def _add_variable(self, data_type):
         """Add variable of type data_type"""
         if data_type in self._variables:
             raise DataZoneError(self.tr(
                 'Variable {} already in Zone {}'
-                ).format(data_type, self._name).encode('utf-8'))
+                ).format(data_type, self._name))
         else:
             try:
                 var = Variable(data_type)
@@ -253,7 +247,7 @@ class Zone(QtCore.QObject):
         except KeyError:
             raise DataZoneError(self.tr(
                 'Variable {} not in Zone {}'
-                ).format(data_type, self._name).encode('utf-8'))
+                ).format(data_type, self._name))
 
     def get_variable_periods(self, data_type):
         """Return list of available periods for type data_type"""
@@ -266,18 +260,17 @@ class Zone(QtCore.QObject):
         except KeyError:
             raise DataZoneError(self.tr(
                 'Variable {} not in Zone {}'
-                ).format(data_type, self._name).encode('utf-8'))
+                ).format(data_type, self._name))
         try:
             return var.get_values(period)
         except DataVariablePeriodError as e:
-            unic_e = str(e).decode('utf-8')
             raise DataZoneError(self.tr(
                 '{} while getting values for {} in Zone {}'
-                ).format(unic_e, data_type, self._name).encode('utf-8'))
+                ).format(e, data_type, self._name))
         except DataVariableNoValueError:
             raise DataZoneError(self.tr(
                 'No {} data for {} in Zone {}'
-                ).format(period, data_type, self._name).encode('utf-8'))
+                ).format(period, data_type, self._name))
 
     def set_values(self, data_type, period, array):
         """Set values of variable of type data_type for period
@@ -294,10 +287,9 @@ class Zone(QtCore.QObject):
         try:
             var.set_values(period, array)
         except DataVariablePeriodError as e:
-            unic_e = str(e).decode('utf-8')
             raise DataZoneError(self.tr(
                 '{} while setting values for {} in Zone {}'
-                ).format(unic_e, data_type, self._name).encode('utf-8'))
+                ).format(e, data_type, self._name))
 
 # class Surface(QtCore.QObject):
 #     """Defines an enveloppe element through which heat is loss"""
@@ -312,7 +304,7 @@ class Zone(QtCore.QObject):
 #         self._surf_type = surf_type
 #
 
-class DataError(Exception):
+class DataError(SimuplotError):
     pass
 
 class DataVariableError(DataError):

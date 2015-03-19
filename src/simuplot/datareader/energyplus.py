@@ -128,8 +128,7 @@ class EnergyPlus(DataReader):
         except DataReaderReadError as e:
             # Error reading file. Clean Building and signal error.
             self._building.clean()
-            unic_e = str(e).decode('utf-8')
-            self.dataLoadError.emit(self.tr("[Error] {}").format(unic_e))
+            self.dataLoadError.emit(self.tr("[Error] {}").format(e))
         else:
             # Signal data was loaded
             # Return last message in queue
@@ -144,10 +143,10 @@ class EnergyPlus(DataReader):
             csv_file = open(file_path, "rb")
         except IOError:
             raise DataReaderReadError(self.tr(
-                "Wrong filepath: {}").format(file_path).encode('utf-8'))
+                "Wrong filepath: {}").format(file_path))
         except UnicodeDecodeError:
             raise DataReaderReadError(self.tr(
-                "Unauthorized characters in data file").encode('utf-8'))
+                "Unauthorized characters in data file"))
         
         # Create CSV reader, store file size to track progress while reading
         # TODO: Unicode files ? (https://docs.python.org/2/library/csv.html)
@@ -188,7 +187,7 @@ class EnergyPlus(DataReader):
         except ValueError :
             raise DataReaderReadError(self.tr(
                 "Invalid file header: '{},...', E+ file begins with 'Date/Time'"
-                ).format(header[0]).encode('utf-8'))
+                ).format(header[0]))
         
         # Go through all columns heads
         for head in header:
@@ -204,8 +203,7 @@ class EnergyPlus(DataReader):
 
             except AttributeError:
                 raise DataReaderReadError(self.tr(
-                    'Misformed column head: "{}"'
-                    ).format(head).encode('utf-8'))
+                    'Misformed column head: "{}"').format(head))
             
             # Remove unwanted strings from name
             for s in self.strings_to_remove:
@@ -267,7 +265,7 @@ class EnergyPlus(DataReader):
                 period = self.DataPeriods[period_str]
             except KeyError:
                 raise DataReaderReadError(self.tr(
-                    'Unknown period {}').format(period_str).encode('utf-8'))
+                    'Unknown period {}').format(period_str))
             
             # Store locally in variable list (one var per column)
             # before final insertion into Variable as a numpy array
@@ -282,13 +280,14 @@ class EnergyPlus(DataReader):
             # Skip first column ('Date/Time')
             vals = row[1:]
             # No need to encode as UTF-8 considering following operations
+            # if would only slow down the processing
             #vals = [unicode(c, 'utf-8') for c in row[1:]]
 
             # Check correct number of values in the line
             # This is broken if file contains "DistrictHeating"
             if len(vals) != nb_values_per_line:
                 raise DataReaderReadError(self.tr(
-                    'Misformed line: {}').format(row).encode('utf-8'))
+                    'Misformed line: {}').format(row))
                 
             # Store each value of known type in the line into its list
             try:
@@ -297,7 +296,7 @@ class EnergyPlus(DataReader):
                         val_list.append(float(vals[i]))
             except ValueError:
                 raise DataReaderReadError(self.tr(
-                    'Invalid value in line: {}').format(row).encode('utf-8'))
+                    'Invalid value in line: {}').format(row))
 
             # Update progress bar
             self.dataLoadProgress.emit(100 * csv_file.tell() / file_size)
