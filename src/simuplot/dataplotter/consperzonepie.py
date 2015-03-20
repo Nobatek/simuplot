@@ -45,7 +45,7 @@ class ConsPerZonePie(DataPlotter):
     def name(self):
         return self._name
 
-    def ComputeZoneCons(zone):
+    def ComputeZoneCons(self, zone):
         try:
             # Get variable HEATING_RATE in zone
             # Hourly power [W] is equivalent to Hourly energy [Wh]

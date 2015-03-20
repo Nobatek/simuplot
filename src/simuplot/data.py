@@ -433,7 +433,7 @@ class Zone(QtCore.QObject):
                 'No {} data for {} in Zone {}'
                 ).format(period, data_type, self._name))
 
-    def set_values(self, data_type, period, array):
+    def set_values(self, data_type, period, val_list):
         """Set values of variable of type data_type for period
         
             data_type (unicode): data type

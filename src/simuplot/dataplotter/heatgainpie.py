@@ -107,7 +107,8 @@ class HeatGainPie(DataPlotter):
         for hs in heat_sources:
             # If hourly heat source data not available, "mark it zero, Donnie"
             try:
-                vals = zone.get_values(hs, 'HOUR')
+                val_array = zone.get_values(hs, 'HOUR')
+                vals = val_array.vals
             except DataZoneError:
                 vals = np.zeros(8760)
             else:
