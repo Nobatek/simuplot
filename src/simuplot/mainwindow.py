@@ -36,7 +36,6 @@ class MainWindow(QtGui.QMainWindow):
         for plotter in dp.plotters:
             p = plotter(self._building,
                         self._config.params['color_chart'],
-                        self._config.params['today'],
                         )
             plotters.append(p)
             self.tabWidget.addTab(p, p.name)

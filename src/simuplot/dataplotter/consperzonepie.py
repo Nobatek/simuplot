@@ -24,9 +24,9 @@ class ConsPerZonePie(DataPlotter):
             # Return total heat need [kWh]
             return vals.sum() / 1000
         
-    def __init__(self, building, color_chart, today):
+    def __init__(self, building, color_chart):
         
-        super(ConsPerZonePie, self).__init__(building, color_chart, today)
+        super(ConsPerZonePie, self).__init__(building, color_chart)
 
         self._name = self.tr("Energy heat need per zone")
         
