@@ -113,7 +113,6 @@ class HeatGainPie(DataPlotter):
             else:
                 # Only hourly year-long simulation data allowed
                 if vals.size != 8760:
-                    'test'
                     self.warning.emit(self.tr(
                         'Hourly {} data for Zone {} is not one year long'
                         ).format(hs, zone.name))
