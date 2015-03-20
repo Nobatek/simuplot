@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # List all plotter widget classes
 
 # To add a new plotter, add a .py file to the dataplotter directory
@@ -8,11 +10,18 @@
 # - a "name" attribute
 # - a "refresh data" slot
 
-from consperzonepie import ConsPerZonePie
-from thermalcomfhistog import ThermalComfHistog
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
+from .consperzonepie import ConsPerZonePie
+from .thermalcomfhistog import ThermalComfHistog
+from .heatgainpie import HeatGainPie
 
 plotters = [
     ConsPerZonePie,
     ThermalComfHistog,
+    HeatGainPie,
 ]
 

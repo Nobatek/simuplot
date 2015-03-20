@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 import os
 
 from PyQt4 import QtGui, uic
@@ -39,21 +44,23 @@ class MainWindow(QtGui.QMainWindow):
                         )
             plotters.append(p)
             self.tabWidget.addTab(p, p.name)
+            # Connect signals to status bar
+            p.warning.connect(self.statusBar().warning)
 
         # Instantiate all reader widgets and add them to stacked widget
         for reader in dr.readers:
             r = reader(self._building)
             self.comboBox.addItem(r.name)
             self.stackedWidget.addWidget(r)
-            # Connect signals to all plotters
-            for p in plotters:
-                r.dataLoaded.connect(p.refresh_data)
-                r.dataLoadError.connect(p.refresh_data)
             # Connect signals to status bar
             r.loadingData.connect(self.statusBar().loadingData)
             r.dataLoaded.connect(self.statusBar().dataLoaded)
             r.dataLoadError.connect(self.statusBar().dataLoadError)
             r.dataLoadProgress.connect(self.statusBar().dataLoadProgress)
+            # Connect signals to all plotters
+            for p in plotters:
+                r.dataLoaded.connect(p.refresh_data)
+                r.dataLoadError.connect(p.refresh_data)
             # Enable or disable tabs depending on load status
             r.dataLoaded.connect(lambda: self.setPlotTabsEnabled(True))
             r.dataLoadError.connect(lambda: self.setPlotTabsEnabled(False))

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
 from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from PyQt4 import QtCore, QtGui
 
@@ -15,50 +19,13 @@ rt_climatic_zone = {'H1a - H1b - H2a - H2b':[2,1],
                     }
                     
 hqe_tmax_per_usage = {
-    u'Bureau - Enseignement':28,
-    u'Hôtel':26,
-    u'Commun - Circulation commerce et baignade':30,
-    u'Entrepôts':35,
+    'Bureau - Enseignement':28,
+    'Hôtel':26,
+    'Commun - Circulation commerce et baignade':30,
+    'Entrepôts':35,
     }
 
-
 class ThermalComfHistog(DataPlotter):
-
-    @staticmethod
-    def ComputeThermalComf(zone, ref_temp):
-    
-        try:
-            # Get variable OPERATIVE_TEMPERATURE in zone
-            # Get PEOPLE_COUNT to determine zone occupation status
-            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR').get_interval()
-            nb_people = zone.get_values('PEOPLE_COUNT','HOUR').get_interval()
-        except DataZoneError:
-            # TODO: log warning
-            # Return None as thermal confort % and None as max temperature
-            return None, None
-        else:
-            
-            # Create 0/1 presence scenario from nb_people
-            io_people = np.where(nb_people > 0, 1, 0)
-
-            # If occupation is always 0 (zone always empty),
-            # return None as thermal confort % and None as max temperature
-            nb_h_occup = np.count_nonzero(io_people)
-            if nb_h_occup == 0:
-                return None, None
-                             
-            # Create array of temperatures during occupation
-            occ_temp = io_people * op_temps
-            
-            # Determine maximum temperature during occupation
-            max_temp = np.amax(occ_temp)
-            
-            # Computing % of time when temperature is above reference temp
-            # according to HQE referential
-            pct_hqe = 100 * np.count_nonzero(occ_temp > ref_temp) / nb_h_occup
-                     
-            # Return % and maximum temperature in occupation [°C]
-            return round(float(pct_hqe),2), round(float(max_temp),1)
 
     def __init__(self, building, color_chart):
         
@@ -79,7 +46,7 @@ class ThermalComfHistog(DataPlotter):
         self._table_widget.setHorizontalHeaderLabels([
             self.tr('Zone'),
             self.tr('Discomfort[%]'),
-            self.trUtf8(u'Max temp [°C]')
+            self.tr('Max temp [°C]')
             ])
         self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
@@ -119,6 +86,41 @@ class ThermalComfHistog(DataPlotter):
     @property
     def name(self):
         return self._name
+
+    def ComputeThermalComf(self, zone, ref_temp):
+    
+        try:
+            # Get variable OPERATIVE_TEMPERATURE in zone
+            # Get PEOPLE_COUNT to determine zone occupation status
+            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR')
+            nb_people = zone.get_values('PEOPLE_COUNT','HOUR')
+        except DataZoneError:
+            # TODO: log warning
+            # Return None as thermal confort % and None as max temperature
+            return None, None
+        else:
+            
+            # Create 0/1 presence scenario from nb_people
+            io_people = np.where(nb_people > 0, 1, 0)
+
+            # If occupation is always 0 (zone always empty),
+            # return None as thermal confort % and None as max temperature
+            nb_h_occup = np.count_nonzero(io_people)
+            if nb_h_occup == 0:
+                return None, None
+                             
+            # Create array of temperatures during occupation
+            occ_temp = io_people * op_temps
+            
+            # Determine maximum temperature during occupation
+            max_temp = np.amax(occ_temp)
+            
+            # Computing % of time when temperature is above reference temp
+            # according to HQE referential
+            pct_hqe = 100 * np.count_nonzero(occ_temp > ref_temp) / nb_h_occup
+                     
+            # Return % and maximum temperature in occupation [°C]
+            return round(float(pct_hqe),2), round(float(max_temp),1)
 
     @QtCore.pyqtSlot()
     def refresh_data(self):
@@ -200,13 +202,11 @@ class ThermalComfHistog(DataPlotter):
                 except AttributeError:
                     raise DataPlotterError(self.tr(
                         'Invalid discomfort value type for row {} ({}): {}'
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1)))
+                        ).format(i, name, self._table_widget.item(i,1)))
                 except ValueError:
                     raise DataPlotterError(self.tr(
                         'Invalid discomfort value for row {} ({}): {}' 
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1).text()))
+                        ).format(i, name, self._table_widget.item(i,1).text()))
                 else:
                     vals.append(value)
         
@@ -219,10 +219,10 @@ class ThermalComfHistog(DataPlotter):
             # TODO: shall we display HQE levels if not in HQE mode ?
 
             # Get "Performant" and "Très Performant" levels
-            self._hqep = \
-                rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][0]
-            self._hqetp = \
-                rt_climatic_zone[str(self.RTclimat_comboBox.currentText())][1]
+            self._hqep = rt_climatic_zone[unicode(
+                self.RTclimat_comboBox.currentText())][0]
+            self._hqetp = rt_climatic_zone[unicode(
+                self.RTclimat_comboBox.currentText())][1]
             
             # Create and draw bar chart    
             ind = np.arange(values.size)
@@ -248,8 +248,8 @@ class ThermalComfHistog(DataPlotter):
                                  va='bottom')
                                                  
             # Add text for labels, title and axes ticks
-            canvas.axes.set_ylabel(self.trUtf8(
-                u'% time beyond {}°C').format(self._ref_temp))
+            canvas.axes.set_ylabel(self.tr(
+                '% time beyond {}°C').format(self._ref_temp))
             canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
             canvas.axes.set_xticklabels(names, ind, ha='right', rotation=75)
             
@@ -283,5 +283,6 @@ class ThermalComfHistog(DataPlotter):
             # Set title
             title = canvas.axes.set_title(self.tr('Summer thermal comfort'))
 
+        # Draw plot
         canvas.draw()
 

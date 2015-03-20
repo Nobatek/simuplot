@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
 from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
 from PyQt4 import QtCore, QtGui
 
@@ -11,19 +15,6 @@ from simuplot.data import DataZoneError
 
 class ConsPerZonePie(DataPlotter):
 
-    @staticmethod
-    def ComputeZoneCons(zone):
-        try:
-            # Get variable HEATING_RATE in zone
-            # Hourly power [W] is equivalent to Hourly energy [Wh]
-            vals = zone.get_values('HEATING_RATE', 'HOUR').get_interval()
-        except DataZoneError:
-            # TODO: log warning
-            return 0
-        else:
-            # Return total heat need [kWh]
-            return vals.sum() / 1000
-        
     def __init__(self, building, color_chart):
         
         super(ConsPerZonePie, self).__init__(building, color_chart)
@@ -40,20 +31,32 @@ class ConsPerZonePie(DataPlotter):
 
         # Set column number and add headers
         self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels([self.tr('Zone'), 
-                                                      self.tr('Heat need [kWh]')])
-        self._table_widget.horizontalHeader().setResizeMode( \
+        self._table_widget.setHorizontalHeaderLabels(
+            [self.tr('Zone'), self.tr('Heat need [kWh]')])
+        self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
  
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect( \
+        self._table_widget.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
 
     @property
     def name(self):
         return self._name
 
+    def ComputeZoneCons(zone):
+        try:
+            # Get variable HEATING_RATE in zone
+            # Hourly power [W] is equivalent to Hourly energy [Wh]
+            vals = zone.get_values('HEATING_RATE', 'HOUR').get_interval()
+        except DataZoneError:
+            # TODO: log warning
+            return 0
+        else:
+            # Return total heat need [kWh]
+            return vals.sum() / 1000
+        
     @QtCore.pyqtSlot()
     def refresh_data(self):
     
@@ -110,12 +113,14 @@ class ConsPerZonePie(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
 
-        values = []
-        names = []
-        
         canvas = self._MplWidget.canvas
 
+        # Clear axes
+        canvas.axes.cla()
+
         # Get checked rows and corresponding (name, value)
+        values = []
+        names = []
         for i in range(self._table_widget.rowCount()):
             if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
                 name = self._table_widget.item(i,0).text()
@@ -125,31 +130,29 @@ class ConsPerZonePie(DataPlotter):
                 except AttributeError:
                     raise DataPlotterError(self.tr(
                         'Invalid cons value type for row {} ({}): {}'
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1)))
+                        ).format(i, name, self._table_widget.item(i,1)))
                 except ValueError:
                     raise DataPlotterError(self.tr(
                         'Invalid cons value for row {} ({}): {}'
-                        '').format(i, name, 
-                                   self._table_widget.item(i,1).text()))
+                        ).format(i, name, self._table_widget.item(i,1).text()))
                 else:
                     values.append(value)
             
-        # Clear axes
-        canvas.axes.cla()
-    
-        # Create pie chart
-        # (Make zone heat need non dimensional to avoid pie expansion)
-        canvas.axes.pie(np.array(values) / self._build_total_hn, 
-                        labels=names,
-                        colors=self._color_chart, autopct='%1.1f%%', 
-                        shadow=False, startangle=90)
-        canvas.axes.axis('equal')
-        
-        # Set title
-        title_str = self.tr(
-            'Building heat need: {} [kWh]').format(self._build_total_hn)
-        title = canvas.axes.set_title(title_str, y = 1.05)
+        # If total heat need is 0, do not plot anything.
+        if self._build_total_hn != 0:
+   
+            # Create pie chart
+            # (Make zone heat need non dimensional to avoid pie expansion)
+            canvas.axes.pie(np.array(values) / self._build_total_hn,
+                            labels=names,
+                            colors=self._color_chart, autopct='%1.1f%%', 
+                            shadow=False, startangle=90)
+            canvas.axes.axis('equal')
+            
+            # Set title
+            title_str = self.tr(
+                'Building heat need: {} [kWh]').format(self._build_total_hn)
+            title = canvas.axes.set_title(title_str, y = 1.05)
         
         # Draw plot
         canvas.draw()

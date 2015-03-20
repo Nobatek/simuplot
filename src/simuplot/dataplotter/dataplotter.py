@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from simuplot import ui_path 
+from simuplot import ui_path, SimuplotError
 
 ui_files_dir = os.path.join(ui_path, 'dataplotter')
 
@@ -14,6 +19,9 @@ class DataPlotter(QtGui.QWidget):
        Useless by itself. Implement in sub-clases
     """
     
+    # Signals
+    warning = QtCore.pyqtSignal(unicode)
+
     def __init__(self, building, color_chart):
         
         super(DataPlotter, self).__init__()
@@ -41,6 +49,6 @@ class DataPlotter(QtGui.QWidget):
         """Refresh the plot"""
         raise NotImplementedError
 
-class DataPlotterError(Exception):
+class DataPlotterError(SimuplotError):
     pass
 

@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 import os
 import sys
 import signal
@@ -19,12 +24,16 @@ if __name__ == "__main__":
     
     app = QtGui.QApplication(sys.argv)
 
-    # Use system locale for internationalization
+    # Internationalization
+    # Specify codec for translation
+    QtCore.QTextCodec.setCodecForTr(QtCore.QTextCodec.codecForName("utf-8"))
+    # Use system locale
     locale = QtCore.QLocale.system().name()
     # Load default translator for Qt strings
     translator_qt = QtCore.QTranslator()
     translator_qt.load('qt_{}'.format(locale),
         QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.TranslationsPath))
+    app.installTranslator(translator_qt);
     # Load translator for own strings
     translator = QtCore.QTranslator()
     translator.load(os.path.join(i18n_path, 'simuplot_' + locale))

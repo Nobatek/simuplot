@@ -1,21 +1,52 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 import numpy as np
 
 import datetime
 
-# TODO: unit conversion functions in DataReader
-# TODO: do we need both HEATING_RATE and HEATING_DEMAND ?
+from PyQt4 import QtCore
+
+from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
+
+from simuplot import SimuplotError
+
+
 DataTypes = {
-    'AIR_DRYBULB_TEMPERATURE':'°C',
-    'AIR_WETBULB_TEMPERATURE':'°C',
-    'AIR_HUMIDITY_RATIO':'%',
-    'OPERATIVE_TEMPERATURE':'°C',
-    'HEATING_RATE':'W',
-    'HEATING_DEMAND':'kWh',
-    'DIFFUSE_SOLAR_RADIATION':'W/m2',
-    'DIRECT_SOLAR_RADIATION':'W/m2',
-    'PEOPLE_COUNT':'',
+    'AIR_DRYBULB_TEMPERATURE':
+        ('°C', translate('Data', 'Air dry-bulb temperature')),
+    'AIR_WETBULB_TEMPERATURE':
+        ('°C', translate('Data', 'Air wet-bulb temperature')),
+    'AIR_HUMIDITY_RATIO':
+        ('%', translate('Data', 'Relative humidity')),
+    'OPERATIVE_TEMPERATURE':
+        ('°C', translate('Data', 'Operative temperature')),
+    'DIFFUSE_SOLAR_RADIATION':
+        ('W/m2', translate('Data', 'Diffuse solar radiation')),
+    'DIRECT_SOLAR_RADIATION':
+        ('W/m2', translate('Data', 'Direct solar radiation')),
+    'HEATING_RATE':
+        ('W', translate('Data', 'Heating rate')),
+    'COOLING_RATE':
+        ('W', translate('Data', 'Cooling rate')),
+    'PEOPLE_COUNT':
+        ('', translate('Data', 'People count')),
+    'PEOPLE_HEATING_RATE':
+        ('W', translate('Data', 'People heating rate')),
+    'LIGHTING_HEATING_RATE':
+        ('W', translate('Data', 'Lighting heating rate')),
+    'EQUIPMENT_HEATING_RATE':
+        ('W', translate('Data', 'Equipment heating rate')),
+    'WINDOWS_HEATING_RATE':
+        ('W', translate('Data', 'Windows heating rate')),
+    'OPAQUE_SURFACES_HEATING_RATE':
+        ('W', translate('Data', 'Opaque surfaces heating rate')),
+    'INFILTRATION_HEATING_RATE':
+        ('W', translate('Data', 'Infiltrations heating rate')),
 }
 
 DataPeriods = [
@@ -24,6 +55,7 @@ DataPeriods = [
     'MONTH',
     'YEAR',
 ]
+
 
 class TimeInterval(object):
     """Object capable of creating and storing one or several time interval
@@ -171,13 +203,17 @@ class Array(object):
     def typical_day(self, per=None, start=None, end=None):
         return None        
 
-class Variable(object):
-    """Stores Arrays objects for one physical parameter (temperature,
-       heat demand,...
+
+        
+class Variable(QtCore.QObject):
+    """Stores an array of values for one physical parameter (temperature,
+       heat demand,...)
     """
 
     def __init__(self, data_type):
     
+        super(Variable, self).__init__()
+
         # Data type
         if data_type not in DataTypes:
             raise DataVariableTypeError(self.tr(
@@ -193,7 +229,7 @@ class Variable(object):
         # start at "01/01  01:00:00"
         # self.date_start = None
         
-    def __str__(self):
+    def __unicode__(self):
         return 'Variable "{}": {}'.format(self._data_type, self._values)
     
     @property
@@ -215,6 +251,7 @@ class Variable(object):
             raise DataVariableNoValueError(self.tr(
                 'No value for sample period {}').format(period))
 
+
     def set_array_from_list(self, period, val_list):
         """Set val_list as values
             
@@ -223,29 +260,37 @@ class Variable(object):
         if period not in DataPeriods:
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
+
         try:
             self._values[period] = Array(val_list, period)
         except ValueError as e:
             raise DataVariableValueError(e)
+
     
 # TODO: Multi-buildings / Multi-versions
-# class Project(object):
+# class Project(QtCore.QObject):
 # 
 #     def __init__(self):
 #     
+#         super(Project, self).__init__()
+#
 #         self.variants = {}
 # 
-# class ProjectVariant(object):
+# class ProjectVariant(QtCore.QObject):
 # 
 #     def __init__(self):
 # 
+#         super(ProjectVariant, self).__init__()
+#
 #         self.name = []
 #         self.buildings = {}
 
-class Building(object):
+class Building(QtCore.QObject):
 
     def __init__(self, name):
     
+        super(Building, self).__init__()
+
         self._name = name
         self._zones = {}
         self._environment = None
@@ -301,20 +346,23 @@ class Building(object):
         self._zones = {}
         self._environment = None
 
-class Zone(object):
+class Zone(QtCore.QObject):
     """Define a thermal zone
     
        Public attributes:
-       - name (str): name of the Zone
-       - variables (str list): variable types available for the Zone
+       - name (unicode): name of the Zone
+       - variables (unicode list): variable types available for the Zone
 
        Public methods:
        - get_variable_periods
        - get_values
-       - set_values_from_list
+       - set_values
        """
 
     def __init__(self, name):
+        
+        super(Zone, self).__init__()
+
         self._name = name
         self._variables = {}
         #self.surfaces = {}
@@ -334,13 +382,15 @@ class Zone(object):
             return self._variables[data_type]
         except KeyError:
             raise DataZoneError(self.tr(
-                'Variable {} not in Zone {}').format(data_type, self._name))
+                'Variable {} not in Zone {}'
+                ).format(data_type, self._name))
 
     def _add_variable(self, data_type):
         """Add variable of type data_type"""
         if data_type in self._variables:
             raise DataZoneError(self.tr(
-                'Variable {} already in Zone {}').format(data_type, self._name))
+                'Variable {} already in Zone {}'
+                ).format(data_type, self._name))
         else:
             try:
                 var = Variable(data_type)
@@ -356,7 +406,8 @@ class Zone(object):
             del self._variables[data_type]
         except KeyError:
             raise DataZoneError(self.tr(
-                'Variable {} not in Zone {}').format(data_type, self._name))
+                'Variable {} not in Zone {}'
+                ).format(data_type, self._name))
 
     def get_variable_periods(self, data_type):
         """Return list of available periods for type data_type"""
@@ -368,23 +419,26 @@ class Zone(object):
             var = self._variables[data_type]
         except KeyError:
             raise DataZoneError(self.tr(
-                'Variable {} not in Zone {}').format(data_type, self._name))
+                'Variable {} not in Zone {}'
+                ).format(data_type, self._name))
         try:
             array = var.get_array(period)
             return array
         except DataVariablePeriodError as e:
-            raise DataZoneError(e + self.tr('while getting values for {} '
-                'in Zone {}').format(data_type, self._name))
+            raise DataZoneError(self.tr(
+                '{} while getting values for {} in Zone {}'
+                ).format(e, data_type, self._name))
         except DataVariableNoValueError:
-            raise DataZoneError(self.tr('No {} data for {} '
-                'in Zone {}').format(period, data_type, self._name))
+            raise DataZoneError(self.tr(
+                'No {} data for {} in Zone {}'
+                ).format(period, data_type, self._name))
 
-    def set_values_from_list(self, data_type, period, val_list):
+    def set_values(self, data_type, period, array):
         """Set values of variable of type data_type for period
         
-            data_type (str): data type
-            period (str): period
-            val_list (list): list of numbers in numeric or string format
+            data_type (unicode): data type
+            period (unicode): period
+            array (numpy array): array of values
             """
         if data_type in self.variables:
             var = self._variables[data_type]
@@ -393,27 +447,26 @@ class Zone(object):
         
         try:
             var.set_array_from_list(period, val_list)
-        except DataVariablePeriodError as e:
-            raise DataZoneError(str(e) 
-                                + self.tr(' while setting values for {} '
-                                'in Zone {}').format(data_type, self._name))
-        except DataVariableValueError as e:
-            raise DataZoneError(str(e) 
-                                + self.tr(' while setting values for {} '
-                                'in Zone {}').format(data_type, self._name))
 
-# class Surface(object):
+        except DataVariablePeriodError as e:
+            raise DataZoneError(self.tr(
+                '{} while setting values for {} in Zone {}'
+                ).format(e, data_type, self._name))
+
+# class Surface(QtCore.QObject):
 #     """Defines an enveloppe element through which heat is loss"""
 # 
 #     def __init__(self, name, surf, surf_type):
 #     
+#         super(Surface, self).__init__()
+#
 #         self._name = name
 #         self._surf = 0
 #         # surf_type can be WALL, ROOF, FLOOR, WINDOW
 #         self._surf_type = surf_type
 #
 
-class DataError(Exception):
+class DataError(SimuplotError):
     pass
 
 class DataVariableError(DataError):
@@ -425,10 +478,6 @@ class DataVariableTypeError(DataVariableError):
 
 class DataVariablePeriodError(DataVariableError):
     """Data sample period does not exist"""
-    pass
-
-class DataVariableValueError(DataVariableError):
-    """Value is of wrong type"""
     pass
 
 class DataVariableNoValueError(DataVariableError):

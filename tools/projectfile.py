@@ -6,6 +6,11 @@
 # ./project_file.py --create
 # ./project_file.py --delete
 
+from __future__ import unicode_literals
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
+
 import os
 from os.path import join, dirname, abspath
 import sys
@@ -45,6 +50,10 @@ class ProjectFileManager(object):
         except IOError:
             raise IOError("Can't open project file.")
 
+        # Specify CODEC for the tr() function
+        pf.write('CODECFORTR = UTF-8')
+        pf.write('\n')
+
         # Source files and ui files are stored in different directories
         # with the same directory structure
         subdirs = ['', 'datareader/', 'dataplotter/']
@@ -74,7 +83,8 @@ class ProjectFileManager(object):
         # TRANSLATIONS
         pf.write('TRANSLATIONS = ')
         for l in languages:
-            pf.write(join(ts_files_relpath, project + '_' + l + '.ts'))
+            pf.write(join(ts_files_relpath, project + '_' + l + '.ts '))
+        pf.write('\n')
 
         pf.close()
 
