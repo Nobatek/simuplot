@@ -33,7 +33,10 @@ class MplCanvas(FigureCanvas):
 
         # Notify the system of updated policy
         FigureCanvas.updateGeometry(self)
-    
+
+        # Call tight_layout on resize
+        self.mpl_connect('resize_event', self.fig.tight_layout)
+
 class MplWidget(QtGui.QWidget):
     """Widget defined in Qt Designer"""
     def __init__(self, parent = None):
