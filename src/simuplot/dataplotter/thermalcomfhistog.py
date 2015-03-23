@@ -7,6 +7,8 @@ from __future__ import absolute_import
 
 from PyQt4 import QtCore, QtGui
 
+from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
+
 import numpy as np
 
 from .dataplotter import DataPlotter, DataPlotterError

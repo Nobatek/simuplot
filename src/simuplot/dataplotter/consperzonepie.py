@@ -49,13 +49,13 @@ class ConsPerZonePie(DataPlotter):
         try:
             # Get variable HEATING_RATE in zone
             # Hourly power [W] is equivalent to Hourly energy [Wh]
-            vals = zone.get_values('HEATING_RATE', 'HOUR').get_interval()
+            vals_array = zone.get_values('HEATING_RATE', 'HOUR')
         except DataZoneError:
             # TODO: log warning
             return 0
         else:
             # Return total heat need [kWh]
-            return vals.sum() / 1000
+            return vals_array.sum_interval() / 1000
         
     @QtCore.pyqtSlot()
     def refresh_data(self):
