@@ -18,10 +18,12 @@ from __future__ import absolute_import
 from .consperzonepie import ConsPerZonePie
 from .thermalcomfhistog import ThermalComfHistog
 from .heatgainpie import HeatGainPie
+from .periodicplot import PeriodicPlot
 
 plotters = [
     ConsPerZonePie,
     ThermalComfHistog,
     HeatGainPie,
+    PeriodicPlot,
 ]
 

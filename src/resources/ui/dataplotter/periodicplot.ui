@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>770</width>
-    <height>546</height>
+    <width>776</width>
+    <height>674</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,17 +29,106 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="priod_combo"/>
+        <widget class="QComboBox" name="PeriodCombo"/>
        </item>
        <item>
         <widget class="QRadioButton" name="average_button">
          <property name="text">
-          <string>Average day analysis</string>
+          <string>Custom period:</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="average_combo"/>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Begins:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateEdit" name="BeginDate">
+           <property name="date">
+            <date>
+             <year>2005</year>
+             <month>1</month>
+             <day>1</day>
+            </date>
+           </property>
+           <property name="maximumDateTime">
+            <datetime>
+             <hour>23</hour>
+             <minute>59</minute>
+             <second>59</second>
+             <year>2005</year>
+             <month>12</month>
+             <day>31</day>
+            </datetime>
+           </property>
+           <property name="minimumDateTime">
+            <datetime>
+             <hour>0</hour>
+             <minute>0</minute>
+             <second>0</second>
+             <year>2005</year>
+             <month>1</month>
+             <day>1</day>
+            </datetime>
+           </property>
+           <property name="displayFormat">
+            <string>dd/MM</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Ends:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QDateEdit" name="EndDate">
+           <property name="date">
+            <date>
+             <year>2005</year>
+             <month>12</month>
+             <day>31</day>
+            </date>
+           </property>
+           <property name="maximumDateTime">
+            <datetime>
+             <hour>23</hour>
+             <minute>59</minute>
+             <second>59</second>
+             <year>2005</year>
+             <month>12</month>
+             <day>31</day>
+            </datetime>
+           </property>
+           <property name="minimumDateTime">
+            <datetime>
+             <hour>0</hour>
+             <minute>0</minute>
+             <second>0</second>
+             <year>2005</year>
+             <month>1</month>
+             <day>1</day>
+            </datetime>
+           </property>
+           <property name="displayFormat">
+            <string>dd/MM</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QTableWidget" name="listW">
@@ -61,6 +150,9 @@
            <height>0</height>
           </size>
          </property>
+         <property name="rowCount">
+          <number>0</number>
+         </property>
          <property name="columnCount">
           <number>0</number>
          </property>
@@ -73,6 +165,13 @@
          <attribute name="verticalHeaderHighlightSections">
           <bool>true</bool>
          </attribute>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AddButton">
+         <property name="text">
+          <string>Add</string>
+         </property>
         </widget>
        </item>
       </layout>
