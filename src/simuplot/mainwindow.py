@@ -86,7 +86,7 @@ class MainWindow(QtGui.QMainWindow):
 
             w = self.tabWidget.currentWidget()
 
-            if isinstance(w, dp.DataPlotter):
+            if isinstance(w, dp.dataplotter.DataPlotter):
                 self.tabWidget.setTabEnabled(i, enable)
 
     def copyPlotToClipboard(self):
@@ -95,7 +95,7 @@ class MainWindow(QtGui.QMainWindow):
         w = self.tabWidget.currentWidget()
 
         # Current tab is not a plotter
-        if not isinstance(w, dp.DataPlotter):
+        if not isinstance(w, dp.dataplotter.DataPlotter):
             return
 
         pixmap = QtGui.QPixmap.grabWidget(w.plotW.canvas)
