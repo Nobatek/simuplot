@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 import os
 
-from PyQt4 import QtGui, uic
+from PyQt4 import QtCore, QtGui, uic
 
 from . import ui_path
 from . import datareader as dr
@@ -76,6 +76,8 @@ class MainWindow(QtGui.QMainWindow):
         # Connect menu signals
         self.actionCopyPlotToClipboard.triggered.connect(
             self.copyPlotToClipboard)
+        self.actionCopyTableToClipboard.triggered.connect(
+            self.copyTableToClipboard)
 
     def setPlotTabsEnabled(self, enable):
         """Enable/disable all plot tabs
@@ -94,9 +96,46 @@ class MainWindow(QtGui.QMainWindow):
 
         w = self.tabWidget.currentWidget()
 
-        # Current tab is not a plotter
+        # If current tab is a plotter
+        # TODO: disable menu action if current tab is not a plotter
         if isinstance(w, dp.dataplotter.DataPlotter):
 
             pixmap = QtGui.QPixmap.grabWidget(w.plotW.canvas)
             self._app.clipboard().setPixmap(pixmap)
+
+    def copyTableToClipboard(self):
+        """Copy currently displayed plot's values table to Clipboard"""
+
+        #TODO: copy selected cells only ?
+
+        w = self.tabWidget.currentWidget()
+
+        # If current tab is a plotter
+        # TODO: disable menu action if current tab is not a plotter
+        if isinstance(w, dp.dataplotter.DataPlotter):
+
+            tw = w._table_widget
+
+            # Create an HTML table from the TableWidget
+            html = '<table>'
+
+            # Headers
+            html += '<tr>'
+            for c in xrange(tw.columnCount()):
+                html += '<th>{}</th>'.format(tw.horizontalHeaderItem(c).text())
+            html += '</tr>'
+
+            # Data
+            for r in xrange(tw.rowCount()):
+                html += '<tr>'
+                for c in xrange(tw.columnCount()):
+                    html += '<td>{}</td>'.format(tw.item(r,c).text())
+                html += '</tr>'
+
+            html += '</table>'
+
+            # Cram HTML string into clipboard, setting proper Mime type
+            mimeData = QtCore.QMimeData()
+            mimeData.setData("text/html", html.encode('utf-8'));
+            self._app.clipboard().setMimeData(mimeData)
 

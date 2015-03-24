@@ -73,6 +73,7 @@
      <string>Export</string>
     </property>
     <addaction name="actionCopyPlotToClipboard"/>
+    <addaction name="actionCopyTableToClipboard"/>
    </widget>
    <addaction name="menuExport"/>
   </widget>
@@ -80,6 +81,11 @@
   <action name="actionCopyPlotToClipboard">
    <property name="text">
     <string>Copy plot to clipboard</string>
+   </property>
+  </action>
+  <action name="actionCopyTableToClipboard">
+   <property name="text">
+    <string>Copy table to clipboard</string>
    </property>
   </action>
  </widget>
