@@ -56,7 +56,8 @@ class PeriodicPlot(DataPlotter):
             self.tr('Show max'),
             self.tr('Show min'),
             ])
-
+        self._table_widget.horizontalHeader().setResizeMode(
+            QtGui.QHeaderView.ResizeToContents)
 
         # Connect browse and load buttons
         self.AddButton.clicked.connect(self.AddLine)
@@ -114,24 +115,52 @@ class PeriodicPlot(DataPlotter):
             
         # Initialize check boxes for rm, min, max
         rm_item = QtGui.QCheckBox()
-        min_item = QtGui.QCheckBox()
-        max_item = QtGui.QCheckBox()
-                    
+
         
-        # Add combobox and check boxes to the table
+        # Create check box for rm (remove line)
+        rm_chkbx = QtGui.QCheckBox()
+        
+        # Create checkbox and layout for min and max
+        # Create the checkbox
+        min_chkbx = QtGui.QCheckBox()
+        max_chkbx = QtGui.QCheckBox()
+        # Create the global widget
+        min_wi = QtGui.QWidget()
+        max_wi = QtGui.QWidget()
+        # Create a layout for the widget
+        min_lay = QtGui.QHBoxLayout(min_wi)
+        max_lay = QtGui.QHBoxLayout(max_wi)
+        # Add the checkbox to the layout 
+        min_lay.addWidget(min_chkbx)
+        max_lay.addWidget(max_chkbx)
+        # Align the checkbox in the layout
+        min_lay.setAlignment(QtCore.Qt.AlignCenter)
+        max_lay.setAlignment(QtCore.Qt.AlignCenter)
+        
+        # Add combobox and check boxes to the table        
         self._table_widget.setCellWidget(act_row, 1, zone_combo)
         self._table_widget.setCellWidget(act_row, 2, var_combo)
         self._table_widget.setCellWidget(act_row, 3, line_combo)
         self._table_widget.setCellWidget(act_row, 4, marker_combo)
-        self._table_widget.setCellWidget(act_row, 0, rm_item)
-        self._table_widget.setCellWidget(act_row, 5, min_item)
-        self._table_widget.setCellWidget(act_row, 6, max_item)
+        self._table_widget.setCellWidget(act_row, 0, rm_chkbx)
+        self._table_widget.setCellWidget(act_row, 5, min_wi)
+        self._table_widget.setCellWidget(act_row, 6, max_wi)
+
+        # Execute load and draw
+        self.refresh_plot()
         
-        # Connect combobox to signal to update Available variable for zone 
+        # Connect zone combobox to signal to update Available variable for zone 
         zone_combo.activated.connect(self.UpdateVar)
         
+        # Connect var, line and marker combobox to signal to update plot
+        var_combo.activated.connect(self.refresh_plot)
+        line_combo.activated.connect(self.refresh_plot)
+        marker_combo.activated.connect(self.refresh_plot)
+        
         # Connect rm checkbox to remove the corresponding line
-        rm_item.stateChanged.connect(self.RemoveLine)
+        rm_chkbx.stateChanged.connect(self.RemoveLine)
+        
+
 
     def RemoveLine(self):
         # Find the table current index
@@ -140,6 +169,9 @@ class PeriodicPlot(DataPlotter):
         
         # Remove corresponding line
         self._table_widget.removeRow(index.row())
+        
+        # Call Load and draw
+        self.refresh_plot()
     
     def UpdateVar(self):
         # Find the table current index
@@ -162,17 +194,64 @@ class PeriodicPlot(DataPlotter):
         # Assign new variables 
         for var in var_list:
             var_combo.addItem(var)
-            
-    def RefreshPlot(self):
-        return 0
-        
-        
 
+        # Call Load and draw
+        self.refresh_plot()
+    
+    @QtCore.pyqtSlot()    
+    def refresh_plot(self):
         
+        # Initialize list of zone to plot
+        zone_list = []
         
+        # Initialise corresponding Variable list
+        var_list = []
         
+        # Initialise list of line style
+        line_list = []
         
+        # Initialise list of marker
+        marker_list = []
         
+        # Define canvas
+        canvas = self._MplWidget.canvas
         
+        # Clear axes
+        canvas.axes.cla()
         
+        # Go through table
+        for i in range(self._table_widget.rowCount()):
+            # Get zone name and add it to list
+            zone_combo = self._table_widget.cellWidget(i,1)
+            cur_zone = self._building.get_zone(zone_combo.currentText())
+            zone_list.append(cur_zone.name)
+            
+            # Get variable values for zone and add it to list
+            var_combo = self._table_widget.cellWidget(i,2)
+            # Get the variable Array
+            cur_var = cur_zone.get_values(var_combo.currentText(),'HOUR')
+            # Add the Array full set to the list of variable
+            var_list.append(cur_var.vals)
+            
+            # Get line_style 
+            line_combo = self._table_widget.cellWidget(i,3)
+            line_list.append(line_combo.currentText())
+            
+            # Get marker style 
+            marker_combo = self._table_widget.cellWidget(i,4)
+            marker_list.append(marker_combo.currentText())
+        
+        #define the x axes
+        for var, color, style, mark in zip(var_list,
+                                           self._color_chart,
+                                           line_list,
+                                           marker_list):
+            canvas.axes.plot(var,
+                             color = color,
+                             linestyle = style,
+                             marker = mark,
+                             linewidth=2)
+        
+        # Draw plot
+        canvas.draw()      
      
