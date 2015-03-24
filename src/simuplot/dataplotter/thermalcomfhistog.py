@@ -36,52 +36,38 @@ class ThermalComfHistog(DataPlotter):
         # Reference temperature
         self._ref_temp = None
 
-        # Chart widget
-        self._MplWidget = self.plotW
-        # Table widget
-        self._table_widget = self.listW
-
         # Set column number and add headers
-        self._table_widget.setColumnCount(3)
-        self._table_widget.setHorizontalHeaderLabels([
+        self.dataTable.setColumnCount(3)
+        self.dataTable.setHorizontalHeaderLabels([
             self.tr('Zone'),
             self.tr('Discomfort[%]'),
             self.tr('Max temp [°C]')
             ])
-        self._table_widget.horizontalHeader().setResizeMode(
+        self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
         
-        # Initialise RTclimat_comboBox
+        # Initialize climaticZoneSelectBox
         for dat in rt_climatic_zone:
-            self.RTclimat_comboBox.addItem(dat)
+            self.climaticZoneSelectBox.addItem(dat)
             
-        # Initialise HQEspace_comboBox
+        # Initialize hqeStudyTypeSelectBox
         for dat in hqe_tmax_per_usage :
-            self.HQEspace_comboBox.addItem(dat)
+            self.hqeStudyTypeSelectBox.addItem(dat)
             
-        # Initialise HQE radio button to checked
-        self.HQEradioButton.setChecked(True)
-        
         # Refresh plot when zone is clicked/unclicked or sort order changed
-        self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect(
+        self.dataTable.itemClicked.connect(self.refresh_plot)
+        self.dataTable.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
             
         # Refresh plot when rt_climatic_zone is changed
-        self.RTclimat_comboBox.activated.connect(
+        self.climaticZoneSelectBox.activated.connect(
             self.refresh_plot)
             
-        # Refresh data when one of the two radio button is switched on or off
-        self.HQEradioButton.toggled.connect(
-            self.refresh_data)
-        
-        # Refresh data when HQEspace_comboBox is changed
-        self.HQEspace_comboBox.activated.connect(
-            self.refresh_data)
-                
-        # Refresh plot when spinBox value is changed
-        self.spinBox.valueChanged.connect(
-            self.refresh_data)     
+        # Refresh data when maximum comfort temperature is changed
+        self.hqeStudyRadioButton.clicked.connect(self.refresh_data)
+        self.customStudyRadioButton.clicked.connect(self.refresh_data)
+        self.hqeStudyTypeSelectBox.activated.connect(self.refresh_data)
+        self.customStudySpinBox.valueChanged.connect(self.refresh_data)
      
     @property
     def name(self):
@@ -129,18 +115,18 @@ class ThermalComfHistog(DataPlotter):
         zones = self._building.zones
 
         # Clear table and disable sorting before populating the table
-        self._table_widget.clearContents()
-        self._table_widget.setSortingEnabled(False)
+        self.dataTable.clearContents()
+        self.dataTable.setSortingEnabled(False)
 
         # Create one empty row per zone
-        self._table_widget.setRowCount(len(zones))
+        self.dataTable.setRowCount(len(zones))
         
         # Get reference temperature for thermal comfort
-        if self.HQEradioButton.isChecked():
+        if self.hqeStudyRadioButton.isChecked():
             self._ref_temp = \
-                hqe_tmax_per_usage[unicode(self.HQEspace_comboBox.currentText())]
+                hqe_tmax_per_usage[self.hqeStudyTypeSelectBox.currentText()]
         else:
-            self._ref_temp = self.spinBox.value()
+            self._ref_temp = self.customStudySpinBox.value()
 
         # For each zone
         for i, name in enumerate(zones):
@@ -170,13 +156,13 @@ class ThermalComfHistog(DataPlotter):
             val_item2.setFlags(QtCore.Qt.ItemIsEnabled)
 
             # Add items to row, column
-            self._table_widget.setItem(i, 0, name_item)
-            self._table_widget.setItem(i, 1, val_item1)
-            self._table_widget.setItem(i, 2, val_item2)
+            self.dataTable.setItem(i, 0, name_item)
+            self.dataTable.setItem(i, 1, val_item1)
+            self.dataTable.setItem(i, 2, val_item2)
 
         # Sort by value, descending order, and allow user column sorting
-        self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
-        self._table_widget.setSortingEnabled(True)
+        self.dataTable.sortItems(1, QtCore.Qt.DescendingOrder)
+        self.dataTable.setSortingEnabled(True)
         
         # Draw plot
         self.refresh_plot()
@@ -187,27 +173,27 @@ class ThermalComfHistog(DataPlotter):
         vals = []
         names = []
 
-        canvas = self._MplWidget.canvas
+        canvas = self.plotWidget.canvas
         
         # Clear axes
         canvas.axes.cla()
         canvas.set_tight_layout_on_resize(False)
 
         # Get checked rows and corresponding (name, value)
-        for i in range(self._table_widget.rowCount()):
-            if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
-                name = self._table_widget.item(i,0).text()
+        for i in range(self.dataTable.rowCount()):
+            if self.dataTable.item(i,0).checkState() == QtCore.Qt.Checked:
+                name = self.dataTable.item(i,0).text()
                 names.append(name)
                 try:
-                    value = float(self._table_widget.item(i,1).text())
+                    value = float(self.dataTable.item(i,1).text())
                 except AttributeError:
                     raise DataPlotterError(self.tr(
                         'Invalid discomfort value type for row {} ({}): {}'
-                        ).format(i, name, self._table_widget.item(i,1)))
+                        ).format(i, name, self.dataTable.item(i,1)))
                 except ValueError:
                     raise DataPlotterError(self.tr(
                         'Invalid discomfort value for row {} ({}): {}' 
-                        ).format(i, name, self._table_widget.item(i,1).text()))
+                        ).format(i, name, self.dataTable.item(i,1).text()))
                 else:
                     vals.append(value)
         
@@ -221,9 +207,9 @@ class ThermalComfHistog(DataPlotter):
 
             # Get "Performant" and "Très Performant" levels
             self._hqep = rt_climatic_zone[unicode(
-                self.RTclimat_comboBox.currentText())][0]
+                self.climaticZoneSelectBox.currentText())][0]
             self._hqetp = rt_climatic_zone[unicode(
-                self.RTclimat_comboBox.currentText())][1]
+                self.climaticZoneSelectBox.currentText())][1]
             
             # Create and draw bar chart    
             ind = np.arange(values.size)

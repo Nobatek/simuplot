@@ -92,12 +92,9 @@ class EnergyPlus(DataReader):
         
         self._name = 'Energy Plus'
         
-        # Path to data file
-        self._file_path_text = self.File_Path_Text
-
         # Connect browse and load buttons
-        self.Browse_Button.clicked.connect(self.browse_button_cbk)
-        self.buttonBox.accepted.connect(self.load_button_cbk)
+        self.filePathBrowseButton.clicked.connect(self.browse_button_cbk)
+        self.filePathButtonBox.accepted.connect(self.load_button_cbk)
 
     @property
     def name(self):
@@ -110,13 +107,13 @@ class EnergyPlus(DataReader):
         # and print it in file path text widget
         file_path = QtGui.QFileDialog.getOpenFileName()
         if file_path != '':
-            self._file_path_text.setText(file_path)
+            self.filePathEdit.setText(file_path)
 
     def load_button_cbk(self):
         """Load button callback"""
         
-        # Get file path from File_Path_Text widget
-        file_path = self._file_path_text.text()
+        # Get file path from filePathEdit
+        file_path = self.filePathEdit.text()
 
         # Initialize progress bar
         self.dataLoadProgress.emit(0)

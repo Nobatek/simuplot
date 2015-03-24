@@ -54,8 +54,8 @@ class MainWindow(QtGui.QMainWindow):
         # Instantiate all reader widgets and add them to stacked widget
         for reader in dr.readers:
             r = reader(self._building)
-            self.comboBox.addItem(r.name)
-            self.stackedWidget.addWidget(r)
+            self.loadSourceTypeSelectBox.addItem(r.name)
+            self.loadStackedWidget.addWidget(r)
             # Connect signals to status bar
             r.loadingData.connect(self.statusBar().loadingData)
             r.dataLoaded.connect(self.statusBar().dataLoaded)
@@ -70,13 +70,13 @@ class MainWindow(QtGui.QMainWindow):
             r.dataLoadError.connect(lambda: self.setPlotTabsEnabled(False))
 
         # Connect comboBox activated signal to stackedWidget set index slot
-        self.comboBox.activated.connect(
-            self.stackedWidget.setCurrentIndex)
+        self.loadSourceTypeSelectBox.activated.connect(
+            self.loadStackedWidget.setCurrentIndex)
 
         # Connect menu signals
-        self.actionCopyPlotToClipboard.triggered.connect(
+        self.copyPlotToClipboardAction.triggered.connect(
             self.copyPlotToClipboard)
-        self.actionCopyTableToClipboard.triggered.connect(
+        self.copyTableToClipboardAction.triggered.connect(
             self.copyTableToClipboard)
 
     def setPlotTabsEnabled(self, enable):
@@ -100,7 +100,7 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: disable menu action if current tab is not a plotter
         if isinstance(w, dp.dataplotter.DataPlotter):
 
-            pixmap = QtGui.QPixmap.grabWidget(w.plotW.canvas)
+            pixmap = QtGui.QPixmap.grabWidget(w.plotWidget.canvas)
             self._app.clipboard().setPixmap(pixmap)
 
     def copyTableToClipboard(self):
@@ -114,7 +114,7 @@ class MainWindow(QtGui.QMainWindow):
         # TODO: disable menu action if current tab is not a plotter
         if isinstance(w, dp.dataplotter.DataPlotter):
 
-            tw = w._table_widget
+            tw = w.dataTable
 
             # Create an HTML table from the TableWidget
             html = '<table>'

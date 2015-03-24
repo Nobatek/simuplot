@@ -24,21 +24,16 @@ class ConsPerZonePie(DataPlotter):
         # Initialize total building heat need
         self._build_total_hn = 0
         
-        # Chart widget
-        self._MplWidget = self.plotW
-        # Table widget
-        self._table_widget = self.listW
-
         # Set column number and add headers
-        self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels(
+        self.dataTable.setColumnCount(2)
+        self.dataTable.setHorizontalHeaderLabels(
             [self.tr('Zone'), self.tr('Heat need [kWh]')])
-        self._table_widget.horizontalHeader().setResizeMode(
+        self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
  
         # Refresh plot when zone is clicked/unclicked or sort order changed
-        self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect(
+        self.dataTable.itemClicked.connect(self.refresh_plot)
+        self.dataTable.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
 
     @property
@@ -69,11 +64,11 @@ class ConsPerZonePie(DataPlotter):
         zones = self._building.zones
         
         # Clear table and disable sorting before populating the table
-        self._table_widget.clearContents()
-        self._table_widget.setSortingEnabled(False)
+        self.dataTable.clearContents()
+        self.dataTable.setSortingEnabled(False)
 
         # Create one empty row per zone
-        self._table_widget.setRowCount(len(zones))
+        self.dataTable.setRowCount(len(zones))
         
         # For each zone
         for i, name in enumerate(zones):
@@ -102,12 +97,12 @@ class ConsPerZonePie(DataPlotter):
             val_item.setFlags(QtCore.Qt.ItemIsEnabled)
 
             # Add items to row, column
-            self._table_widget.setItem(i, 0, name_item)
-            self._table_widget.setItem(i, 1, val_item)
+            self.dataTable.setItem(i, 0, name_item)
+            self.dataTable.setItem(i, 1, val_item)
             
         # Sort by value, descending order, and allow user column sorting
-        self._table_widget.sortItems(1, QtCore.Qt.DescendingOrder)
-        self._table_widget.setSortingEnabled(True)        
+        self.dataTable.sortItems(1, QtCore.Qt.DescendingOrder)
+        self.dataTable.setSortingEnabled(True)        
 
         # Draw plot
         self.refresh_plot()
@@ -115,7 +110,7 @@ class ConsPerZonePie(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
 
-        canvas = self._MplWidget.canvas
+        canvas = self.plotWidget.canvas
 
         # Clear axes
         canvas.axes.cla()
@@ -124,20 +119,20 @@ class ConsPerZonePie(DataPlotter):
         # Get checked rows and corresponding (name, value)
         values = []
         names = []
-        for i in range(self._table_widget.rowCount()):
-            if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
-                name = self._table_widget.item(i,0).text()
+        for i in range(self.dataTable.rowCount()):
+            if self.dataTable.item(i,0).checkState() == QtCore.Qt.Checked:
+                name = self.dataTable.item(i,0).text()
                 names.append(name)
                 try:
-                    value = int(self._table_widget.item(i,1).text())
+                    value = int(self.dataTable.item(i,1).text())
                 except AttributeError:
                     raise DataPlotterError(self.tr(
                         'Invalid cons value type for row {} ({}): {}'
-                        ).format(i, name, self._table_widget.item(i,1)))
+                        ).format(i, name, self.dataTable.item(i,1)))
                 except ValueError:
                     raise DataPlotterError(self.tr(
                         'Invalid cons value for row {} ({}): {}'
-                        ).format(i, name, self._table_widget.item(i,1).text()))
+                        ).format(i, name, self.dataTable.item(i,1).text()))
                 else:
                     values.append(value)
             

@@ -20,18 +20,18 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <layout class="QVBoxLayout" name="dataLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <layout class="QHBoxLayout" name="climaticZoneLayout">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="climaticZoneSelectLabel">
            <property name="text">
             <string>RT2012 climatic zone</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="RTclimat_comboBox"/>
+          <widget class="QComboBox" name="climaticZoneSelectBox"/>
          </item>
         </layout>
        </item>
@@ -52,36 +52,39 @@
         </spacer>
        </item>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="maxComfortTemperatureGroupBox">
          <property name="title">
           <string>Maximum comfort temperature</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <layout class="QHBoxLayout" name="maxComfortTemperatureHqeStudyLayout">
             <item>
-             <widget class="QRadioButton" name="HQEradioButton">
+             <widget class="QRadioButton" name="hqeStudyRadioButton">
               <property name="text">
                <string>HQE study</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="HQEspace_comboBox"/>
+             <widget class="QComboBox" name="hqeStudyTypeSelectBox"/>
             </item>
            </layout>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
+           <layout class="QHBoxLayout" name="maxComfortTemperatureCustomStudyLayout">
             <item>
-             <widget class="QRadioButton" name="CustomradioButton">
+             <widget class="QRadioButton" name="customStudyRadioButton">
               <property name="text">
                <string>Custom study</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QSpinBox" name="spinBox">
+             <widget class="QSpinBox" name="customStudySpinBox">
               <property name="keyboardTracking">
                <bool>false</bool>
               </property>
@@ -102,7 +105,7 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer">
+        <spacer name="verticalSpacer_1">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -118,7 +121,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QTableWidget" name="listW">
+        <widget class="QTableWidget" name="dataTable">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -153,7 +156,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="MplWidget" name="plotW" native="true">
+     <widget class="MplWidget" name="plotWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>

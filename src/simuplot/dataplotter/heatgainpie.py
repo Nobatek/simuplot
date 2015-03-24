@@ -46,19 +46,15 @@ class HeatGainPie(DataPlotter):
         # Results dict
         self._heat_build_zone = None
 
-        # Chart and table widgets
-        self._MplWidget = self.plotW
-        self._table_widget = self.listW
-
         # Set column number and add headers
-        self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels(
+        self.dataTable.setColumnCount(2)
+        self.dataTable.setHorizontalHeaderLabels(
             [self.tr('Heat sources'), self.tr('Heat gains [kWh]')])
-        self._table_widget.horizontalHeader().setResizeMode(
+        self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
             
         # Initialize table with one row per heat source with checkbox
-        self._table_widget.setRowCount(len(heat_sources))
+        self.dataTable.setRowCount(len(heat_sources))
         for i, val in enumerate(heat_sources) :
             # DataTypes is a dict of type:(unit, string)
             hs_name = QtCore.QCoreApplication.translate(
@@ -68,23 +64,23 @@ class HeatGainPie(DataPlotter):
                            QtCore.Qt.ItemIsEnabled)
             name_item.setCheckState(QtCore.Qt.Checked)
             
-            self._table_widget.setItem(i, 0, name_item)
+            self.dataTable.setItem(i, 0, name_item)
             
-        # Set PeriodcomboBox
+        # Set periodSelectBox
         for per in periods:
-            self.PeriodcomboBox.addItem(self.tr(per[0]))
+            self.periodSelectBox.addItem(self.tr(per[0]))
 
-        # Refresh data when PeriodcomboBox is activated
-        self.PeriodcomboBox.activated.connect(
+        # Refresh data when periodSelectBox is activated
+        self.periodSelectBox.activated.connect(
             self.refresh_data)
             
-        # Refresh plot when BuildcomboBox is modified
-        self.BuildcomboBox.activated.connect(
+        # Refresh plot when buildingSelectBox is modified
+        self.buildingSelectBox.activated.connect(
             self.refresh_tab_and_plot)
 
         # Refresh plot when zone is clicked/unclicked or sort order changed
-        self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect(
+        self.dataTable.itemClicked.connect(self.refresh_plot)
+        self.dataTable.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)    
             
     @property
@@ -144,12 +140,12 @@ class HeatGainPie(DataPlotter):
         
         # Set combobox with zone names 
         # and add 'Building' as a ficticious "all zones" zone
-        self.BuildcomboBox.addItems(zones)
-        self.BuildcomboBox.addItem(self.tr('Building'))
-        self.BuildcomboBox.setCurrentIndex(self.BuildcomboBox.count() - 1)
+        self.buildingSelectBox.addItems(zones)
+        self.buildingSelectBox.addItem(self.tr('Building'))
+        self.buildingSelectBox.setCurrentIndex(self.buildingSelectBox.count() - 1)
         
         # Get the study period from combobox
-        study_period = periods[self.PeriodcomboBox.currentIndex()][1]
+        study_period = periods[self.periodSelectBox.currentIndex()][1]
 
         # Compute heat gain per source in each zone
         self._heat_build_zone = {}
@@ -172,10 +168,10 @@ class HeatGainPie(DataPlotter):
     def refresh_tab_and_plot(self):    
 
         # Current zone or building displayed
-        if self.BuildcomboBox.currentIndex() == self.BuildcomboBox.count() - 1:
+        if self.buildingSelectBox.currentIndex() == self.buildingSelectBox.count() - 1:
             cur_zone = 'Building'
         else :
-            cur_zone = self.BuildcomboBox.currentText()
+            cur_zone = self.buildingSelectBox.currentText()
 
         # Display Zone or building value in table 2nd column
         for i, hs in enumerate(heat_sources):
@@ -187,10 +183,10 @@ class HeatGainPie(DataPlotter):
             val_item = QtGui.QTableWidgetItem()
             val_item.setData(QtCore.Qt.DisplayRole, hs_value)
             val_item.setFlags(QtCore.Qt.ItemIsEnabled)
-            self._table_widget.setItem(i, 1, val_item)
+            self.dataTable.setItem(i, 1, val_item)
             
             # Uncheck heat source name if value is zero
-            name_item = self._table_widget.item(i,0)
+            name_item = self.dataTable.item(i,0)
             if hs_value == 0:
                 name_item.setCheckState(QtCore.Qt.Unchecked)
             else :
@@ -202,7 +198,7 @@ class HeatGainPie(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
         
-        canvas = self._MplWidget.canvas
+        canvas = self.plotWidget.canvas
         
         # Clear axes
         canvas.axes.cla()
@@ -213,11 +209,11 @@ class HeatGainPie(DataPlotter):
         name_plot = []
         value_plot = []
         sum_value = 0
-        for i in range(self._table_widget.rowCount()):
-            name = self._table_widget.item(i,0).text()
-            value = int(self._table_widget.item(i,1).text())
+        for i in range(self.dataTable.rowCount()):
+            name = self.dataTable.item(i,0).text()
+            value = int(self.dataTable.item(i,1).text())
             sum_value += value
-            if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
+            if self.dataTable.item(i,0).checkState() == QtCore.Qt.Checked:
                 name_plot.append(name)
                 value_plot.append(value)
 
