@@ -119,6 +119,7 @@ class ConsPerZonePie(DataPlotter):
 
         # Clear axes
         canvas.axes.cla()
+        canvas.set_tight_layout_on_resize(False)
 
         # Get checked rows and corresponding (name, value)
         values = []
@@ -156,6 +157,8 @@ class ConsPerZonePie(DataPlotter):
                 'Building heat need: {} [kWh]').format(self._build_total_hn)
             title = canvas.axes.set_title(title_str, y = 1.05)
         
+            canvas.set_tight_layout_on_resize(True)
+
         # Draw plot
         canvas.draw()
 

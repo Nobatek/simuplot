@@ -95,9 +95,8 @@ class MainWindow(QtGui.QMainWindow):
         w = self.tabWidget.currentWidget()
 
         # Current tab is not a plotter
-        if not isinstance(w, dp.dataplotter.DataPlotter):
-            return
+        if isinstance(w, dp.dataplotter.DataPlotter):
 
-        pixmap = QtGui.QPixmap.grabWidget(w.plotW.canvas)
-        self._app.clipboard().setPixmap(pixmap)
+            pixmap = QtGui.QPixmap.grabWidget(w.plotW.canvas)
+            self._app.clipboard().setPixmap(pixmap)
 

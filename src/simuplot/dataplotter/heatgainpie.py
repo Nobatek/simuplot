@@ -206,6 +206,7 @@ class HeatGainPie(DataPlotter):
         
         # Clear axes
         canvas.axes.cla()
+        canvas.set_tight_layout_on_resize(False)
         
         # Compute heat source sum and 
         # create plot list removing unchecked values
@@ -235,6 +236,8 @@ class HeatGainPie(DataPlotter):
             title_str = self.tr('Heat gains repartition')
             title = canvas.axes.set_title(title_str, y = 1.05)
         
+            canvas.set_tight_layout_on_resize(True)
+
         # Draw plot
         canvas.draw()
 

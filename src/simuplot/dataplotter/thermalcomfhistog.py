@@ -191,6 +191,7 @@ class ThermalComfHistog(DataPlotter):
         
         # Clear axes
         canvas.axes.cla()
+        canvas.set_tight_layout_on_resize(False)
 
         # Get checked rows and corresponding (name, value)
         for i in range(self._table_widget.rowCount()):
@@ -282,6 +283,8 @@ class ThermalComfHistog(DataPlotter):
             
             # Set title
             title = canvas.axes.set_title(self.tr('Summer thermal comfort'))
+
+            canvas.set_tight_layout_on_resize(True)
 
         # Draw plot
         canvas.draw()

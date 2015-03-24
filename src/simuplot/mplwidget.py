@@ -34,8 +34,27 @@ class MplCanvas(FigureCanvas):
         # Notify the system of updated policy
         FigureCanvas.updateGeometry(self)
 
-        # Call tight_layout on resize
-        self.mpl_connect('resize_event', self.fig.tight_layout)
+        # 'resize event' connection cid
+        self.resize_cid = None
+
+    def set_tight_layout_on_resize(self, value):
+        """Set to True to let the layout adapt automatically on resize"""
+
+        if value is True:
+            self.resize_cid = self.mpl_connect(
+                'resize_event', self.tight_layout)
+            self.tight_layout()
+        else:
+            if self.resize_cid is not None:
+                self.mpl_disconnect(self.resize_cid)
+                self.resize_cid = None
+
+    def tight_layout(self, event=None):
+        try:
+            self.fig.tight_layout()
+        except ValueError as e:
+            if unicode(e) == 'left cannot be >= right': pass
+            else: raise
 
 class MplWidget(QtGui.QWidget):
     """Widget defined in Qt Designer"""
