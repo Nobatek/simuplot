@@ -49,7 +49,7 @@ class MainWindow(QtGui.QMainWindow):
             p.warning.connect(self.statusBar().warning)
 
         # Disable all plotter tabs
-        self.setPlotTabsEnabled(False)
+        self.set_plot_tabs_enabled(False)
 
         # Instantiate all reader widgets and add them to stacked widget
         for reader in dr.readers:
@@ -66,8 +66,8 @@ class MainWindow(QtGui.QMainWindow):
                 r.dataLoaded.connect(p.refresh_data)
                 r.dataLoadError.connect(p.refresh_data)
             # Enable or disable tabs depending on load status
-            r.dataLoaded.connect(lambda: self.setPlotTabsEnabled(True))
-            r.dataLoadError.connect(lambda: self.setPlotTabsEnabled(False))
+            r.dataLoaded.connect(lambda: self.set_plot_tabs_enabled(True))
+            r.dataLoadError.connect(lambda: self.set_plot_tabs_enabled(False))
 
         # Connect comboBox activated signal to stackedWidget set index slot
         self.loadSourceTypeSelectBox.activated.connect(
@@ -75,23 +75,38 @@ class MainWindow(QtGui.QMainWindow):
 
         # Connect menu signals
         self.copyPlotToClipboardAction.triggered.connect(
-            self.copyPlotToClipboard)
+            self.copy_plot_to_clipboard)
         self.copyTableToClipboardAction.triggered.connect(
-            self.copyTableToClipboard)
+            self.copy_table_to_clipboard)
 
-    def setPlotTabsEnabled(self, enable):
+        # Connect tab selection changed signal
+        self.tabWidget.currentChanged.connect(self.tab_selection_changed)
+
+    def set_plot_tabs_enabled(self, enable):
         """Enable/disable all plot tabs
         
             enable (bool): Disable or enable plot tabs
         """
+        
         for i in range(self.tabWidget.count()):
 
-            w = self.tabWidget.currentWidget()
+            w = self.tabWidget.widget(i)
 
             if isinstance(w, dp.dataplotter.DataPlotter):
                 self.tabWidget.setTabEnabled(i, enable)
 
-    def copyPlotToClipboard(self):
+    @QtCore.pyqtSlot()
+    def tab_selection_changed(self):
+
+        # Enable copy(Plot|Table)ToClipboard if and only if
+        # selected widget is a DataPlotter
+        w = self.tabWidget.currentWidget()
+        enable = isinstance(w, dp.dataplotter.DataPlotter)
+        self.copyPlotToClipboardAction.setEnabled(enable)
+        self.copyTableToClipboardAction.setEnabled(enable)
+
+    @QtCore.pyqtSlot()
+    def copy_plot_to_clipboard(self):
         """Copy currently displayed plot to clipboard"""
 
         w = self.tabWidget.currentWidget()
@@ -101,7 +116,8 @@ class MainWindow(QtGui.QMainWindow):
         if isinstance(w, dp.dataplotter.DataPlotter):
             self._app.clipboard().setPixmap(w.plot)
 
-    def copyTableToClipboard(self):
+    @QtCore.pyqtSlot()
+    def copy_table_to_clipboard(self):
         """Copy currently displayed plot's values table to clipboard"""
 
         w = self.tabWidget.currentWidget()
