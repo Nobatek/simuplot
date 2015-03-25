@@ -92,50 +92,26 @@ class MainWindow(QtGui.QMainWindow):
                 self.tabWidget.setTabEnabled(i, enable)
 
     def copyPlotToClipboard(self):
-        """Copy currently displayed plot to Clipboard"""
+        """Copy currently displayed plot to clipboard"""
 
         w = self.tabWidget.currentWidget()
 
         # If current tab is a plotter
         # TODO: disable menu action if current tab is not a plotter
         if isinstance(w, dp.dataplotter.DataPlotter):
-
-            pixmap = QtGui.QPixmap.grabWidget(w.plotWidget.canvas)
-            self._app.clipboard().setPixmap(pixmap)
+            self._app.clipboard().setPixmap(w.plot)
 
     def copyTableToClipboard(self):
-        """Copy currently displayed plot's values table to Clipboard"""
-
-        #TODO: copy selected cells only ?
+        """Copy currently displayed plot's values table to clipboard"""
 
         w = self.tabWidget.currentWidget()
 
         # If current tab is a plotter
         # TODO: disable menu action if current tab is not a plotter
         if isinstance(w, dp.dataplotter.DataPlotter):
-
-            tw = w.dataTable
-
-            # Create an HTML table from the TableWidget
-            html = '<table>'
-
-            # Headers
-            html += '<tr>'
-            for c in xrange(tw.columnCount()):
-                html += '<th>{}</th>'.format(tw.horizontalHeaderItem(c).text())
-            html += '</tr>'
-
-            # Data
-            for r in xrange(tw.rowCount()):
-                html += '<tr>'
-                for c in xrange(tw.columnCount()):
-                    html += '<td>{}</td>'.format(tw.item(r,c).text())
-                html += '</tr>'
-
-            html += '</table>'
 
             # Cram HTML string into clipboard, setting proper Mime type
             mimeData = QtCore.QMimeData()
-            mimeData.setData("text/html", html.encode('utf-8'));
+            mimeData.setData("text/html", w.data.encode('utf-8'));
             self._app.clipboard().setMimeData(mimeData)
 

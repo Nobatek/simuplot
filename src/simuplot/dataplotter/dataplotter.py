@@ -49,6 +49,39 @@ class DataPlotter(QtGui.QWidget):
         """Refresh the plot"""
         raise NotImplementedError
 
+    @property
+    def plot(self):
+        """Return the plot as a pixmap"""
+        return QtGui.QPixmap.grabWidget(self.plotWidget.canvas)
+
+    @property
+    def data(self):
+        """Return the table data as an HTML table"""
+
+        #TODO: copy selected cells only ?
+
+        tw = self.dataTable
+
+        # Create an HTML table from the TableWidget
+        html = '<table>'
+
+        # Headers
+        html += '<tr>'
+        for c in xrange(tw.columnCount()):
+            html += '<th>{}</th>'.format(tw.horizontalHeaderItem(c).text())
+        html += '</tr>'
+
+        # Data
+        for r in xrange(tw.rowCount()):
+            html += '<tr>'
+            for c in xrange(tw.columnCount()):
+                html += '<td>{}</td>'.format(tw.item(r,c).text())
+            html += '</tr>'
+
+        html += '</table>'
+
+        return html
+
 class DataPlotterError(SimuplotError):
     pass
 
