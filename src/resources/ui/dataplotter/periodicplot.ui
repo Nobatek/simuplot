@@ -19,12 +19,12 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QRadioButton" name="period_radio">
          <property name="text">
-          <string>Priod analysis:</string>
+          <string>Period analysis:</string>
          </property>
         </widget>
        </item>

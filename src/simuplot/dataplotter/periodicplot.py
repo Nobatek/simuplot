@@ -21,16 +21,16 @@ from data import DataZoneError
 
 # Predefined period for plot
 
-periods = [(translate('PeriodicPlot', 'Year'),[["Jan-Dec"],]),
-           (translate('PeriodicPlot', 'Summer'),[["Apr-Sep"]]),
-           (translate('PeriodicPlot', 'Winter'),[["Jan-Mar","Oct-Dec"]]),
+periods = [(translate('PeriodicPlot', 'Year'),["Jan-Dec"]),
+           (translate('PeriodicPlot', 'Summer'),["Apr-Sep"]),
+           (translate('PeriodicPlot', 'Winter'),["Jan-Mar","Oct-Dec"]),
            ]
            
 # Predefined line style
 line_style = ["-","--","-.",":"," "]           
 
 # Predefined marker style
-marker_style = ["+",",",".","1","2","3","4"]            
+marker_style = [" ","+",",",".","1","2","3","4"]            
            
 class PeriodicPlot(DataPlotter):
 
@@ -58,9 +58,19 @@ class PeriodicPlot(DataPlotter):
             ])
         self._table_widget.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
-
-        # Connect browse and load buttons
+            
+        # Initialise Period radio button to checked
+        self.period_radio.setChecked(True)
+        
+        # Initialise PeriodCombo with predefined values
+        for dat in periods:
+            self.PeriodCombo.addItem(dat[0])
+        
+        # Connect add line button
         self.AddButton.clicked.connect(self.AddLine)
+        
+        # Connect Period combobox to refresh_plot
+        self.PeriodCombo.activated.connect(self.refresh_plot)
         
         # Refresh plot when zone is clicked/unclicked or sort order changed
         # self._table_widget.cellClicked.connect(self.PrintCurrent)
@@ -145,6 +155,10 @@ class PeriodicPlot(DataPlotter):
         self._table_widget.setCellWidget(act_row, 0, rm_chkbx)
         self._table_widget.setCellWidget(act_row, 5, min_wi)
         self._table_widget.setCellWidget(act_row, 6, max_wi)
+        
+        # Resize column to fit zone name and variables
+        self._table_widget.horizontalHeader().setResizeMode(
+            QtGui.QHeaderView.ResizeToContents)
 
         # Execute load and draw
         self.refresh_plot()
@@ -230,8 +244,22 @@ class PeriodicPlot(DataPlotter):
             var_combo = self._table_widget.cellWidget(i,2)
             # Get the variable Array
             cur_var = cur_zone.get_values(var_combo.currentText(),'HOUR')
+            
+            # Get the time interval to plot values
+            if self.period_radio.isChecked():
+                time_interval = \
+                    periods[self.PeriodCombo.currentIndex()][1]
+            
+            # Get the Array set corresponding to the interval 
+            #(or combine intervals if 2 period in interval eg. winter)
+            var_in_interval = np.array([])
+            for per in time_interval :
+                var_in_interval = np.concatenate( \
+                (var_in_interval,cur_var.get_interval(per)),axis = 0)
+
+            
             # Add the Array full set to the list of variable
-            var_list.append(cur_var.vals)
+            var_list.append(var_in_interval)
             
             # Get line_style 
             line_combo = self._table_widget.cellWidget(i,3)
