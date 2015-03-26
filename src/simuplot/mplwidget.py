@@ -18,7 +18,7 @@ from matplotlib.backends.backend_qt4agg import (
 class MplCanvas(FigureCanvas):
     """Class to represent the FigureCanvas widget"""
     def __init__(self):
-        
+
         # Setup Matplotlib Figure and Axis
         self.fig = Figure(facecolor="white")
         self.axes = self.fig.add_subplot(111)
@@ -50,16 +50,19 @@ class MplCanvas(FigureCanvas):
                 self.resize_cid = None
 
     def tight_layout(self, event=None):
+        """Call tight_layout on figure to auto-adapt the plot size"""
         try:
             self.fig.tight_layout()
         except ValueError as e:
-            if unicode(e) == 'left cannot be >= right': pass
-            else: raise
+            if unicode(e) == 'left cannot be >= right':
+                pass
+            else:
+                raise
 
 class MplWidget(QtGui.QWidget):
     """Widget defined in Qt Designer"""
-    def __init__(self, parent = None):
-        
+    def __init__(self, parent=None):
+
         super(MplWidget, self).__init__(parent)
 
         # Set canvas and navigation toolbar
