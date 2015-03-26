@@ -252,7 +252,7 @@ class Zone(QtCore.QObject):
 
     def get_variable_periods(self, data_type):
         """Return list of available periods for type data_type"""
-        self._get_variable(data_type).periods
+        return self._get_variable(data_type).periods
 
     def get_values(self, data_type, period):
         """Return values of variable of type data_type for period"""
