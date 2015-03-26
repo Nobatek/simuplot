@@ -11,8 +11,6 @@ from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
 import numpy as np
 
-import matplotlib.pyplot as plt
-
 from .dataplotter import DataPlotter
 
 from simuplot.data import DataTypes, DataZoneError

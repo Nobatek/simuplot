@@ -5,8 +5,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import os
-
 from PyQt4 import QtCore, QtGui
 
 class StatusBar(QtGui.QStatusBar):

@@ -5,8 +5,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import numpy as np
-
 from PyQt4 import QtCore
 
 from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
