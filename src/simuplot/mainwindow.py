@@ -128,6 +128,6 @@ class MainWindow(QtGui.QMainWindow):
 
             # Cram HTML string into clipboard, setting proper Mime type
             mimeData = QtCore.QMimeData()
-            mimeData.setData("text/html", w.data.encode('utf-8'));
+            mimeData.setData("text/html", w.data.encode('utf-8'))
             self._app.clipboard().setMimeData(mimeData)
 
