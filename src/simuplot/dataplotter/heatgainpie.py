@@ -228,7 +228,7 @@ class HeatGainPie(DataPlotter):
 
             # Set title
             title_str = self.tr('Heat gains repartition')
-            title = canvas.axes.set_title(title_str, y = 1.05)
+            canvas.axes.set_title(title_str, y = 1.05)
         
             canvas.set_tight_layout_on_resize(True)
 

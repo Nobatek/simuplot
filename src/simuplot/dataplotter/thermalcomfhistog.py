@@ -268,7 +268,7 @@ class ThermalComfHistog(DataPlotter):
             l.texts[0].set_style('italic')
             
             # Set title
-            title = canvas.axes.set_title(self.tr('Summer thermal comfort'))
+            canvas.axes.set_title(self.tr('Summer thermal comfort'))
 
             canvas.set_tight_layout_on_resize(True)
 

@@ -150,7 +150,7 @@ class ConsPerZonePie(DataPlotter):
             # Set title
             title_str = self.tr(
                 'Building heat need: {} [kWh]').format(self._build_total_hn)
-            title = canvas.axes.set_title(title_str, y = 1.05)
+            canvas.axes.set_title(title_str, y = 1.05)
         
             canvas.set_tight_layout_on_resize(True)
 
