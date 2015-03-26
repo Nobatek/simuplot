@@ -72,8 +72,13 @@ class PeriodicPlot(DataPlotter):
         # Connect Period combobox to refresh_plot
         self.PeriodCombo.activated.connect(self.refresh_plot)
         
-        # Refresh plot when zone is clicked/unclicked or sort order changed
-        # self._table_widget.cellClicked.connect(self.PrintCurrent)
+        # Refresh data when one of the two radio button is switched on or off
+        self.period_radio.toggled.connect(self.refresh_plot)
+        
+        # Refresh data when begin date or end date is changed
+        self.BeginDate.dateChanged.connect(self.refresh_plot)
+        self.EndDate.dateChanged.connect(self.refresh_plot)
+        
         
     @property
     def name(self):
@@ -249,6 +254,13 @@ class PeriodicPlot(DataPlotter):
             if self.period_radio.isChecked():
                 time_interval = \
                     periods[self.PeriodCombo.currentIndex()][1]
+            else :
+                begin_date = self.BeginDate.date()
+                end_date = self.EndDate.date()
+                time_interval = [begin_date.toString("MM/dd")+"-"+
+                                 end_date.toString("MM/dd")]
+            
+            print (time_interval)
             
             # Get the Array set corresponding to the interval 
             #(or combine intervals if 2 period in interval eg. winter)
@@ -256,6 +268,7 @@ class PeriodicPlot(DataPlotter):
             for per in time_interval :
                 var_in_interval = np.concatenate( \
                 (var_in_interval,cur_var.get_interval(per)),axis = 0)
+                
 
             
             # Add the Array full set to the list of variable

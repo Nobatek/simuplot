@@ -59,7 +59,12 @@ DataPeriods = [
 
 class TimeInterval(object):
     """Object capable of creating and storing one or several time interval
-       from months or days input
+       from months or days input.
+       exemple of possible input :
+       [Jan,Fev]
+       [Jan]
+       [Jan,12/24]
+       [12/24]
     """
     
     def __init__(self, inter) :
