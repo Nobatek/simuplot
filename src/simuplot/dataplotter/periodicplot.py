@@ -18,12 +18,20 @@ from .dataplotter import DataPlotter, DataPlotterError
 
 from data import DataZoneError
 
+from simuplot.data import TimeInterval
+
+from datetime import date, datetime, time, timedelta as td
+
+import matplotlib.dates as dates
 
 # Predefined period for plot
 
-periods = [(translate('PeriodicPlot', 'Year'),["Jan-Dec"]),
-           (translate('PeriodicPlot', 'Summer'),["Apr-Sep"]),
-           (translate('PeriodicPlot', 'Winter'),["Jan-Mar","Oct-Dec"]),
+periods = [(translate('PeriodicPlot', 'Year'),[datetime.strptime('01/01','%m/%d'),
+                                               datetime.strptime('12/31','%m/%d')]),
+           (translate('PeriodicPlot', 'Summer'),[datetime.strptime('04/01','%m/%d'),
+                                               datetime.strptime('09/30','%m/%d')]),
+           (translate('PeriodicPlot', 'Winter'),[datetime.strptime('10/01','%m/%d'),
+                                               datetime.strptime('03/31','%m/%d')])
            ]
            
 # Predefined line style
@@ -69,15 +77,19 @@ class PeriodicPlot(DataPlotter):
         # Connect add line button
         self.AddButton.clicked.connect(self.AddLine)
         
+        # Define default value for plot period
+        self._period = \
+            TimeInterval(periods[self.PeriodCombo.currentIndex()][1])
+        
         # Connect Period combobox to refresh_plot
-        self.PeriodCombo.activated.connect(self.refresh_plot)
+        self.PeriodCombo.activated.connect(self.UpdatePeriod)
         
         # Refresh data when one of the two radio button is switched on or off
-        self.period_radio.toggled.connect(self.refresh_plot)
+        self.period_radio.toggled.connect(self.UpdatePeriod)
         
         # Refresh data when begin date or end date is changed
-        self.BeginDate.dateChanged.connect(self.refresh_plot)
-        self.EndDate.dateChanged.connect(self.refresh_plot)
+        self.BeginDate.dateChanged.connect(self.UpdatePeriod)
+        self.EndDate.dateChanged.connect(self.UpdatePeriod)
         
         
     @property
@@ -214,9 +226,28 @@ class PeriodicPlot(DataPlotter):
         for var in var_list:
             var_combo.addItem(var)
 
-        # Call Load and draw
+        # Update the plot
         self.refresh_plot()
-    
+        
+    def UpdatePeriod(self) :
+        # Get the period depending on radio chosen option
+        # Get begin and end datetime for plot axis
+        if self.period_radio.isChecked():
+            self._period = \
+                TimeInterval(periods[self.PeriodCombo.currentIndex()][1])
+        else :
+            begin_date = self.BeginDate.date()
+            end_date = self.EndDate.date()
+            self._period = TimeInterval([begin_date,end_date])
+                
+        
+        
+        print ( self._period.datetime_interval())
+
+        # Update the plot
+        self.refresh_plot()
+        
+        
     @QtCore.pyqtSlot()    
     def refresh_plot(self):
         
@@ -236,7 +267,7 @@ class PeriodicPlot(DataPlotter):
         canvas = self._MplWidget.canvas
         
         # Clear axes
-        canvas.axes.cla()
+        canvas.axes.cla()      
         
         # Go through table
         for i in range(self._table_widget.rowCount()):
@@ -250,29 +281,12 @@ class PeriodicPlot(DataPlotter):
             # Get the variable Array
             cur_var = cur_zone.get_values(var_combo.currentText(),'HOUR')
             
-            # Get the time interval to plot values
-            if self.period_radio.isChecked():
-                time_interval = \
-                    periods[self.PeriodCombo.currentIndex()][1]
-            else :
-                begin_date = self.BeginDate.date()
-                end_date = self.EndDate.date()
-                time_interval = [begin_date.toString("MM/dd")+"-"+
-                                 end_date.toString("MM/dd")]
-            
-            print (time_interval)
-            
-            # Get the Array set corresponding to the interval 
-            #(or combine intervals if 2 period in interval eg. winter)
-            var_in_interval = np.array([])
-            for per in time_interval :
-                var_in_interval = np.concatenate( \
-                (var_in_interval,cur_var.get_interval(per)),axis = 0)
+            # Get the Array set corresponding to the TimeInterval 
+            var_in_period = cur_var.get_interval(self._period)
+            print(var_in_period)
                 
-
-            
             # Add the Array full set to the list of variable
-            var_list.append(var_in_interval)
+            var_list.append(var_in_period)
             
             # Get line_style 
             line_combo = self._table_widget.cellWidget(i,3)
