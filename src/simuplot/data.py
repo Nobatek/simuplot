@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 import numpy as np
 
-import datetime
+from datetime import datetime
 
 from PyQt4 import QtCore
 
@@ -58,103 +58,51 @@ DataPeriods = [
 
 
 class TimeInterval(object):
-    """Object capable of creating and storing one or several time interval
-       from months or days input.
-       exemple of possible input :
-       [Jan,Fev]
-       [Jan]
-       [Jan,12/24]
-       [12/24]
+    """A TimeInterval is defined by a list containing two boundaries
+       if the first boundary is greater than the second, the time interval
+       be slitted. The boundaries must be date times object and its not 
+       necessary to specify hour or year info
+       input :
+      [begin_interval1, end_innterval1]
     """
     
-    def __init__(self, inter) :
+    def __init__(self, period) :
     
         # Set simulation first day (if Energyplus simulation it s a Sunday)
         # CAUTION : For now Simuplot works for full year only
-        self._day0 = datetime.datetime(2005,1,1,0,0,0)
-    
-        # Definition of months for non leap year
-        self._year_month = {'Jan':[1,31],
-                            'Feb':[2,28],
-                            'Mar':[3,31],
-                            'Apr':[4,30],
-                            'May':[5,31],
-                            'Jun':[6,30],
-                            'Jul':[7,31],
-                            'Aug':[8,31],
-                            'Sep':[9,30],
-                            'Oct':[10,31],
-                            'Nov':[11,30],
-                            'Dec':[12,31],
-                            }
-                            
-        # Unpack inter string to get begin and end boundaries                    
-        inter_arg_list = inter.split('-')
-        begin = inter_arg_list[0]
-        end = None
-        if len(inter_arg_list) == 2 :
-           end = inter_arg_list[1]
-                
-        # Get month and day for first boundary
-        if begin in self._year_month.keys():
-            b1_month = self._year_month[begin][0]
-            b1_day = 1
+        self._day0 = datetime(2005,1,1,0,0,0)
+        self._day364 = datetime(2005,12,31,23,0,0)
         
-        else :
-            b1_month , b1_day = begin.split('/')
-            
-        # Get month and day for second boundary
-        # if no interval has been input
-        if end == None :
-            b2_month = b1_month
-            
-            # Determine if begin is month or day
-            if begin in self._year_month.keys() :
-                b2_day = self._year_month[begin][1]
-            
-            #  Ending day is the same day
-            else :
-                b2_day = b1_day
-                
-        # If there is a specified ending values
-        elif end in self._year_month.keys() :
-            b2_month = self._year_month[end][0]
-            b2_day = self._year_month[end][1]
+        self._period = period
         
+        # Set year for the boundaries
+        self._period = [bound.replace(year = 2005) for bound in period ]
+        
+        # Set time and spilt the interval if necessary
+        if period[1] < period[0] :
+            self._period = [[self._day0, self._period[1].replace(hour = 0)],
+                            [self._period[0].replace(hour = 23), self._day0]]
         else :
-            b2_month , b2_day = end.split('/')
-            
+            self._period[0] = self._period[0].replace(hour = 0)
+            self._period[1] = self._period[1].replace(hour = 23)
+            self._period = [self._period]
 
-        # Set datetime of first boundary
-        b1 = datetime.datetime(2005,
-                               # Month
-                               int(b1_month),
-                               # Day
-                               int(b1_day),
-                               # Hour
-                               0,0,0)
+    def datetime_interval(self):
+        return self._period
 
-        # Set datetime of second boundary
-        b2 = datetime.datetime(2005,
-                               # Month
-                               int(b2_month),
-                               # Day
-                               int(b2_day),
-                               # Hour
-                               23,0,0)                               
-
-            
-        # Creation of the interval
-        self._b1 = b1 - self._day0
-        self._b2 = b2 - self._day0
-
-    # Return a list containing the time interval boundaries
-    # expressed according to the period
-    def time_interval(self, period):
+    # Return interval with relative hours boundary values
+    def hours_interval(self):
         # TODO: create the interval for other periods
-        if period == 'HOUR' :
-            return [self._b1.days * 24 + self._b1.seconds / 3600,
-                    self._b2.days * 24 + self._b2.seconds / 3600]       
+        # transform interval boundaries into delta values 
+        # (relative to the first day of the year)
+        hours_interval = [[bound - self._day0 
+                          for bound in interval]
+                          for interval in self._period]
+        # convert timedelta into hour
+        return [[bound.days * 24 + bound.seconds / 3600
+                        for bound in interval]
+                        for interval in hours_interval]
+                
 
 
 class Array(object):
@@ -173,14 +121,19 @@ class Array(object):
         
     # Return values for time interval
     def get_interval(self, interval = None):
+        # Give a TimeInterval in argument
         # If no interval is specified
         # Return full year
         if interval == None :
             return self._vals
         else :
-            # Return values for desired time interval
-            bound = TimeInterval(interval).time_interval(self._period)
-            return self._vals[bound[0]: bound[1]]
+            # get hour interval from time interval
+            period = interval.hours_interval()
+            # gather the values for each interval in res array
+            res = np.array([])
+            for int in period :
+                res = np.concatenate((res,self._vals[int[0]:int[1]]),axis=0)
+            return res
         
     # Return sum over the desired interval
     def sum_interval(self, interval = None) :
@@ -189,20 +142,16 @@ class Array(object):
         if interval == None :
             return sum(self._vals)
         else :
-            # Return sum values for desired time interval
-            bound = TimeInterval(interval).time_interval(self._period)
-            return sum(self._vals[bound[0]: bound[1]])
+            return sum(get_interval(interval))
 
     # Return mean value over the desired interval
     def mean_interval(self, interval) :
         # If no interval is specified
         # Return mean value for full year
         if interval == None :
-            return mean(self._vals)
+            return mean(get_interval(interval))
         else :
-            # Return mean values for desired time interval
-            bound = TimeInterval(interval).time_interval(self._period)
-            return mean(self._vals[bound[0]: bound[1]])
+            return mean(get_interval(interval))
         
     # Return typical days for desired interval
     def typical_day(self, per=None, start=None, end=None):
