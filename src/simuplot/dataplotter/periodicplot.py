@@ -236,14 +236,21 @@ class PeriodicPlot(DataPlotter):
             self._period = \
                 TimeInterval(periods[self.PeriodCombo.currentIndex()][1])
         else :
+            # Get end_date and begin_date from the interface calendar
             begin_date = self.BeginDate.date()
             end_date = self.EndDate.date()
+            
+            # Convert Qdatetime object begin_date into datetime object            
+            year, month, day = begin_date.getDate()
+            begin_date = datetime(year, month, day, 0, 0,0)
+            
+            # Convert Qdatetime object end_date into datetime object
+            year, month, day = end_date.getDate()
+            end_date = datetime(year, month, day, 0, 0,0)
+            
+            # Create the TimeInterval object
             self._period = TimeInterval([begin_date,end_date])
-                
         
-        
-        print ( self._period.datetime_interval())
-
         # Update the plot
         self.refresh_plot()
         
@@ -283,7 +290,6 @@ class PeriodicPlot(DataPlotter):
             
             # Get the Array set corresponding to the TimeInterval 
             var_in_period = cur_var.get_interval(self._period)
-            print(var_in_period)
                 
             # Add the Array full set to the list of variable
             var_list.append(var_in_period)
