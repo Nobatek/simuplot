@@ -63,7 +63,7 @@ class TimeInterval(object):
        be slitted. The boundaries must be date times object and its not 
        necessary to specify hour or year info
        input :
-      [begin_interval1, end_innterval1]
+      [begin_interval1, end_interval1]
     """
     
     def __init__(self, period) :
@@ -80,13 +80,41 @@ class TimeInterval(object):
         
         # Set time and spilt the interval if necessary
         if period[1] < period[0] :
-            self._period = [[self._day0, self._period[1].replace(hour = 0)],
-                            [self._period[0].replace(hour = 23), self._day0]]
+            # set the hour for beginning and ending days
+            self._begin_date = self._period[1].replace(hour = 0)
+            self._end_date = self._period[0].replace(hour = 23)
+            
+            # Create the interval list that defines the period
+            self._period = [[self._begin_date, self._day364],
+                            [self._day0, self._end_date]]
+            
+            # Create a list of delta object corresponding
+            # to the time interval
+            self._deltalist = [self._day364 - self._begin_date,
+                               self._end_date - self._day0]
         else :
-            self._period[0] = self._period[0].replace(hour = 0)
-            self._period[1] = self._period[1].replace(hour = 23)
-            self._period = [self._period]
-
+            # set the hour for beginning and ending days
+            self._begin_date = self._period[0].replace(hour = 0)
+            self._end_date = self._period[1].replace(hour = 23)
+            
+            # Store the interval list that defines the period
+            self._period = [[self._begin_date, self._end_date]]
+            
+            # Create a list of delta object corresponding
+            # to the time interval
+            self._deltalist = [self._end_date - self._begin_date]
+    
+    @property
+    def begin_date(self) :
+        return self._begin_date
+    
+    @property
+    def end_date(self) :
+        return self._end_date
+        
+    def get_deltalist(self) :
+        return self._deltalist
+        
     def datetime_interval(self):
         return self._period
 
@@ -98,6 +126,7 @@ class TimeInterval(object):
         hours_interval = [[bound - self._day0 
                           for bound in interval]
                           for interval in self._period]
+
         # convert timedelta into hour
         return [[bound.days * 24 + bound.seconds / 3600
                         for bound in interval]

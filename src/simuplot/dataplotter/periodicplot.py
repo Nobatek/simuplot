@@ -20,7 +20,7 @@ from data import DataZoneError
 
 from simuplot.data import TimeInterval
 
-from datetime import date, datetime, time, timedelta as td
+from datetime import date, datetime, time, timedelta
 
 import matplotlib.dates as dates
 
@@ -291,7 +291,7 @@ class PeriodicPlot(DataPlotter):
             # Get the Array set corresponding to the TimeInterval 
             var_in_period = cur_var.get_interval(self._period)
                 
-            # Add the Array full set to the list of variable
+            # Add the Array set to the list of variable
             var_list.append(var_in_period)
             
             # Get line_style 
@@ -301,17 +301,75 @@ class PeriodicPlot(DataPlotter):
             # Get marker style 
             marker_combo = self._table_widget.cellWidget(i,4)
             marker_list.append(marker_combo.currentText())
+            
+        # Create object to handle months days and hours
+        months = dates.MonthLocator()
+        days = dates.DayLocator()
+        hours = dates.HourLocator()
+        minutes = dates.MinuteLocator()
+        
+        # Compute number of hour in the TimeInterval deltalist
+        # delta_list = self._period.get_deltalist()
+        # delta_hours = [delta.days * 24 + delta.seconds / 3600
+                       # for delta in delta_list]
+        
+        # Create a list of datetime for the interval in period
+        # get the datetime list corresponding to period interval list
+        interval_list = self._period.datetime_interval()
+        dates_list = []
+        for inter in interval_list :
+            td = inter[1] - inter[0]
+            td_hours = int(td.days * 24 + td.seconds / 3600)
+            inter_dates = [inter[0] + timedelta(hours=i) 
+                          for i in range(td_hours)]
+            dates_list.append(inter_dates)
+        
+        # Reformat dates_list before plotting
+        dates_list = [val for inter in dates_list
+                      for val in inter]
+        dates_list = [dates.date2num(dat) for dat in dates_list]
         
         #define the x axes
         for var, color, style, mark in zip(var_list,
                                            self._color_chart,
                                            line_list,
                                            marker_list):
-            canvas.axes.plot(var,
+            
+            print ("dates_list = ", len(dates_list))
+            print ("size de var = ", var.size)
+            
+            canvas.axes.plot(dates_list,
+                             var,
                              color = color,
                              linestyle = style,
                              marker = mark,
-                             linewidth=2)
+                             linewidth=2)        
+        
+        # format the ticks depending on plot delta
+        if len(dates_list) <= 48 :
+            maj_loc = hours
+            min_loc = minutes
+            fmts = "%H:%M"
+        elif len(dates_list) <= 744 :
+            maj_loc = days
+            min_loc = hours
+            fmts = "%d-%m"
+        else :
+            maj_loc = months
+            min_loc = days
+            fmts = "%d-%m"
+        
+        # Create a date formatter
+        date_fmt = dates.DateFormatter(fmts)
+    
+        canvas.axes.xaxis.set_major_locator(maj_loc)
+        canvas.axes.xaxis.set_major_formatter(date_fmt)
+        # canvas.axes.xaxis.set_minor_locator(min_loc)
+        canvas.axes.autoscale_view()
+        
+        # format the coordinates message box
+        canvas.axes.fmt_xdata = dates.DateFormatter('%d-%m-%h')
+        canvas.axes.grid(True)
         
         # Draw plot
         canvas.draw()      
