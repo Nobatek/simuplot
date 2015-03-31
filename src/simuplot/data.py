@@ -171,16 +171,16 @@ class Array(object):
         if interval == None :
             return sum(self._vals)
         else :
-            return sum(get_interval(interval))
+            return sum(self.get_interval(interval))
 
     # Return mean value over the desired interval
     def mean_interval(self, interval) :
         # If no interval is specified
         # Return mean value for full year
         if interval == None :
-            return mean(get_interval(interval))
+            return mean(self.get_interval(interval))
         else :
-            return mean(get_interval(interval))
+            return mean(self.get_interval(interval))
         
     # Return typical days for desired interval
     def typical_day(self, per=None, start=None, end=None):

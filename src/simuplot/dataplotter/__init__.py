@@ -19,11 +19,13 @@ from .consperzonepie import ConsPerZonePie
 from .thermalcomfhistog import ThermalComfHistog
 from .heatgainpie import HeatGainPie
 from .periodicplot import PeriodicPlot
+from .pilebargainloss import PileBarGainLoss
 
 plotters = [
     ConsPerZonePie,
     ThermalComfHistog,
     HeatGainPie,
     PeriodicPlot,
+    PileBarGainLoss,
 ]
 
