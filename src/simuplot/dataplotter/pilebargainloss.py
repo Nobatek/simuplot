@@ -209,6 +209,10 @@ class PileBarGainLoss(DataPlotter):
         # Clear axes
         canvas.axes.cla()
         
+        # Get all heat sources names
+        hs_names = [self._table_widget.item(i,0).text()
+                    for i in range(self._table_widget.rowCount())]
+        
         # Compute heat source sum and 
         # create plot list removing unchecked values
         name_plot = []
@@ -223,33 +227,54 @@ class PileBarGainLoss(DataPlotter):
                 name_plot.append(name)
                 value_plot.append(month_vals)
 
-        # Create and draw bar chart    
+        
+        # Create a uniform x axis        
         ind = np.arange(len(month_list))
         
+        # Create a colormap adapted to heat_sources
+        hs_cmap = {hs_names[i] : self._color_chart[i] 
+                   for i in range(len(heat_sources))}
+        
+        # Create and draw bar chart
         prev_height = []
-        for i, hs in enumerate(value_plot):
+        rectangle = []
+        for i, (hs_name, hs_val) in enumerate(zip(name_plot, value_plot)):
             #initialize plot
             if i == 0 :
-                rectangle = canvas.axes.bar(ind, hs, 
+                rectangle = canvas.axes.bar(ind, hs_val, 
                                             edgecolor = 'white',
-                                            color = self._color_chart[i])
-                prev_height = hs
+                                            color = hs_cmap[hs_name],
+                                            label = hs_name)
+                prev_height = hs_val
 
             # Draw rectangle on top of the previous one
             else :
-                rectangle = canvas.axes.bar(ind, hs, 
+                rectangle = canvas.axes.bar(ind, hs_val, 
                                             edgecolor = 'white',
-                                            color = self._color_chart[i],
-                                            bottom = prev_height)
+                                            color = hs_cmap[hs_name],
+                                            bottom = prev_height,
+                                            label = hs_name)
                                             
                 # Store current HS height for future iteration
-                prev_height = map(add, prev_height, hs)
-        
+                prev_height = map(add, prev_height, hs_val)
             
-
+        # Add text for labels, title and axes ticks
+        canvas.axes.set_ylabel(self.tr(
+            'heat gains / loss [kWh]'))
+        canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
+        canvas.axes.set_xticklabels(month_list, ind, ha='center')
+        
         # Set title
         title_str = self.tr('Heat gains repartition')
         title = canvas.axes.set_title(title_str, y = 1.05)
+        
+        # Add legend
+        l = canvas.axes.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+          fancybox=True, ncol=4)
+
+        for text in l.texts :
+            text.set_size('small')
+                
         
         # Draw plot
         canvas.draw()
