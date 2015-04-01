@@ -231,8 +231,8 @@ class ThermalComfHistog(DataPlotter):
             rectangle = canvas.axes.bar(ind, values, edgecolor='white')
             
             # Create rectangle color map
-            rect_colors = np.where(values < self._hqetp, '#1F497D', '#7F7F7F')
-            rect_colors[values > self._hqep] = '#E36C09'
+            rect_colors = np.where(values < self._hqetp, '#8EC02F', '#E47823')
+            rect_colors[values > self._hqep] = '#868786'
 
             # Set rectangle color
             for rec, val in zip(rectangle, rect_colors):
@@ -264,22 +264,22 @@ class ThermalComfHistog(DataPlotter):
             canvas.axes.plot(ind2,
                              dr_hqetp,
                              '--',
-                             color = '#1F497D',
+                             color = '#8EC02F',
                              linewidth = 2,
                              label = self.tr(
                                 '{:.1f}% TP level').format(self._hqetp))
             canvas.axes.plot(ind2,
                              dr_hqep,
                              '--',
-                             color = '#A5A5A5',
+                             color = '#E47823',
                              linewidth = 2,
                              label = self.tr(
                                 '{:.1f}% P level').format(self._hqep))
             
             # Add legend
             l = canvas.axes.legend()
-            l.texts[0].set_color('#1F497D')
-            l.texts[1].set_color('#A5A5A5')
+            l.texts[0].set_color('#8EC02F')
+            l.texts[1].set_color('#E47823')
             l.texts[0].set_style('italic')
             
             # Set title
