@@ -20,6 +20,7 @@ from .thermalcomfhistog import ThermalComfHistog
 from .heatgainpie import HeatGainPie
 from .periodicplot import PeriodicPlot
 from .pilebargainloss import PileBarGainLoss
+from .neubrager import NEUBrager
 
 plotters = [
     ConsPerZonePie,
@@ -27,5 +28,6 @@ plotters = [
     HeatGainPie,
     PeriodicPlot,
     PileBarGainLoss,
+    NEUBrager,
 ]
 
