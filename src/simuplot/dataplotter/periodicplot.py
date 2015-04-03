@@ -101,7 +101,10 @@ class PeriodicPlot(DataPlotter):
         # Get Building zone list (for combobox)
         self._zone_list = self._building.zones
         self._zone_list.sort()
-        self._zone_list.append("Environment")
+        # Check if Environment data are available
+        outdoor = self._building.get_environment
+        if outdoor is not None :
+            self._zone_list.append("Environment")
     
     
         
@@ -322,25 +325,10 @@ class PeriodicPlot(DataPlotter):
         hours = dates.HourLocator()
         minutes = dates.MinuteLocator()
         
-        # Compute number of hour in the TimeInterval deltalist
-        # delta_list = self._period.get_deltalist()
-        # delta_hours = [delta.days * 24 + delta.seconds / 3600
-                       # for delta in delta_list]
-        
-        # Create a list of datetime for the interval in period
-        # get the datetime list corresponding to period interval list
-        interval_list = self._period.datetime_interval()
-        dates_list = []
-        for inter in interval_list :
-            td = inter[1] - inter[0]
-            td_hours = int(td.days * 24 + td.seconds / 3600)
-            inter_dates = [inter[0] + timedelta(hours=i) 
-                          for i in range(td_hours)]
-            dates_list.append(inter_dates)
+        # Get a list of datetime for the interval in period        
+        dates_list = self._period.get_datetimelist()
         
         # Reformat dates_list before plotting
-        dates_list = [val for inter in dates_list
-                      for val in inter]
         dates_list = [dates.date2num(dat) for dat in dates_list]
         
         #define the x axes
