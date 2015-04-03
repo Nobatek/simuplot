@@ -14,7 +14,7 @@ from simuplot import SimuplotError
 
 import numpy as np
 
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 
 DataTypes = {
     'AIR_DRYBULB_TEMPERATURE':
@@ -130,8 +130,23 @@ class TimeInterval(object):
     def end_date(self) :
         return self._end_date.date()
         
-    def get_deltalist(self) :
-        return self._deltalist
+    def get_datelist(self) :
+        datelist = []
+        # Create a datelist that combines all intervals
+        for i, delta in enumerate(self._deltalist) :
+            delta_day = delta.days + 1
+            datelist += [self._period[i][0] + timedelta(days = n)
+                         for n in range(delta_day)]
+        return datelist
+        
+    def get_datetimelist(self) :
+        datetimelist = []
+        # Create a datetimelist that combines all intervals
+        for i, delta in enumerate(self._deltalist) :
+            delta_hour = int(delta.days * 24 + delta.seconds / 3600)
+            datetimelist += [self._period[i][0] + timedelta(hours = n)
+                             for n in range(delta_hour)]
+        return datetimelist
         
     def datetime_interval(self):
         return self._period
@@ -198,7 +213,6 @@ class Array(object):
         if interval == None :
             return np.mean(self._vals)
         else :
-            print ("\n",self.get_interval(interval),"\n")
             return np.mean(self.get_interval(interval))
         
     # Return typical days for desired interval
