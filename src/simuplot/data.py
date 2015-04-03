@@ -5,9 +5,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import numpy as np
-
-from datetime import datetime, date, time
 
 from PyQt4 import QtCore
 
@@ -15,6 +12,9 @@ from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
 from simuplot import SimuplotError
 
+import numpy as np
+
+from datetime import datetime, date, time
 
 DataTypes = {
     'AIR_DRYBULB_TEMPERATURE':
@@ -413,7 +413,7 @@ class Zone(QtCore.QObject):
 
     def get_variable_periods(self, data_type):
         """Return list of available periods for type data_type"""
-        self._get_variable(data_type).periods
+        return self._get_variable(data_type).periods
 
     def get_values(self, data_type, period):
         """Return values of variable of type data_type for period"""

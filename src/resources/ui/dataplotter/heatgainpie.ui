@@ -20,37 +20,37 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="dataLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="periodSelectLayout">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="periodSelectLabel">
            <property name="text">
             <string>Period</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="PeriodcomboBox"/>
+          <widget class="QComboBox" name="periodSelectBox"/>
          </item>
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="buildingSelectLayout">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="buildingSelectLabel">
            <property name="text">
             <string>Zone or whole building</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="BuildcomboBox"/>
+          <widget class="QComboBox" name="buildingSelectBox"/>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QTableWidget" name="listW">
+        <widget class="QTableWidget" name="dataTable">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -85,7 +85,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="MplWidget" name="plotW" native="true">
+     <widget class="MplWidget" name="plotWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>

@@ -19,7 +19,7 @@
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QTableWidget" name="listW">
+     <widget class="QTableWidget" name="dataTable">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -51,7 +51,7 @@
        <bool>true</bool>
       </attribute>
      </widget>
-     <widget class="MplWidget" name="plotW" native="true">
+     <widget class="MplWidget" name="plotWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>

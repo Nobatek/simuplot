@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 import os
 
-from PyQt4 import QtGui, uic
+from PyQt4 import QtCore, QtGui, uic
 
 from . import ui_path
 from . import datareader as dr
@@ -19,9 +19,12 @@ from .data import Building
 
 class MainWindow(QtGui.QMainWindow):
     
-    def __init__(self):
+    def __init__(self, app):
 
         super(MainWindow, self).__init__()
+
+        # Application
+        self._app = app
 
         # Get parameters
         self._config = Config()
@@ -47,11 +50,14 @@ class MainWindow(QtGui.QMainWindow):
             # Connect signals to status bar
             p.warning.connect(self.statusBar().warning)
 
+        # Disable all plotter tabs
+        self.set_plot_tabs_enabled(False)
+
         # Instantiate all reader widgets and add them to stacked widget
         for reader in dr.readers:
             r = reader(self._building)
-            self.comboBox.addItem(r.name)
-            self.stackedWidget.addWidget(r)
+            self.loadSourceTypeSelectBox.addItem(r.name)
+            self.loadStackedWidget.addWidget(r)
             # Connect signals to status bar
             r.loadingData.connect(self.statusBar().loadingData)
             r.dataLoaded.connect(self.statusBar().dataLoaded)
@@ -62,21 +68,68 @@ class MainWindow(QtGui.QMainWindow):
                 r.dataLoaded.connect(p.refresh_data)
                 r.dataLoadError.connect(p.refresh_data)
             # Enable or disable tabs depending on load status
-            r.dataLoaded.connect(lambda: self.setPlotTabsEnabled(True))
-            r.dataLoadError.connect(lambda: self.setPlotTabsEnabled(False))
+            r.dataLoaded.connect(lambda: self.set_plot_tabs_enabled(True))
+            r.dataLoadError.connect(lambda: self.set_plot_tabs_enabled(False))
 
         # Connect comboBox activated signal to stackedWidget set index slot
-        self.comboBox.activated.connect(
-            self.stackedWidget.setCurrentIndex)
+        self.loadSourceTypeSelectBox.activated.connect(
+            self.loadStackedWidget.setCurrentIndex)
 
-        # Disable all tabs
-        self.setPlotTabsEnabled(False)
+        # Connect menu signals
+        self.copyPlotToClipboardAction.triggered.connect(
+            self.copy_plot_to_clipboard)
+        self.copyTableToClipboardAction.triggered.connect(
+            self.copy_table_to_clipboard)
 
-    def setPlotTabsEnabled(self, enable):
+        # Connect tab selection changed signal
+        self.tabWidget.currentChanged.connect(self.tab_selection_changed)
+
+    def set_plot_tabs_enabled(self, enable):
         """Enable/disable all plot tabs
         
             enable (bool): Disable or enable plot tabs
         """
-        for i in range(1, self.tabWidget.count()):
-            self.tabWidget.setTabEnabled(i, enable)
+        
+        for i in range(self.tabWidget.count()):
+
+            w = self.tabWidget.widget(i)
+
+            if isinstance(w, dp.dataplotter.DataPlotter):
+                self.tabWidget.setTabEnabled(i, enable)
+
+    @QtCore.pyqtSlot()
+    def tab_selection_changed(self):
+
+        # Enable copy(Plot|Table)ToClipboard if and only if
+        # selected widget is a DataPlotter
+        w = self.tabWidget.currentWidget()
+        enable = isinstance(w, dp.dataplotter.DataPlotter)
+        self.copyPlotToClipboardAction.setEnabled(enable)
+        self.copyTableToClipboardAction.setEnabled(enable)
+
+    @QtCore.pyqtSlot()
+    def copy_plot_to_clipboard(self):
+        """Copy currently displayed plot to clipboard"""
+
+        w = self.tabWidget.currentWidget()
+
+        # If current tab is a plotter
+        # TODO: disable menu action if current tab is not a plotter
+        if isinstance(w, dp.dataplotter.DataPlotter):
+            self._app.clipboard().setPixmap(w.plot)
+
+    @QtCore.pyqtSlot()
+    def copy_table_to_clipboard(self):
+        """Copy currently displayed plot's values table to clipboard"""
+
+        w = self.tabWidget.currentWidget()
+
+        # If current tab is a plotter
+        # TODO: disable menu action if current tab is not a plotter
+        if isinstance(w, dp.dataplotter.DataPlotter):
+
+            # Cram HTML string into clipboard, setting proper Mime type
+            mimeData = QtCore.QMimeData()
+            mimeData.setData("text/html", w.data.encode('utf-8'))
+            self._app.clipboard().setMimeData(mimeData)
 

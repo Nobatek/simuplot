@@ -15,9 +15,9 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <layout class="QHBoxLayout" name="filePathLayout">
      <item>
-      <widget class="QLineEdit" name="File_Path_Text">
+      <widget class="QLineEdit" name="filePathEdit">
        <property name="text">
         <string/>
        </property>
@@ -27,14 +27,14 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="Browse_Button">
+      <widget class="QPushButton" name="filePathBrowseButton">
        <property name="text">
         <string>Browse</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
+      <widget class="QDialogButtonBox" name="filePathButtonBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -49,7 +49,7 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer_6">
+    <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>

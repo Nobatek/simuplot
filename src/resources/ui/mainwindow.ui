@@ -23,13 +23,13 @@
       <property name="movable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="Load_Tab">
+      <widget class="QWidget" name="loadTab">
        <attribute name="title">
         <string>Data source</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <item>
-         <widget class="QComboBox" name="comboBox">
+         <widget class="QComboBox" name="loadSourceTypeSelectBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -48,7 +48,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QStackedWidget" name="stackedWidget"/>
+            <widget class="QStackedWidget" name="loadStackedWidget"/>
            </item>
           </layout>
          </widget>
@@ -65,11 +65,35 @@
      <x>0</x>
      <y>0</y>
      <width>955</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
+   <widget class="QMenu" name="exportMenu">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <addaction name="copyPlotToClipboardAction"/>
+    <addaction name="copyTableToClipboardAction"/>
+   </widget>
+   <addaction name="exportMenu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="copyPlotToClipboardAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Copy plot to clipboard</string>
+   </property>
+  </action>
+  <action name="copyTableToClipboardAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Copy table to clipboard</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
