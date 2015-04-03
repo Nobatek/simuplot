@@ -25,6 +25,42 @@ from datetime import date, datetime, time, timedelta
 import matplotlib.dates as dates
 
 
+def seven_day_mean(ext_temp, cur_day) :
+    """Return a single temperature corresponding to the 
+    mean temperature of the last 7 days according to EU norm
+    E 51-762 and french adaptation NF EN 15251
+    
+    The arguments of this function are an Array and a date object.
+    
+    """
+    # Create a list of interval corresponding to the 7 last days
+    seven_day_list=[[cur_day-timedelta(days = i),
+                     cur_day-timedelta(days = i)]
+                     for i in range(7)]
+    
+    # Replace the date if cur day is the first week of January
+    seven_day_list = [[inter[0].replace(year = 2005),
+                       inter[0].replace(year = 2005)]
+                       for inter in seven_day_list]
+                       
+    print (seven_day_list)
+    
+    # Create a list of time interval objects
+    seven_day_list = [TimeInterval(day) for day in seven_day_list]
+    
+    # Create a list of mean temperature for each days
+    seven_temp = [ext_temp.mean_interval(inter)
+                  for inter in seven_day_list]
+    
+    print (seven_temp)
+    
+    print (sum(seven_temp)/len(seven_temp))
+    
+    # Return seven_day_mean temperature
+    return sum(seven_temp)/len(seven_temp)
+    
+             
+    
 
 
 class NEUBrager(DataPlotter):
@@ -72,9 +108,19 @@ class NEUBrager(DataPlotter):
         3 lists are returned :
         teta_mean coordinates [16, 20, ..., 25 ]
         teta_op coordinates [18, 219, ..., 28 ]
-
         """
         
+        # Get the Outdoor temperature Array from the environment
+        # TODO : exception if no environment 
+        environment = self._building.get_environment()
+        ext_temp = environment.get_values('AIR_DRYBULB_TEMPERATURE','HOUR')
+        
+        # Get the Operative temperature Array for the zone
+        zone = self._building.get_zone(cur_zone)
+        op_temp = zone.get_values('OPERATIVE_TEMPERATURE','HOUR')
+        
+        seven_day_mean(ext_temp, summer_period.begin_date)
+
         
         
         
@@ -89,16 +135,23 @@ class NEUBrager(DataPlotter):
         self.ComboZone.addItems(zone_list)
         
         # Execute Refresh Plot
-        self.refresh_plot()
+        self.create_scatter()
         
-    def refresh_plot(self):
-        # Get end_date and begin_date from the interface calendar
+    def create_scatter(self):
+        # Convert Qdatetime object BeinDate into date object
         begin_date = self.BeginDate.date()
+        year, month, day = begin_date.getDate()
+        begin_date = date(year, month, day)
+        
+        # Convert Qdatetime object end_date into date object
         end_date = self.EndDate.date()
+        year, month, day = end_date.getDate()
+        end_date = date(year, month, day)
+        
         summer_period = TimeInterval([begin_date, end_date])
-    
+        
         # Get zone to plot
-        cur_zone = self.BuildcomboBox.currentText()
+        cur_zone = self.ComboZone.currentText()
         
         # Check if fans are activated
         if self.CheckFan.isChecked():
@@ -107,9 +160,8 @@ class NEUBrager(DataPlotter):
             air_speed = None
             
         # Compute scatter point coordinates
-        teta_mean, teta_op, color = ComputeScatter(cur_zone,
-                                                    summer_period,
-                                                    air_speed)
+        teta_mean, teta_op = self.ComputeScatter(cur_zone, summer_period)
+                                                    
             
         
     
