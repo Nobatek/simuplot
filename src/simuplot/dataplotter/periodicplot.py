@@ -26,12 +26,12 @@ import matplotlib.dates as dates
 
 # Predefined period for plot
 
-periods = [(translate('PeriodicPlot', 'Year'),[datetime.strptime('01/01','%m/%d'),
-                                               datetime.strptime('12/31','%m/%d')]),
-           (translate('PeriodicPlot', 'Summer'),[datetime.strptime('04/01','%m/%d'),
-                                               datetime.strptime('09/30','%m/%d')]),
-           (translate('PeriodicPlot', 'Winter'),[datetime.strptime('10/01','%m/%d'),
-                                               datetime.strptime('03/31','%m/%d')])
+periods = [(translate('PeriodicPlot', 'Year'),[datetime.strptime('01/01','%m/%d').date(),
+                                               datetime.strptime('12/31','%m/%d').date()]),
+           (translate('PeriodicPlot', 'Summer'),[datetime.strptime('04/01','%m/%d').date(),
+                                               datetime.strptime('09/30','%m/%d').date()]),
+           (translate('PeriodicPlot', 'Winter'),[datetime.strptime('10/01','%m/%d').date(),
+                                               datetime.strptime('03/31','%m/%d').date()])
            ]
            
 # Predefined line style
@@ -101,6 +101,7 @@ class PeriodicPlot(DataPlotter):
         # Get Building zone list (for combobox)
         self._zone_list = self._building.zones
         self._zone_list.sort()
+        self._zone_list.append("Environment")
     
     
         
@@ -123,7 +124,12 @@ class PeriodicPlot(DataPlotter):
         # Initialise variable in combobox
         # First get the current zone variables
         zone_name = zone_combo.currentText()
-        zone = self._building.get_zone(zone_name)
+        
+        # Check if it s building zone or environment
+        if zone_name in self._building.zones :
+            zone = self._building.get_zone(zone_name)
+        else :
+            zone = self._building.get_environment()
         var_list = zone.variables
         
         # Assign variables to variable combobox
@@ -213,8 +219,11 @@ class PeriodicPlot(DataPlotter):
         zone_combo = self._table_widget.cellWidget(index.row(),1)
         zone_name = zone_combo.currentText()
         
-        # Get the list of variables available for the zone
-        zone = self._building.get_zone(zone_name)
+        # Check if it s building zone or environment
+        if zone_name in self._building.zones :
+            zone = self._building.get_zone(zone_name)
+        else :
+            zone = self._building.get_environment()
         var_list = zone.variables
         
         # Assign variables to the combobox
@@ -240,13 +249,13 @@ class PeriodicPlot(DataPlotter):
             begin_date = self.BeginDate.date()
             end_date = self.EndDate.date()
             
-            # Convert Qdatetime object begin_date into datetime object            
+            # Convert Qdatetime object begin_date into date object            
             year, month, day = begin_date.getDate()
-            begin_date = datetime(year, month, day, 0, 0,0)
+            begin_date = date(year, month, day)
             
-            # Convert Qdatetime object end_date into datetime object
+            # Convert Qdatetime object end_date into date object
             year, month, day = end_date.getDate()
-            end_date = datetime(year, month, day, 0, 0,0)
+            end_date = date(year, month, day)
             
             # Create the TimeInterval object
             self._period = TimeInterval([begin_date,end_date])
@@ -278,9 +287,14 @@ class PeriodicPlot(DataPlotter):
         
         # Go through table
         for i in range(self._table_widget.rowCount()):
-            # Get zone name and add it to list
+            # Get zone or environment from Combobox and add it to list
             zone_combo = self._table_widget.cellWidget(i,1)
-            cur_zone = self._building.get_zone(zone_combo.currentText())
+            zone_name = zone_combo.currentText()
+            if zone_name in self._building.zones:
+                cur_zone = self._building.get_zone(zone_name)
+            else :
+                cur_zone = self._building.get_environment()
+            
             zone_list.append(cur_zone.name)
             
             # Get variable values for zone and add it to list

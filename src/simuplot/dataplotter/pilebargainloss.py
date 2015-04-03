@@ -34,18 +34,18 @@ heat_sources = ['HEATING_RATE',
                 ]
 
 # Define intervals for months in a non leap year  
-year_period = {"Jan" : [datetime(2005,1,1,0,0,0),datetime(2005,1,31,23,0,0)],
-               "Feb" : [datetime(2005,2,1,0,0,0),datetime(2005,2,28,23,0,0)],
-               "Mar" : [datetime(2005,3,1,0,0,0),datetime(2005,3,31,23,0,0)],
-               "Apr" : [datetime(2005,4,1,0,0,0),datetime(2005,4,30,23,0,0)],
-               "May" : [datetime(2005,5,1,0,0,0),datetime(2005,5,31,23,0,0)],
-               "Jun" : [datetime(2005,6,1,0,0,0),datetime(2005,6,30,23,0,0)],
-               "Jul" : [datetime(2005,7,1,0,0,0),datetime(2005,7,31,23,0,0)],
-               "Aug" : [datetime(2005,8,1,0,0,0),datetime(2005,8,31,23,0,0)],
-               "Sep" : [datetime(2005,9,1,0,0,0),datetime(2005,9,30,23,0,0)],
-               "Oct" : [datetime(2005,10,1,0,0,0),datetime(2005,10,31,23,0,0)],
-               "Nov" : [datetime(2005,11,1,0,0,0),datetime(2005,11,30,23,0,0)],
-               "Dec" : [datetime(2005,12,1,0,0,0),datetime(2005,12,31,23,0,0)]
+year_period = {"Jan" : [date(2005,1,1),date(2005,1,31)],
+               "Feb" : [date(2005,2,1),date(2005,2,28)],
+               "Mar" : [date(2005,3,1),date(2005,3,31)],
+               "Apr" : [date(2005,4,1),date(2005,4,30)],
+               "May" : [date(2005,5,1),date(2005,5,31)],
+               "Jun" : [date(2005,6,1),date(2005,6,30)],
+               "Jul" : [date(2005,7,1),date(2005,7,31)],
+               "Aug" : [date(2005,8,1),date(2005,8,31)],
+               "Sep" : [date(2005,9,1),date(2005,9,30)],
+               "Oct" : [date(2005,10,1),date(2005,10,31)],
+               "Nov" : [date(2005,11,1),date(2005,11,30)],
+               "Dec" : [date(2005,12,1),date(2005,12,31)]
               }
 
 # Create a month list

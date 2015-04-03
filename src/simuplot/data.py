@@ -7,7 +7,7 @@ from __future__ import absolute_import
 
 import numpy as np
 
-from datetime import datetime
+from datetime import datetime, date, time
 
 from PyQt4 import QtCore
 
@@ -80,10 +80,15 @@ class TimeInterval(object):
         
         # Set time and spilt the interval if necessary
         if period[1] < period[0] :
+            # If the interval bounds are date objects
             # set the hour for beginning and ending days
-            self._begin_date = self._period[1].replace(hour = 0)
-            self._end_date = self._period[0].replace(hour = 23)
-            
+            if self._period[0].__class__.__name__ == "date" and \
+               self._period[1].__class__.__name__ == "date" :
+                self._begin_date = datetime.combine(self._period[1],
+                                                    time(0,0,0))
+                self._end_date = datetime.combine(self._period[0],
+                                                    time(23,0,0))
+
             # Create the interval list that defines the period
             self._period = [[self._begin_date, self._day364],
                             [self._day0, self._end_date]]
@@ -93,10 +98,15 @@ class TimeInterval(object):
             self._deltalist = [self._day364 - self._begin_date,
                                self._end_date - self._day0]
         else :
-            # set the hour for beginning and ending days
-            self._begin_date = self._period[0].replace(hour = 0)
-            self._end_date = self._period[1].replace(hour = 23)
-            
+            # If interval bounds are date objects :
+            if self._period[0].__class__.__name__ == "date" and \
+               self._period[1].__class__.__name__ == "date" :
+                # set the hour for beginning and ending days
+                self._begin_date = datetime.combine(self._period[0],
+                                                    time(0,0,0))
+                self._end_date = datetime.combine(self._period[1],
+                                                    time(23,0,0))
+
             # Store the interval list that defines the period
             self._period = [[self._begin_date, self._end_date]]
             
@@ -105,12 +115,20 @@ class TimeInterval(object):
             self._deltalist = [self._end_date - self._begin_date]
     
     @property
-    def begin_date(self) :
+    def begin_datetime(self) :
         return self._begin_date
     
     @property
-    def end_date(self) :
+    def end_datetime(self) :
         return self._end_date
+        
+    @property
+    def begin_date(self) :
+        return self._begin_date.date()
+    
+    @property
+    def end_date(self) :
+        return self._end_date.date()
         
     def get_deltalist(self) :
         return self._deltalist
@@ -178,9 +196,10 @@ class Array(object):
         # If no interval is specified
         # Return mean value for full year
         if interval == None :
-            return mean(self.get_interval(interval))
+            return np.mean(self._vals)
         else :
-            return mean(self.get_interval(interval))
+            print ("\n",self.get_interval(interval),"\n")
+            return np.mean(self.get_interval(interval))
         
     # Return typical days for desired interval
     def typical_day(self, per=None, start=None, end=None):
