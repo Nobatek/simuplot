@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
-    <height>674</height>
+    <width>1023</width>
+    <height>895</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -119,6 +119,13 @@
             </item>
            </layout>
           </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="OccCheckBox">
+            <property name="text">
+             <string>Only display points corresponding to zone occupation</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -146,9 +153,18 @@
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="AirSpeedBox">
+          <widget class="QDoubleSpinBox" name="AirSpeedBox">
+           <property name="minimum">
+            <double>0.200000000000000</double>
+           </property>
            <property name="maximum">
-            <number>15</number>
+            <double>1.500000000000000</double>
+           </property>
+           <property name="singleStep">
+            <double>0.100000000000000</double>
+           </property>
+           <property name="value">
+            <double>0.200000000000000</double>
            </property>
           </widget>
          </item>
