@@ -5,16 +5,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import string
+import datetime as dt
+import numpy as np
 
 from PyQt4 import QtCore
-
 from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
 from simuplot import SimuplotError
-
-import numpy as np
-
-from datetime import datetime, date, time, timedelta
 
 DataTypes = {
     'AIR_DRYBULB_TEMPERATURE':
@@ -56,8 +54,42 @@ DataPeriods = [
     'YEAR',
 ]
 
+# TODO: translate short names as well
+MONTHS = [
+    ('Jan', 31, ['01/01', '01/31'], (translate('Data', 'January'))),
+    ('Fev', 28, ['02/01', '02/28'], (translate('Data', 'February'))),
+    ('Mar', 31, ['03/01', '03/31'], (translate('Data', 'March'))),
+    ('Apr', 30, ['04/01', '04/30'], (translate('Data', 'April'))),
+    ('May', 31, ['05/01', '05/31'], (translate('Data', 'May'))),
+    ('Jun', 30, ['06/01', '06/30'], (translate('Data', 'June'))),
+    ('Jul', 31, ['07/01', '07/31'], (translate('Data', 'July'))),
+    ('Aug', 31, ['08/01', '08/31'], (translate('Data', 'August'))),
+    ('Sep', 30, ['09/01', '09/30'], (translate('Data', 'September'))),
+    ('Oct', 31, ['10/01', '10/31'], (translate('Data', 'October'))),
+    ('Nov', 30, ['11/01', '11/30'], (translate('Data', 'November'))),
+    ('Dec', 31, ['12/01', '12/31'], (translate('Data', 'December'))),
+]
 
-class TimeInterval(object):
+# TODO: move to user settings
+SEASONS = [(translate('Data', 'Year'), ['01/01', '12/31']),
+           (translate('Data', 'Summer'), ['04/01', '09/30']),
+           (translate('Data', 'Winter'), ['10/01', '03/31']),
+           ]
+
+def date2dt(date):
+    """Returns a datetime corresponding to date
+    
+       date: date as a string of the form 'MM/dd'
+       e.g.: date2dt('31/12')
+    """
+    
+    try:
+        [month, day] = string.split(date, '/')
+        return dt.datetime(2005, int(month), int(day), 0, 0, 0)
+    except (TypeError, ValueError):
+        raise DataDateError(translate('Data', 'Invalid date: {}').format(date))
+
+class TimeInterval(QtCore.QObject):
     """A TimeInterval is defined by a list containing two boundaries
        if the first boundary is greater than the second, the time interval
        be slitted. The boundaries must be date times object and its not 
@@ -66,160 +98,120 @@ class TimeInterval(object):
       [begin_interval1, end_interval1]
     """
     
-    def __init__(self, period) :
-    
-        # Set simulation first day (if Energyplus simulation it s a Sunday)
-        # CAUTION : For now Simuplot works for full year only
-        self._day0 = datetime(2005,1,1,0,0,0)
-        self._day364 = datetime(2005,12,31,23,0,0)
+    def __init__(self, beg_dt, next_dt):
         
-        self._period = period
-        
-        # Set year for the boundaries
-        self._period = [bound.replace(year = 2005) for bound in period ]
-        
-        # Set time and spilt the interval if necessary
-        if period[1] < period[0] :
-            # If the interval bounds are date objects
-            # set the hour for beginning and ending days
-            if self._period[0].__class__.__name__ == "date" and \
-               self._period[1].__class__.__name__ == "date" :
-                self._begin_date = datetime.combine(self._period[1],
-                                                    time(0,0,0))
-                self._end_date = datetime.combine(self._period[0],
-                                                    time(23,0,0))
+        super(TimeInterval, self).__init__()
 
-            # Create the interval list that defines the period
-            self._period = [[self._begin_date, self._day364],
-                            [self._day0, self._end_date]]
+        # TODO: check datetime is 2005 or 01/01/2006 ?
+        # If beg_dt = next_dt, a whole wrapped year is returned
+        
+        if beg_dt < next_dt:
+            self._intervals = [[beg_dt, next_dt]]
+        else:
+            day0_dt = dt.datetime(2005, 1, 1, 0, 0, 0)
+            day365_dt =  dt.datetime(2006, 1, 1, 0, 0, 0)
+            self._intervals = [[day0_dt, next_dt],
+                               [beg_dt, day365_dt]]
+
+    @classmethod
+    def from_strings(cls, beg, end):
+        return cls(date2dt(beg), 
+                   date2dt(end) + dt.timedelta(days=1))
+
+    @classmethod
+    def from_string_seq(cls, beg_end):
+        return cls.from_strings(beg_end[0], beg_end[1])
             
-            # Create a list of delta object corresponding
-            # to the time interval
-            self._deltalist = [self._day364 - self._begin_date,
-                               self._end_date - self._day0]
-        else :
-            # If interval bounds are date objects :
-            if self._period[0].__class__.__name__ == "date" and \
-               self._period[1].__class__.__name__ == "date" :
-                # set the hour for beginning and ending days
-                self._begin_date = datetime.combine(self._period[0],
-                                                    time(0,0,0))
-                self._end_date = datetime.combine(self._period[1],
-                                                    time(23,0,0))
+    @classmethod
+    def from_month_nb(cls, month_nb):
+        # month_nb is in range(0,12)
+        try:
+            return cls.from_string_seq(MONTHS[month_nb][2])
+        except IndexError:
+            raise DataDateError(self.tr(
+                'Data', 'Invalid month number: {}').format(month_nb))
 
-            # Store the interval list that defines the period
-            self._period = [[self._begin_date, self._end_date]]
-            
-            # Create a list of delta object corresponding
-            # to the time interval
-            self._deltalist = [self._end_date - self._begin_date]
-    
-    @property
-    def begin_datetime(self) :
-        return self._begin_date
-    
-    @property
-    def end_datetime(self) :
-        return self._end_date
-        
-    @property
-    def begin_date(self) :
-        return self._begin_date.date()
-    
-    @property
-    def end_date(self) :
-        return self._end_date.date()
-        
-    def get_datelist(self) :
-        datelist = []
-        # Create a datelist that combines all intervals
-        for i, delta in enumerate(self._deltalist) :
-            delta_day = delta.days + 1
-            datelist += [self._period[i][0] + timedelta(days = n)
-                         for n in range(delta_day)]
-        return datelist
-        
-    def get_datetimelist(self) :
-        datetimelist = []
-        # Create a datetimelist that combines all intervals
-        for i, delta in enumerate(self._deltalist) :
-            delta_hour = int(delta.days * 24 + delta.seconds / 3600)
-            datetimelist += [self._period[i][0] + timedelta(hours = n)
-                             for n in range(delta_hour)]
-        return datetimelist
-        
-    def datetime_interval(self):
-        return self._period
+    def get_dt_interval_list(self):
+        return self._intervals
 
-    # Return interval with relative hours boundary values
-    def hours_interval(self):
-        # TODO: create the interval for other periods
-        # transform interval boundaries into delta values 
-        # (relative to the first day of the year)
-        hours_interval = [[bound - self._day0 
-                          for bound in interval]
-                          for interval in self._period]
-
-        # convert timedelta into hour
-        return [[bound.days * 24 + bound.seconds / 3600
-                        for bound in interval]
-                        for interval in hours_interval]
+    def get_indexes(self, period):
+        if period not in DataPeriods:
+            raise DataTimeIntervalPeriodError(self.tr(
+                'Incorrect sample period {}').format(period))
                 
+        def dt2index(date_dt, period):
+            if period == 'HOUR':
+                return(date_dt - dt.datetime(2005, 1, 1, 0, 0, 0)).days * 24
+            elif period == 'DAY':
+                return(date_dt - dt.datetime(2005, 1, 1, 0, 0, 0)).days
+            else:
+                raise NotImplementedError
 
+        for beg_dt, end_dt in self._intervals:
+            beg_i = dt2index(beg_dt, period)
+            end_i = dt2index(end_dt, period)
 
-class Array(object):
+        return np.concatenate([np.arange(dt2index(beg, period),
+                                         dt2index(end, period))
+                               for beg, end in self._intervals])
+
+    def get_dt_range(self, period):
+        if period not in DataPeriods:
+            raise DataTimeIntervalPeriodError(self.tr(
+                'Incorrect sample period {}').format(period))
+
+        if period == 'HOUR':
+            def dt_range(b, e):
+                return [b + dt.timedelta(hours=i) 
+                        for i in range((e - b).days * 24)]
+        elif period == 'DAY':
+            def dt_range(b, e):
+                return [b + dt.timedelta(days=i) 
+                        for i in range((e - b).days)]
+        else:
+            raise NotImplementedError
+
+        return np.concatenate([dt_range(b, e) for b, e in self._intervals])
+
+class Array(QtCore.QObject):
     """ Store numpy array and return values for time interval
         or perform calculation
     """
     
     def __init__(self, values, period):
-        self._vals = np.array(values)
+        
+        super(Array, self).__init__()
+        
+        self._values = np.array(values)
         self._period = period        
     
-    # Return initial array
-    @property
-    def vals(self):
-        return self._vals
-        
-    # Return values for time interval
-    def get_interval(self, interval = None):
-        # Give a TimeInterval in argument
-        # If no interval is specified
-        # Return full year
-        if interval == None :
-            return self._vals
-        else :
-            # get hour interval from time interval
-            period = interval.hours_interval()
-            # gather the values for each interval in res array
-            res = np.array([])
-            for int in period :
-                res = np.concatenate((res,self._vals[int[0]:int[1]]),axis=0)
-            return res
-        
-    # Return sum over the desired interval
-    def sum_interval(self, interval = None) :
-        # If no interval is specified
-        # Return sum value for full year
-        if interval == None :
-            return sum(self._vals)
-        else :
-            return sum(self.get_interval(interval))
+    def apply(self, function):
+        """Apply function to array of values"""
+        self._values = function(self._values)
+    
+    def values(self, t_interval=None):
+        """Return a np.array containing the array values
 
-    # Return mean value over the desired interval
-    def mean_interval(self, interval) :
-        # If no interval is specified
-        # Return mean value for full year
-        if interval == None :
-            return np.mean(self._vals)
-        else :
-            return np.mean(self.get_interval(interval))
+           If optional TimeInterval is specified, the returned array
+           contains a subset corresponding to the TimeInterval.
+        """
+        if t_interval is None:
+            return self._values
+        else:
+            return self._values[t_interval.get_indexes(self._period)]
+
+    def sum(self, t_interval=None) :
+        """Return sum over the desired interval"""
+        return self.values(t_interval).sum()
+
+    def mean(self, t_interval=None) :
+        """Return mean value over the desired interval"""
+        return np.mean(self.values(t_interval))
         
-    # Return typical days for desired interval
-    def typical_day(self, per=None, start=None, end=None):
-        return None        
-
-
+    def typical_day(self, t_interval=None):
+        """Return typical days for desired interval"""
+        # TODO: implement Array.typical_day
+        raise NotImplementedError
         
 class Variable(QtCore.QObject):
     """Stores an array of values for one physical parameter (temperature,
@@ -267,21 +259,12 @@ class Variable(QtCore.QObject):
             raise DataVariableNoValueError(self.tr(
                 'No value for sample period {}').format(period))
 
-
-    def set_array_from_list(self, period, val_list):
-        """Set val_list as values
-            
-            val_list: list of numbers in numeric or string format
-        """
+    def set_array(self, period, array):
         if period not in DataPeriods:
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
 
-        try:
-            self._values[period] = Array(val_list, period)
-        except ValueError as e:
-            raise DataVariableValueError(e)
-
+        self._values[period] = array
     
 # TODO: Multi-buildings / Multi-versions
 # class Project(QtCore.QObject):
@@ -371,8 +354,8 @@ class Zone(QtCore.QObject):
 
        Public methods:
        - get_variable_periods
-       - get_values
-       - set_values
+       - get_array
+       - set_array
        """
 
     def __init__(self, name):
@@ -429,8 +412,8 @@ class Zone(QtCore.QObject):
         """Return list of available periods for type data_type"""
         return self._get_variable(data_type).periods
 
-    def get_values(self, data_type, period):
-        """Return values of variable of type data_type for period"""
+    def get_array(self, data_type, period):
+        """Return Array of variable of type data_type for period"""
         try:
             var = self._variables[data_type]
         except KeyError:
@@ -438,8 +421,7 @@ class Zone(QtCore.QObject):
                 'Variable {} not in Zone {}'
                 ).format(data_type, self._name))
         try:
-            array = var.get_array(period)
-            return array
+            return var.get_array(period)
         except DataVariablePeriodError as e:
             raise DataZoneError(self.tr(
                 '{} while getting values for {} in Zone {}'
@@ -449,12 +431,12 @@ class Zone(QtCore.QObject):
                 'No {} data for {} in Zone {}'
                 ).format(period, data_type, self._name))
 
-    def set_values(self, data_type, period, val_list):
-        """Set values of variable of type data_type for period
+    def set_array(self, data_type, period, array):
+        """Set Array of variable of type data_type for period
         
             data_type (unicode): data type
             period (unicode): period
-            array (numpy array): array of values
+            array (Array): array of values
             """
         if data_type in self.variables:
             var = self._variables[data_type]
@@ -462,8 +444,7 @@ class Zone(QtCore.QObject):
             var = self._add_variable(data_type)
         
         try:
-            var.set_array_from_list(period, val_list)
-
+            var.set_array(period, array)
         except DataVariablePeriodError as e:
             raise DataZoneError(self.tr(
                 '{} while setting values for {} in Zone {}'
@@ -483,6 +464,15 @@ class Zone(QtCore.QObject):
 #
 
 class DataError(SimuplotError):
+    pass
+
+class DataDateError(DataError):
+    pass
+
+class DataTimeIntervalError(DataError):
+    pass
+
+class DataTimeIntervalPeriodError(DataTimeIntervalError):
     pass
 
 class DataVariableError(DataError):

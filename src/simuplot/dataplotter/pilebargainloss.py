@@ -11,17 +11,9 @@ from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
 import numpy as np
 
-import matplotlib.pyplot as plt
-
 from .dataplotter import DataPlotter
 
-from simuplot.data import DataTypes, DataZoneError
-
-from datetime import date, datetime, time, timedelta
-
-from simuplot.data import TimeInterval
-
-from operator import add
+from simuplot.data import DataTypes, DataZoneError, MONTHS, TimeInterval
 
 # TODO: put this stuff somewhere else
 heat_sources = ['HEATING_RATE',
@@ -32,26 +24,6 @@ heat_sources = ['HEATING_RATE',
                 'OPAQUE_SURFACES_HEATING_RATE',
                 'INFILTRATION_HEATING_RATE',
                 ]
-
-# Define intervals for months in a non leap year  
-year_period = {"Jan" : [date(2005,1,1),date(2005,1,31)],
-               "Feb" : [date(2005,2,1),date(2005,2,28)],
-               "Mar" : [date(2005,3,1),date(2005,3,31)],
-               "Apr" : [date(2005,4,1),date(2005,4,30)],
-               "May" : [date(2005,5,1),date(2005,5,31)],
-               "Jun" : [date(2005,6,1),date(2005,6,30)],
-               "Jul" : [date(2005,7,1),date(2005,7,31)],
-               "Aug" : [date(2005,8,1),date(2005,8,31)],
-               "Sep" : [date(2005,9,1),date(2005,9,30)],
-               "Oct" : [date(2005,10,1),date(2005,10,31)],
-               "Nov" : [date(2005,11,1),date(2005,11,30)],
-               "Dec" : [date(2005,12,1),date(2005,12,31)]
-              }
-
-# Create a month list
-month_list = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
 
 class PileBarGainLoss(DataPlotter):
 
@@ -64,19 +36,15 @@ class PileBarGainLoss(DataPlotter):
         # Results dict
         self._heat_build_zone = None
 
-        # Chart and table widgets
-        self._MplWidget = self.plotW
-        self._table_widget = self.listW
-
         # Set column number and add headers
-        self._table_widget.setColumnCount(13)
-        self._table_widget.setHorizontalHeaderLabels(
-            [self.tr('Heat sources')]+month_list)
-        self._table_widget.horizontalHeader().setResizeMode(
+        self.dataTable.setColumnCount(13)
+        self.dataTable.setHorizontalHeaderLabels(
+            [self.tr('Heat sources')] + [m[0] for m in MONTHS])
+        self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
             
         # Initialize table with one row per heat source with checkbox
-        self._table_widget.setRowCount(len(heat_sources))
+        self.dataTable.setRowCount(len(heat_sources))
         for i, val in enumerate(heat_sources) :
             # DataTypes is a dict of type:(unit, string)
             hs_name = QtCore.QCoreApplication.translate(
@@ -86,16 +54,13 @@ class PileBarGainLoss(DataPlotter):
                            QtCore.Qt.ItemIsEnabled)
             name_item.setCheckState(QtCore.Qt.Checked)
             
-            self._table_widget.setItem(i, 0, name_item)
+            self.dataTable.setItem(i, 0, name_item)
             
-        # Refresh plot when BuildcomboBox is modified
-        self.BuildcomboBox.activated.connect(
-            self.refresh_tab_and_plot)
+        # Refresh plot when zoneSelectBox is modified
+        self.zoneSelectBox.activated.connect(self.refresh_table_and_plot)
 
-        # Refresh plot when zone is clicked/unclicked or sort order changed
-        self._table_widget.itemClicked.connect(self.refresh_plot)
-        self._table_widget.horizontalHeader().sectionClicked.connect(
-            self.refresh_plot)    
+        # Refresh plot when zone is clicked/unclicked
+        self.dataTable.itemClicked.connect(self.refresh_plot)
             
     @property
     def name(self):
@@ -113,30 +78,20 @@ class PileBarGainLoss(DataPlotter):
         """
         
         # Initialize full_year_vals list containing all values for each source
-        full_year_vals = []
+        full_year = np.empty(len(heat_sources), dtype=np.ndarray)
         
-        for hs in heat_sources:
-            hs_year_values = np.array([])
+        for i, hs in enumerate(heat_sources):
             # If hourly heat source data not available, "mark it zero, Donnie"
             try:
                 # Get the Array object for current heat source
-                val_array = zone.get_values(hs, 'HOUR')
-
-                for month in month_list :
-                    # Create TimeInterval for current month
-                    month_timeint = TimeInterval(year_period[month])
-                    # Get monthly sum
-                    cur_month_val = val_array.sum_interval(month_timeint)
-                    hs_year_values = np.append(hs_year_values,cur_month_val)
-                    
+                val_array = zone.get_array(hs, 'HOUR')
             except DataZoneError:
-                hs_year_values = np.zeros(12)
+                full_year[i] = np.zeros(12)
+            else:
+                full_year[i] = np.array(
+                    [val_array.sum(TimeInterval.from_month_nb(m))
+                     for m in range(len(MONTHS))])
 
-            full_year_vals.append(hs_year_values)
-
-        # Store values as 2D numpy array
-        full_year = np.array(full_year_vals)
-        
         # Return results as a dictionary, with energy in [kWh]
         return dict(zip(heat_sources, full_year / 1000))
 
@@ -149,9 +104,10 @@ class PileBarGainLoss(DataPlotter):
         
         # Set combobox with zone names 
         # and add 'Building' as a ficticious "all zones" zone
-        self.BuildcomboBox.addItems(zones)
-        self.BuildcomboBox.addItem(self.tr('Building'))
-        self.BuildcomboBox.setCurrentIndex(self.BuildcomboBox.count() - 1)
+        self.zoneSelectBox.clear()
+        self.zoneSelectBox.addItems(zones)
+        self.zoneSelectBox.addItem(self.tr('Building'))
+        self.zoneSelectBox.setCurrentIndex(self.zoneSelectBox.count() - 1)
 
         # Compute heat gain per source in each zone
         self._heat_build_zone = {}
@@ -165,19 +121,19 @@ class PileBarGainLoss(DataPlotter):
         for hs in heat_sources:
             self._heat_build_zone['Building'][hs] = \
                 np.sum([self._heat_build_zone[zone][hs] for zone in zones],
-                       axis =0)
+                       axis=0)
         
         # Write in Table and draw plot
-        self.refresh_tab_and_plot()
+        self.refresh_table_and_plot()
 
     @QtCore.pyqtSlot()
-    def refresh_tab_and_plot(self):    
+    def refresh_table_and_plot(self):    
 
         # Current zone or building displayed
-        if self.BuildcomboBox.currentIndex() == self.BuildcomboBox.count() - 1:
+        if self.zoneSelectBox.currentIndex() == self.zoneSelectBox.count() - 1:
             cur_zone = 'Building'
         else :
-            cur_zone = self.BuildcomboBox.currentText()
+            cur_zone = self.zoneSelectBox.currentText()
 
         # Display Zone or building values in table
         for i, hs in enumerate(heat_sources):
@@ -189,10 +145,10 @@ class PileBarGainLoss(DataPlotter):
                 val_item = QtGui.QTableWidgetItem()
                 val_item.setData(QtCore.Qt.DisplayRole, int(monthly_val))
                 val_item.setFlags(QtCore.Qt.ItemIsEnabled)
-                self._table_widget.setItem(i, j+1, val_item)
+                self.dataTable.setItem(i, j+1, val_item)
             
             # Uncheck heat source name if value is zero
-            name_item = self._table_widget.item(i,0)
+            name_item = self.dataTable.item(i,0)
             if np.sum(hs_value) == 0:
                 name_item.setCheckState(QtCore.Qt.Unchecked)
             else :
@@ -204,78 +160,73 @@ class PileBarGainLoss(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
         
-        canvas = self._MplWidget.canvas
+        canvas = self.plotWidget.canvas
         
         # Clear axes
         canvas.axes.cla()
+        canvas.set_tight_layout_on_resize(False)
         
         # Get all heat sources names
-        hs_names = [self._table_widget.item(i,0).text()
-                    for i in range(self._table_widget.rowCount())]
+        hs_names = [self.dataTable.item(i,0).text()
+                    for i in range(self.dataTable.rowCount())]
         
         # Compute heat source sum and 
         # create plot list removing unchecked values
         name_plot = []
         value_plot = []
-        sum_value = 0
-        for i in range(self._table_widget.rowCount()):
-            name = self._table_widget.item(i,0).text()
-            month_vals = []
-            for j in range(1, self._table_widget.columnCount()):
-                month_vals.append(int(self._table_widget.item(i,j).text()))
-            if self._table_widget.item(i,0).checkState() == QtCore.Qt.Checked:
-                name_plot.append(name)
+        sum_values = 0
+        for i in range(self.dataTable.rowCount()):
+            
+            month_vals = [int(self.dataTable.item(i,j).text())
+                          for j in range(1, len(MONTHS)+1)]
+            sum_values += np.sum(np.abs(month_vals))
+            
+            if self.dataTable.item(i,0).checkState() == QtCore.Qt.Checked:
+                name_plot.append(self.dataTable.item(i,0).text())
                 value_plot.append(month_vals)
 
-        
-        # Create a uniform x axis        
-        ind = np.arange(len(month_list))
-        
-        # Create a colormap adapted to heat_sources
-        hs_cmap = {hs_names[i] : self._color_chart[i] 
-                   for i in range(len(heat_sources))}
-        
-        # Create and draw bar chart
-        prev_height = []
-        rectangle = []
-        for i, (hs_name, hs_val) in enumerate(zip(name_plot, value_plot)):
-            #initialize plot
-            if i == 0 :
-                rectangle = canvas.axes.bar(ind, hs_val, 
-                                            edgecolor = 'white',
-                                            color = hs_cmap[hs_name],
-                                            label = hs_name)
-                prev_height = hs_val
+        # If sum is 0, heat gains and losses are 0. Do not plot anything.
+        if sum_values != 0:
 
-            # Draw rectangle on top of the previous one
-            else :
-                rectangle = canvas.axes.bar(ind, hs_val, 
-                                            edgecolor = 'white',
-                                            color = hs_cmap[hs_name],
-                                            bottom = prev_height,
-                                            label = hs_name)
-                                            
-                # Store current HS height for future iteration
-                prev_height = map(add, prev_height, hs_val)
+            # Create a uniform x axis        
+            ind = np.arange(len(MONTHS))
             
-        # Add text for labels, title and axes ticks
-        canvas.axes.set_ylabel(self.tr(
-            'heat gains / loss [kWh]'))
-        canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
-        canvas.axes.set_xticklabels(month_list, ind, ha='center')
-        
-        # Set title
-        title_str = self.tr('Heat gains repartition')
-        title = canvas.axes.set_title(title_str, y = 1.05)
-        
-        # Add legend
-        l = canvas.axes.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-          fancybox=True, ncol=4)
-
-        for text in l.texts :
-            text.set_size('small')
+            # Create a colormap adapted to heat_sources
+            # TODO: move to __init__ ?
+            hs_cmap = {hs_names[i] : self._color_chart[i] 
+                       for i in range(len(heat_sources))}
+            
+            # Create and draw bar chart
+            prev_height = np.zeros(len(MONTHS))
+            width = 0.8
+            for i, (hs_name, hs_vals) in enumerate(zip(name_plot, value_plot)):
+                canvas.axes.bar(ind, 
+                                hs_vals,
+                                width=width,
+                                edgecolor='white',
+                                color=hs_cmap[hs_name],
+                                bottom=prev_height,
+                                label=hs_name)
+                prev_height += np.array(hs_vals)
+            
+            # Add text for labels, title and axes ticks
+            canvas.axes.set_ylabel(self.tr('Heat gains / loss [kWh]'))
+            canvas.axes.set_xticks(ind + width/2)
+            canvas.axes.set_xticklabels([m[0] for m in MONTHS], 
+                                        ind, ha='center')
+            
+            # Set title
+            title_str = self.tr('Heat gains repartition')
+            canvas.axes.set_title(title_str, y=1.05)
+            
+            # Add legend
+            l = canvas.axes.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+                                   fancybox=True, ncol=4)
+            for text in l.texts:
+                text.set_size('small')
                 
-        
+            canvas.set_tight_layout_on_resize(False)
+
         # Draw plot
         canvas.draw()
 

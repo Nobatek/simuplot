@@ -5,7 +5,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-# Use Nobatek color chart
+# Define color charts
 NBK_color_chart = 16 * ['#E36C09','#7F7F7F','#1F497D','#A5A5A5','#F79646','#FAC08F']
 INEF4_color_chart = 16 * ['#8EC02F','#E47823','#FEA022','#6A4300','#868786','#1B461E','#000000']
 

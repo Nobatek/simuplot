@@ -36,16 +36,16 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="buildingSelectLayout">
+        <layout class="QHBoxLayout" name="zoneSelectLayout">
          <item>
-          <widget class="QLabel" name="buildingSelectLabel">
+          <widget class="QLabel" name="zoneSelectLabel">
            <property name="text">
             <string>Zone or whole building</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="buildingSelectBox"/>
+          <widget class="QComboBox" name="zoneSelectBox"/>
          </item>
         </layout>
        </item>

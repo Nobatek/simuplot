@@ -71,17 +71,13 @@ class HeatGainPie(DataPlotter):
             self.periodSelectBox.addItem(self.tr(per[0]))
 
         # Refresh data when periodSelectBox is activated
-        self.periodSelectBox.activated.connect(
-            self.refresh_data)
+        self.periodSelectBox.activated.connect(self.refresh_data)
 
-        # Refresh plot when buildingSelectBox is modified
-        self.buildingSelectBox.activated.connect(
-            self.refresh_tab_and_plot)
+        # Refresh plot when zoneSelectBox is modified
+        self.zoneSelectBox.activated.connect(self.refresh_table_and_plot)
 
-        # Refresh plot when zone is clicked/unclicked or sort order changed
+        # Refresh plot when zone is clicked/unclicked
         self.dataTable.itemClicked.connect(self.refresh_plot)
-        self.dataTable.horizontalHeader().sectionClicked.connect(
-            self.refresh_plot)
 
     @property
     def name(self):
@@ -98,13 +94,14 @@ class HeatGainPie(DataPlotter):
         }
         """
 
+        # TODO: rework using TimeInterval
+
         # Initialize full_year_vals list containing all values for each source
         full_year_vals = []
         for hs in HEAT_SOURCES:
             # If hourly heat source data not available, "mark it zero, Donnie"
             try:
-                val_array = zone.get_values(hs, 'HOUR')
-                vals = val_array.vals
+                vals = zone.get_array(hs, 'HOUR').values()
             except DataZoneError:
                 vals = np.zeros(8760)
             else:
@@ -141,10 +138,11 @@ class HeatGainPie(DataPlotter):
 
         # Set combobox with zone names
         # and add 'Building' as a ficticious "all zones" zone
-        self.buildingSelectBox.addItems(zones)
-        self.buildingSelectBox.addItem(self.tr('Building'))
-        self.buildingSelectBox.setCurrentIndex(
-            self.buildingSelectBox.count() - 1)
+        self.zoneSelectBox.clear()
+        self.zoneSelectBox.addItems(zones)
+        self.zoneSelectBox.addItem(self.tr('Building'))
+        self.zoneSelectBox.setCurrentIndex(
+            self.zoneSelectBox.count() - 1)
 
         # Get the study period from combobox
         study_period = PERIODS[self.periodSelectBox.currentIndex()][1]
@@ -164,17 +162,17 @@ class HeatGainPie(DataPlotter):
                 sum([self._heat_build_zone[zone][hs] for zone in zones])
 
         # Write in Table and draw plot
-        self.refresh_tab_and_plot()
+        self.refresh_table_and_plot()
 
     @QtCore.pyqtSlot()
-    def refresh_tab_and_plot(self):
+    def refresh_table_and_plot(self):
 
         # Current zone or building displayed
-        if (self.buildingSelectBox.currentIndex() ==
-            self.buildingSelectBox.count() - 1):
+        if (self.zoneSelectBox.currentIndex() ==
+            self.zoneSelectBox.count() - 1):
             cur_zone = 'Building'
         else:
-            cur_zone = self.buildingSelectBox.currentText()
+            cur_zone = self.zoneSelectBox.currentText()
 
         # Display Zone or building value in table 2nd column
         for i, hs in enumerate(HEAT_SOURCES):
@@ -213,11 +211,10 @@ class HeatGainPie(DataPlotter):
         value_plot = []
         sum_value = 0
         for i in range(self.dataTable.rowCount()):
-            name = self.dataTable.item(i, 0).text()
             value = int(self.dataTable.item(i, 1).text())
             sum_value += value
             if self.dataTable.item(i, 0).checkState() == QtCore.Qt.Checked:
-                name_plot.append(name)
+                name_plot.append(self.dataTable.item(i, 0).text())
                 value_plot.append(value)
 
         # If sum is 0, heat gain are 0. Do not plot anything.

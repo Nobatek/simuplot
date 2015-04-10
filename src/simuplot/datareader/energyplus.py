@@ -10,10 +10,9 @@ import os
 import csv
 import re
 
-import numpy as np
-
 from PyQt4 import QtGui
 
+from simuplot.data import Array 
 from .datareader import DataReader, DataReaderReadError
 
 class EnergyPlus(DataReader):
@@ -316,10 +315,11 @@ class EnergyPlus(DataReader):
                         '[Warning] Unexpected unit [{}] for data type {}'
                         ).format(data_unit, data_type))
                     continue
-                data_array = conv_func(np.array(tmp_variables[i]))
+                data_array = Array(tmp_variables[i], per)
+                data_array.apply(conv_func)
                 # TODO: check there is not data already 
                 # for this type and period in this zone ?
-                item.set_values(data_type, per, data_array)
+                item.set_array(data_type, per, data_array)
 
         return messages
 

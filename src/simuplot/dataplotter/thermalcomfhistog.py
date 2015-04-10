@@ -7,8 +7,6 @@ from __future__ import absolute_import
 
 from PyQt4 import QtCore, QtGui
 
-from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
-
 import numpy as np
 
 from .dataplotter import DataPlotter, DataPlotterError
@@ -80,8 +78,10 @@ class ThermalComfHistog(DataPlotter):
         try:
             # Get variable OPERATIVE_TEMPERATURE in zone
             # Get PEOPLE_COUNT to determine zone occupation status
-            op_temps = zone.get_values('OPERATIVE_TEMPERATURE', 'HOUR').vals
-            nb_people = zone.get_values('PEOPLE_COUNT','HOUR').vals
+            op_temps = zone.get_array(
+                'OPERATIVE_TEMPERATURE', 'HOUR').values()
+            nb_people = zone.get_array(
+                'PEOPLE_COUNT','HOUR').values()
         except DataZoneError:
             # TODO: log warning
             # Return None as thermal confort % and None as max temperature

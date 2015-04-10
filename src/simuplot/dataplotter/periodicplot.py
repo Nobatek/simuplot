@@ -10,30 +10,13 @@ from PyQt4 import QtCore, QtGui
 
 from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
-import numpy as np
-
-import matplotlib.pyplot as plt
-
-from .dataplotter import DataPlotter, DataPlotterError
-
-from data import DataZoneError
-
-from simuplot.data import TimeInterval
-
-from datetime import date, datetime, time, timedelta
+import datetime as dt
 
 import matplotlib.dates as dates
 
-# Predefined period for plot
+from simuplot.data import SEASONS, TimeInterval
+from .dataplotter import DataPlotter, DataPlotterError
 
-periods = [(translate('PeriodicPlot', 'Year'),[datetime.strptime('01/01','%m/%d').date(),
-                                               datetime.strptime('12/31','%m/%d').date()]),
-           (translate('PeriodicPlot', 'Summer'),[datetime.strptime('04/01','%m/%d').date(),
-                                               datetime.strptime('09/30','%m/%d').date()]),
-           (translate('PeriodicPlot', 'Winter'),[datetime.strptime('10/01','%m/%d').date(),
-                                               datetime.strptime('03/31','%m/%d').date()])
-           ]
-           
 # Predefined line style
 line_style = ["-","--","-.",":"," "]           
 
@@ -48,14 +31,12 @@ class PeriodicPlot(DataPlotter):
         
         # Plot name
         self._name = self.tr("Time Interval Plotting")
-        
-        # Chart and table widgets
-        self._MplWidget = self.plotW
-        self._table_widget = self.listW
+
+        self._period = None
         
         # Set column number and add headers
-        self._table_widget.setColumnCount(7)
-        self._table_widget.setHorizontalHeaderLabels([
+        self.dataTable.setColumnCount(7)
+        self.dataTable.setHorizontalHeaderLabels([
             self.tr('rm'),
             self.tr('Zone'),
             self.tr('Variable'),
@@ -64,33 +45,27 @@ class PeriodicPlot(DataPlotter):
             self.tr('Show max'),
             self.tr('Show min'),
             ])
-        self._table_widget.horizontalHeader().setResizeMode(
+        self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
             
         # Initialise Period radio button to checked
-        self.period_radio.setChecked(True)
+        self.predefinedPeriodCheckBox.setChecked(True)
         
-        # Initialise PeriodCombo with predefined values
-        for dat in periods:
-            self.PeriodCombo.addItem(dat[0])
+        # Initialise predefinedPeriodComboBox with predefined values
+        for dat in SEASONS:
+            self.predefinedPeriodComboBox.addItem(dat[0])
         
         # Connect add line button
-        self.AddButton.clicked.connect(self.AddLine)
+        self.addButton.clicked.connect(self.AddLine)
         
-        # Define default value for plot period
-        self._period = \
-            TimeInterval(periods[self.PeriodCombo.currentIndex()][1])
+        # Connect update period signals
+        self.predefinedPeriodComboBox.activated.connect(self.update_period)
+        self.predefinedPeriodCheckBox.clicked.connect(self.update_period)
+        self.customPeriodCheckBox.clicked.connect(self.update_period)
+        self.beginDateEdit.dateChanged.connect(self.update_period)
+        self.endDateEdit.dateChanged.connect(self.update_period)
         
-        # Connect Period combobox to refresh_plot
-        self.PeriodCombo.activated.connect(self.UpdatePeriod)
-        
-        # Refresh data when one of the two radio button is switched on or off
-        self.period_radio.toggled.connect(self.UpdatePeriod)
-        
-        # Refresh data when begin date or end date is changed
-        self.BeginDate.dateChanged.connect(self.UpdatePeriod)
-        self.EndDate.dateChanged.connect(self.UpdatePeriod)
-        
+        self.update_period()
         
     @property
     def name(self):
@@ -98,22 +73,23 @@ class PeriodicPlot(DataPlotter):
         
     @QtCore.pyqtSlot()
     def refresh_data(self):
+        
         # Get Building zone list (for combobox)
         self._zone_list = self._building.zones
         self._zone_list.sort()
+        
         # Check if Environment data are available
         outdoor = self._building.get_environment
-        if outdoor is not None :
+        if outdoor is not None:
             self._zone_list.append("Environment")
-    
-    
         
     def AddLine(self):
         # Actual number of row:
-        act_row = self._table_widget.rowCount()
+        act_row = self.dataTable.rowCount()
         
         # Add one row to table
-        self._table_widget.setRowCount(act_row + 1)
+        #self.dataTable.setRowCount(act_row + 1)
+        self.dataTable.insertRow(act_row)
         
         # Creates the zone combobox
         zone_combo = QtGui.QComboBox()
@@ -129,9 +105,9 @@ class PeriodicPlot(DataPlotter):
         zone_name = zone_combo.currentText()
         
         # Check if it s building zone or environment
-        if zone_name in self._building.zones :
+        if zone_name in self._building.zones:
             zone = self._building.get_zone(zone_name)
-        else :
+        else:
             zone = self._building.get_environment()
         var_list = zone.variables
         
@@ -149,10 +125,6 @@ class PeriodicPlot(DataPlotter):
         for dat in marker_style :
             marker_combo.addItem(dat)
             
-        # Initialize check boxes for rm, min, max
-        rm_item = QtGui.QCheckBox()
-
-        
         # Create check box for rm (remove line)
         rm_chkbx = QtGui.QCheckBox()
         
@@ -174,21 +146,18 @@ class PeriodicPlot(DataPlotter):
         max_lay.setAlignment(QtCore.Qt.AlignCenter)
         
         # Add combobox and check boxes to the table        
-        self._table_widget.setCellWidget(act_row, 1, zone_combo)
-        self._table_widget.setCellWidget(act_row, 2, var_combo)
-        self._table_widget.setCellWidget(act_row, 3, line_combo)
-        self._table_widget.setCellWidget(act_row, 4, marker_combo)
-        self._table_widget.setCellWidget(act_row, 0, rm_chkbx)
-        self._table_widget.setCellWidget(act_row, 5, min_wi)
-        self._table_widget.setCellWidget(act_row, 6, max_wi)
+        self.dataTable.setCellWidget(act_row, 0, rm_chkbx)
+        self.dataTable.setCellWidget(act_row, 1, zone_combo)
+        self.dataTable.setCellWidget(act_row, 2, var_combo)
+        self.dataTable.setCellWidget(act_row, 3, line_combo)
+        self.dataTable.setCellWidget(act_row, 4, marker_combo)
+        self.dataTable.setCellWidget(act_row, 5, min_wi)
+        self.dataTable.setCellWidget(act_row, 6, max_wi)
         
         # Resize column to fit zone name and variables
-        self._table_widget.horizontalHeader().setResizeMode(
+        self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
 
-        # Execute load and draw
-        self.refresh_plot()
-        
         # Connect zone combobox to signal to update Available variable for zone 
         zone_combo.activated.connect(self.UpdateVar)
         
@@ -200,15 +169,16 @@ class PeriodicPlot(DataPlotter):
         # Connect rm checkbox to remove the corresponding line
         rm_chkbx.stateChanged.connect(self.RemoveLine)
         
-
+        # Execute load and draw
+        self.refresh_plot()
 
     def RemoveLine(self):
         # Find the table current index
         clickme = QtGui.qApp.focusWidget()
-        index = self._table_widget.indexAt(clickme.pos())
+        index = self.dataTable.indexAt(clickme.pos())
         
         # Remove corresponding line
-        self._table_widget.removeRow(index.row())
+        self.dataTable.removeRow(index.row())
         
         # Call Load and draw
         self.refresh_plot()
@@ -216,10 +186,10 @@ class PeriodicPlot(DataPlotter):
     def UpdateVar(self):
         # Find the table current index
         clickme = QtGui.qApp.focusWidget()
-        index = self._table_widget.indexAt(clickme.pos())
+        index = self.dataTable.indexAt(clickme.pos())
 
         # Get the zone name
-        zone_combo = self._table_widget.cellWidget(index.row(),1)
+        zone_combo = self.dataTable.cellWidget(index.row(),1)
         zone_name = zone_combo.currentText()
         
         # Check if it s building zone or environment
@@ -231,7 +201,7 @@ class PeriodicPlot(DataPlotter):
         
         # Assign variables to the combobox
         # Remove existing variables 
-        var_combo = self._table_widget.cellWidget(index.row(),2)
+        var_combo = self.dataTable.cellWidget(index.row(),2)
         var_combo.clear()
         
         # Assign new variables 
@@ -241,138 +211,114 @@ class PeriodicPlot(DataPlotter):
         # Update the plot
         self.refresh_plot()
         
-    def UpdatePeriod(self) :
-        # Get the period depending on radio chosen option
-        # Get begin and end datetime for plot axis
-        if self.period_radio.isChecked():
-            self._period = \
-                TimeInterval(periods[self.PeriodCombo.currentIndex()][1])
+    @QtCore.pyqtSlot()
+    def update_period(self) :
+        """Set self._period from GUI"""
+        
+        if self.predefinedPeriodCheckBox.isChecked():
+            # Predefined periods
+            self._period = SEASONS[
+                self.predefinedPeriodComboBox.currentIndex()][1]
         else :
-            # Get end_date and begin_date from the interface calendar
-            begin_date = self.BeginDate.date()
-            end_date = self.EndDate.date()
-            
-            # Convert Qdatetime object begin_date into date object            
-            year, month, day = begin_date.getDate()
-            begin_date = date(year, month, day)
-            
-            # Convert Qdatetime object end_date into date object
-            year, month, day = end_date.getDate()
-            end_date = date(year, month, day)
-            
-            # Create the TimeInterval object
-            self._period = TimeInterval([begin_date,end_date])
+            # Custom dates
+            self._period = [self.beginDateEdit.date().toString('MM/dd'),
+                            self.endDateEdit.date().toString('MM/dd')]
         
         # Update the plot
         self.refresh_plot()
         
-        
     @QtCore.pyqtSlot()    
     def refresh_plot(self):
         
-        # Initialize list of zone to plot
-        zone_list = []
-        
-        # Initialise corresponding Variable list
-        var_list = []
-        
-        # Initialise list of line style
-        line_list = []
-        
-        # Initialise list of marker
-        marker_list = []
-        
+        # TODO: add legend
+
         # Define canvas
-        canvas = self._MplWidget.canvas
+        canvas = self.plotWidget.canvas
+        canvas.set_tight_layout_on_resize(False)
         
         # Clear axes
         canvas.axes.cla()      
         
-        # Go through table
-        for i in range(self._table_widget.rowCount()):
-            # Get zone or environment from Combobox and add it to list
-            zone_combo = self._table_widget.cellWidget(i,1)
-            zone_name = zone_combo.currentText()
-            if zone_name in self._building.zones:
-                cur_zone = self._building.get_zone(zone_name)
-            else :
-                cur_zone = self._building.get_environment()
+        # If there is at least one data to plot
+        if self.dataTable.rowCount():
+
+            # Make TimeInterval from self._period 
+            t_interval = TimeInterval.from_string_seq(self._period)
             
-            zone_list.append(cur_zone.name)
-            
-            # Get variable values for zone and add it to list
-            var_combo = self._table_widget.cellWidget(i,2)
-            # Get the variable Array
-            cur_var = cur_zone.get_values(var_combo.currentText(),'HOUR')
-            
-            # Get the Array set corresponding to the TimeInterval 
-            var_in_period = cur_var.get_interval(self._period)
+            # Go through table to get all variables to plot
+            #zone_list = []
+            var_list = []
+            line_list = []
+            marker_list = []
+            for i in range(self.dataTable.rowCount()):
                 
-            # Add the Array set to the list of variable
-            var_list.append(var_in_period)
+                # Get zone (or environment) name and add it to list
+                zone = self.dataTable.cellWidget(i,1).currentText()
+                if zone in self._building.zones:
+                    cur_zone = self._building.get_zone(zone)
+                else :
+                    cur_zone = self._building.get_environment()
+                #zone_list.append(cur_zone.name)
+                
+                # Get variable Array of values for Zone and add it to list
+                array = cur_zone.get_array(
+                    self.dataTable.cellWidget(i,2).currentText(),'HOUR')
+                var_list.append(array.values(t_interval))
+                
+                # Get line_style and marker style
+                line_list.append(self.dataTable.cellWidget(i,3).currentText())
+                marker_list.append(self.dataTable.cellWidget(i,4).currentText())
+                
+            # Create object to handle months days and hours
+            months = dates.MonthLocator()
+            days = dates.DayLocator()
+            hours = dates.HourLocator()
+            minutes = dates.MinuteLocator()
             
-            # Get line_style 
-            line_combo = self._table_widget.cellWidget(i,3)
-            line_list.append(line_combo.currentText())
+            # List of hourly dates from start to end
+            # TODO: faster with dates.drange ?
+            dates_list = dates.date2num(t_interval.get_dt_range('HOUR'))
+
+            # Define x axis
+            for var, color, style, mark in zip(var_list,
+                                               self._color_chart,
+                                               line_list,
+                                               marker_list):
+                canvas.axes.plot(dates_list,
+                                 var,
+                                 color = color,
+                                 linestyle = style,
+                                 marker = mark,
+                                 linewidth=2)        
             
-            # Get marker style 
-            marker_combo = self._table_widget.cellWidget(i,4)
-            marker_list.append(marker_combo.currentText())
+            # Format ticks depending on plot delta
+            if len(dates_list) <= 48:
+                maj_loc = hours
+                min_loc = minutes
+                fmts = "%H:%M"
+            elif len(dates_list) <= 744:
+                maj_loc = days
+                min_loc = hours
+                fmts = "%d-%m"
+            else:
+                maj_loc = months
+                min_loc = days
+                fmts = "%d-%m"
             
-        # Create object to handle months days and hours
-        months = dates.MonthLocator()
-        days = dates.DayLocator()
-        hours = dates.HourLocator()
-        minutes = dates.MinuteLocator()
+            # Create a date formatter
+            date_fmt = dates.DateFormatter(fmts)
         
-        # Get a list of datetime for the interval in period        
-        dates_list = self._period.get_datetimelist()
-        
-        # Reformat dates_list before plotting
-        dates_list = [dates.date2num(dat) for dat in dates_list]
-        
-        #define the x axes
-        for var, color, style, mark in zip(var_list,
-                                           self._color_chart,
-                                           line_list,
-                                           marker_list):
+            canvas.axes.xaxis.set_major_locator(maj_loc)
+            canvas.axes.xaxis.set_major_formatter(date_fmt)
+            # canvas.axes.xaxis.set_minor_locator(min_loc)
+            canvas.axes.autoscale_view()
             
-            print ("dates_list = ", len(dates_list))
-            print ("size de var = ", var.size)
+            # format the coordinates message box
+            canvas.axes.fmt_xdata = dates.DateFormatter('%d-%m-%h')
+            canvas.axes.grid(True)
             
-            canvas.axes.plot(dates_list,
-                             var,
-                             color = color,
-                             linestyle = style,
-                             marker = mark,
-                             linewidth=2)        
-        
-        # format the ticks depending on plot delta
-        if len(dates_list) <= 48 :
-            maj_loc = hours
-            min_loc = minutes
-            fmts = "%H:%M"
-        elif len(dates_list) <= 744 :
-            maj_loc = days
-            min_loc = hours
-            fmts = "%d-%m"
-        else :
-            maj_loc = months
-            min_loc = days
-            fmts = "%d-%m"
-        
-        # Create a date formatter
-        date_fmt = dates.DateFormatter(fmts)
-    
-        canvas.axes.xaxis.set_major_locator(maj_loc)
-        canvas.axes.xaxis.set_major_formatter(date_fmt)
-        # canvas.axes.xaxis.set_minor_locator(min_loc)
-        canvas.axes.autoscale_view()
-        
-        # format the coordinates message box
-        canvas.axes.fmt_xdata = dates.DateFormatter('%d-%m-%h')
-        canvas.axes.grid(True)
-        
+            canvas.set_tight_layout_on_resize(True)
+
         # Draw plot
         canvas.draw()      
-     
+
