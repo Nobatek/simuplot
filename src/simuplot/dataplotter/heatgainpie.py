@@ -13,16 +13,8 @@ import numpy as np
 
 from .dataplotter import DataPlotter
 
-from simuplot.data import DataTypes, DataZoneError
-
-# TODO: This module is broken if start date is not January 1st
-# The simulation length must be one year, and the period 'HOUR'
-# Should this be made more generic ?
-PERIODS = [
-    (translate('HeatGainPie', 'Year'), [[0, 8760]]),
-    (translate('HeatGainPie', 'Summer'), [[2879, 6553]]),
-    (translate('HeatGainPie', 'Winter'), [[0, 2779], [6553, 8760]]),
-    ]
+from simuplot.data import (DataTypes, SEASONS, 
+                           Array, TimeInterval, DataZoneError)
 
 # TODO: put this stuff somewhere else
 HEAT_SOURCES = [
@@ -67,8 +59,8 @@ class HeatGainPie(DataPlotter):
             self.dataTable.setItem(i, 0, name_item)
 
         # Set periodSelectBox
-        for per in PERIODS:
-            self.periodSelectBox.addItem(self.tr(per[0]))
+        for per in SEASONS:
+            self.periodSelectBox.addItem(per[0])
 
         # Refresh data when periodSelectBox is activated
         self.periodSelectBox.activated.connect(self.refresh_data)
@@ -83,8 +75,8 @@ class HeatGainPie(DataPlotter):
     def name(self):
         return self._name
 
-    def compute_heat_gains(self, zone, study_period):
-        """Return heat gain for each source for the study period
+    def compute_heat_gains(self, zone, t_int):
+        """Return heat gain for each source for specified time interval
 
         Data is returned as a dict:
 
@@ -94,40 +86,25 @@ class HeatGainPie(DataPlotter):
         }
         """
 
-        # TODO: rework using TimeInterval
-
-        # Initialize full_year_vals list containing all values for each source
-        full_year_vals = []
+        gain_per_source = {}
         for hs in HEAT_SOURCES:
             # If hourly heat source data not available, "mark it zero, Donnie"
             try:
-                vals = zone.get_array(hs, 'HOUR').values()
+                array = zone.get_array(hs, 'HOUR')
             except DataZoneError:
-                vals = np.zeros(8760)
+                array = Array(np.zeros(8760), 'HOUR')
             else:
                 # Only hourly year-long simulation data allowed
-                if vals.size != 8760:
+                if array.values().size != 8760:
                     self.warning.emit(self.tr(
                         'Hourly {} data for Zone {} is not one year long'
                         ).format(hs, zone.name))
-                    vals = np.zeros(8760)
-            full_year_vals.append(vals)
+                    array = Array(np.zeros(8760), 'HOUR')
 
-        # Store values as 2D numpy array
-        full_year = np.array(full_year_vals)
+            # Sum values for heat source on time interval and make it [kWh]
+            gain_per_source[hs] = array.sum(t_int) / 1000
 
-        # Compute total gain [kWH] for each heat source
-        # summing all intervals of the period
-        # (Thanks to 2D array, all sources are processed at once)
-        gain_per_source = np.zeros(len(HEAT_SOURCES))
-        for inter in study_period:
-            # Extract values for interval
-            inter_val = full_year[:, inter[0]:inter[1]]
-            # Sum gain for interval and add it to total
-            gain_per_source += inter_val.sum(axis=1)
-
-        # Return results as a dictionary, with energy in [kWh]
-        return dict(zip(HEAT_SOURCES, gain_per_source / 1000))
+        return gain_per_source
 
     @QtCore.pyqtSlot()
     def refresh_data(self):
@@ -144,16 +121,16 @@ class HeatGainPie(DataPlotter):
         self.zoneSelectBox.setCurrentIndex(
             self.zoneSelectBox.count() - 1)
 
-        # Get the study period from combobox
-        study_period = PERIODS[self.periodSelectBox.currentIndex()][1]
+        # Make TimeInterval from study period in combobox
+        t_int = TimeInterval.from_string_seq(
+            SEASONS[self.periodSelectBox.currentIndex()][1])
 
         # Compute heat gain per source in each zone
         self._heat_build_zone = {}
         for name in zones:
             # Compute heat gains for desired study period
             self._heat_build_zone[name] = \
-                self.compute_heat_gains(self._building.get_zone(name),
-                                        study_period)
+                self.compute_heat_gains(self._building.get_zone(name), t_int)
 
         # Compute heat gain per source for building by summing all zones
         self._heat_build_zone['Building'] = {}
