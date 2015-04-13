@@ -21,6 +21,7 @@ CATEGORY_COLOR = {'I': '#8EC02F',
                   'II': '#E47823',
                   'III': '#6A4300',
                   'out': '#868786'}
+DEF_INTERVALS = {'LOW': [15, 30], 'HIGH': [10, 30]}
 
 def comfort_temp(mean_temp):
     """Returns the comfort temperature associated to outdoor mean temperature
@@ -39,11 +40,10 @@ class NEUBrager(DataPlotter):
         self._name = self.tr("Brager comfort")
         
         # Set column number and add headers
-        self.dataTable.setColumnCount(4)
+        self.dataTable.setColumnCount(3)
         self.dataTable.setHorizontalHeaderLabels([
-            self.tr('Category'),
             self.tr('Below [%]'),
-            self.tr('In Zone [%]'),
+            self.tr('Comfort [%]'),
             self.tr('Over [%]')
             ])
         self.dataTable.horizontalHeader().setResizeMode(
@@ -51,9 +51,11 @@ class NEUBrager(DataPlotter):
 
         # Set row number and category names
         self.dataTable.setRowCount(3)
-        self.dataTable.setItem(0,0, QtGui.QTableWidgetItem("I"))
-        self.dataTable.setItem(1,0, QtGui.QTableWidgetItem("II"))
-        self.dataTable.setItem(2,0, QtGui.QTableWidgetItem("II"))
+        self.dataTable.setVerticalHeaderLabels([
+            self.tr('Category I'),
+            self.tr('Category II'),
+            self.tr('Category III'),
+            ])
         
         # Mean outdoor temperature and Zone operative temperature
         self._teta_mean = None
@@ -128,8 +130,8 @@ class NEUBrager(DataPlotter):
                 # If "zone occupation" is activated, 
                 # only consider times when occupation is not 0
                 if self.occupCheckBox.isChecked():
-                    occupation = np.where(zone.get_array(
-                        'PEOPLE_COUNT', 'HOUR').values(time_int))
+                    occupation = zone.get_array(
+                        'PEOPLE_COUNT', 'HOUR').values(time_int) > 0
                     self._teta_mean = t_out_mean[occupation]
                     self._teta_op = t_in[occupation]
                 else:
@@ -146,7 +148,10 @@ class NEUBrager(DataPlotter):
         # Clear axes
         canvas.axes.cla()
         canvas.set_tight_layout_on_resize(False)
-        
+
+        # Clear data table
+        self.dataTable.clearContents()
+
         # If there is data to plot
         if self._teta_op is not None:
         
@@ -169,24 +174,64 @@ class NEUBrager(DataPlotter):
             # create a colour array for the scatter plot
             colors = np.empty_like(self._teta_mean, dtype='<U7')
             colors[:] = CATEGORY_COLOR['out']
-            colors[np.where(self._teta_op > t_comf -
-                CATEGORY_OFFSET['III'])] = CATEGORY_COLOR['III']
-            colors[np.where(self._teta_op > t_comf -
-                CATEGORY_OFFSET['II'])] = CATEGORY_COLOR['II']
-            colors[np.where(self._teta_op > t_comf -
-                CATEGORY_OFFSET['I'])] = CATEGORY_COLOR['I']
-            colors[np.where(self._teta_op >= t_comf + corr +
-                CATEGORY_OFFSET['I'])] = CATEGORY_COLOR['II']
-            colors[np.where(self._teta_op >= t_comf + corr +
-                CATEGORY_OFFSET['II'])] = CATEGORY_COLOR['III']
-            colors[np.where(self._teta_op >= t_comf + corr +
-                CATEGORY_OFFSET['III'])] = CATEGORY_COLOR['out']
+            colors[self._teta_op >= t_comf - CATEGORY_OFFSET['III']] = (
+                CATEGORY_COLOR['III'])
+            colors[self._teta_op >= t_comf - CATEGORY_OFFSET['II']] = (
+                CATEGORY_COLOR['II'])
+            colors[self._teta_op >= t_comf - CATEGORY_OFFSET['I']] = (
+                CATEGORY_COLOR['I'])
+            colors[self._teta_op > t_comf + corr + CATEGORY_OFFSET['I']] = (
+                CATEGORY_COLOR['II'])
+            colors[self._teta_op > t_comf + corr + CATEGORY_OFFSET['II']] = (
+                CATEGORY_COLOR['III'])
+            colors[self._teta_op > t_comf + corr + CATEGORY_OFFSET['III']] = (
+                CATEGORY_COLOR['out'])
 
+            # Fill data table
+            # High or low limit is valid on limit definition interval only.
+            # A point is considered in comfort zone if it is not below limit
+            # in the limit's definition interval. Outside the definition 
+            # interval, it is considered in comfort zone by default.
+            low_def = ((self._teta_mean >= DEF_INTERVALS['LOW'][0]) &
+                       (self._teta_mean <= DEF_INTERVALS['LOW'][1]))
+            high_def = ((self._teta_mean >= DEF_INTERVALS['HIGH'][0]) &
+                        (self._teta_mean <= DEF_INTERVALS['HIGH'][1]))
+            # Values are expressed in percentage of all points, even those 
+            # outside of definition interval.
+            nb_vals = self._teta_op.size
+            for i, category in enumerate(['I', 'II', 'III']):
+                if nb_vals != 0:
+                    below = ((self._teta_op[low_def] < t_comf[low_def] - 
+                              CATEGORY_OFFSET[category]).sum() /
+                             nb_vals)
+                    over = ((self._teta_op[high_def] >= t_comf[high_def] + 
+                              corr + CATEGORY_OFFSET[category]).sum() /
+                             nb_vals)
+                    in_zone = 1 - (below + over)
+                    
+                    below_item = QtGui.QTableWidgetItem()
+                    below_item.setData(QtCore.Qt.DisplayRole, 
+                        round(100 * below, 2))
+                    over_item =  QtGui.QTableWidgetItem()
+                    over_item.setData(QtCore.Qt.DisplayRole, 
+                        round(100 * over, 2))
+                    in_zone_item =  QtGui.QTableWidgetItem()
+                    in_zone_item.setData(QtCore.Qt.DisplayRole, 
+                        round(100 * in_zone, 2))
+                else:
+                    below_item = QtGui.QTableWidgetItem('')
+                    over_item = QtGui.QTableWidgetItem('')
+                    in_zone_item = QtGui.QTableWidgetItem('')
+                
+                self.dataTable.setItem(i, 0, below_item)
+                self.dataTable.setItem(i, 1, in_zone_item)
+                self.dataTable.setItem(i, 2, over_item)
+            
             # Display points
             canvas.axes.scatter(self._teta_mean, self._teta_op, color=colors)
             
             # Plot categories upper limits
-            x_high = np.array([10, 30])
+            x_high = np.array(DEF_INTERVALS['HIGH'])
             t_comf_high = comfort_temp(x_high)
             canvas.axes.plot(x_high, 
                              t_comf_high + CATEGORY_OFFSET['I'] + corr,
@@ -202,7 +247,7 @@ class NEUBrager(DataPlotter):
                              linewidth = 1.5)
      
             # Plot categories lower limits
-            x_low = np.array([15, 30])
+            x_low = np.array(DEF_INTERVALS['LOW'])
             t_comf_low = comfort_temp(x_low)
             canvas.axes.plot(x_low,
                              t_comf_low - CATEGORY_OFFSET['I'],
