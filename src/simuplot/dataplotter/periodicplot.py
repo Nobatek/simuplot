@@ -234,10 +234,10 @@ class PeriodicPlot(DataPlotter):
 
         # Define canvas
         canvas = self.plotWidget.canvas
-        canvas.set_tight_layout_on_resize(False)
         
         # Clear axes
         canvas.axes.cla()      
+        canvas.set_tight_layout_on_resize(False)
         
         # If there is at least one data to plot
         if self.dataTable.rowCount():
