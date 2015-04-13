@@ -118,10 +118,15 @@ class PileBarGainLoss(DataPlotter):
 
         # Compute heat gain per source for building by summing all zones
         self._heat_build_zone['Building'] = {}
-        for hs in heat_sources:
-            self._heat_build_zone['Building'][hs] = \
-                np.sum([self._heat_build_zone[zone][hs] for zone in zones],
-                       axis=0)
+        if len(zones):
+            for hs in heat_sources:
+                self._heat_build_zone['Building'][hs] = np.sum(
+                    [self._heat_build_zone[zone][hs] for zone in zones],
+                    axis=0)
+        else:
+            # If no Zone data, set 0 values to Building for each source
+            for hs in heat_sources:
+                self._heat_build_zone['Building'][hs] = np.zeros(12)
         
         # Write in Table and draw plot
         self.refresh_table_and_plot()
