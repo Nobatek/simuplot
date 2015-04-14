@@ -25,7 +25,7 @@
     </message>
 </context>
 <context>
-    <name>ConsPerZonePie</name>
+    <name>HeatDemandPie</name>
     <message>
         <location filename="simuplot/dataplotter/consperzonepie.py" line="22"/>
         <source>Energy heat need per zone</source>
@@ -303,7 +303,7 @@
     </message>
 </context>
 <context>
-    <name>ThermalComfHistog</name>
+    <name>ThermalComfortHistog</name>
     <message>
         <location filename="simuplot/dataplotter/thermalcomfhistog.py" line="34"/>
         <source>Summer thermal comfort per zone</source>

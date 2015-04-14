@@ -15,19 +15,19 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from .consperzonepie import ConsPerZonePie
-from .thermalcomfhistog import ThermalComfHistog
+from .heatdemandpie import HeatDemandPie
 from .heatgainpie import HeatGainPie
-from .periodicplot import PeriodicPlot
-from .pilebargainloss import PileBarGainLoss
-from .neubrager import NEUBrager
+from .heatgainpilebar import HeatGainPileBar
+from .thermalcomforthistog import ThermalComfortHistog
+from .adaptivecomfortscatter import AdaptiveComfortScatter
+from .customplot import CustomPlot
 
 plotters = [
-    ConsPerZonePie,
-    ThermalComfHistog,
+    HeatDemandPie,
     HeatGainPie,
-    PeriodicPlot,
-    PileBarGainLoss,
-    NEUBrager,
+    HeatGainPileBar,
+    ThermalComfortHistog,
+    AdaptiveComfortScatter,
+    CustomPlot,
 ]
 

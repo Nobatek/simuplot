@@ -23,11 +23,11 @@ line_style = ["-","--","-.",":"," "]
 # Predefined marker style
 marker_style = [" ","+",",",".","1","2","3","4"]            
            
-class PeriodicPlot(DataPlotter):
+class CustomPlot(DataPlotter):
 
     def __init__(self, building, color_chart):
         
-        super(PeriodicPlot, self).__init__(building, color_chart)
+        super(CustomPlot, self).__init__(building, color_chart)
         
         # Plot name
         self._name = self.tr("Time Interval Plotting")

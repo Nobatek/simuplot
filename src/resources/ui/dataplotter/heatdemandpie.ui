@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ConsPerZonePie</class>
- <widget class="QWidget" name="ConsPerZonePie">
+ <class>HeatDemandPie</class>
+ <widget class="QWidget" name="HeatDemandPie">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">ConsPerZonePie DataPlotter</string>
+   <string notr="true">HeatDemandPie DataPlotter</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>

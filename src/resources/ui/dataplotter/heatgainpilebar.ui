@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PileBarGainLoss</class>
- <widget class="QWidget" name="PileBarGainLoss">
+ <class>HeatGainPileBar</class>
+ <widget class="QWidget" name="HeatGainPileBar">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">PileBarGainLoss DataPlotter</string>
+   <string notr="true">HeatGainPileBar DataPlotter</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

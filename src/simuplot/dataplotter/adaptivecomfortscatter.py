@@ -30,11 +30,11 @@ def comfort_temp(mean_temp):
     """
     return 0.33 * mean_temp + 18.8
 
-class NEUBrager(DataPlotter):
+class AdaptiveComfortScatter(DataPlotter):
 
     def __init__(self, building, color_chart):
         
-        super(NEUBrager, self).__init__(building, color_chart)
+        super(AdaptiveComfortScatter, self).__init__(building, color_chart)
         
         # Plot name
         self._name = self.tr("Brager comfort")

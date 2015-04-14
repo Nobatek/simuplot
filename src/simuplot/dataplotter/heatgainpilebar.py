@@ -25,11 +25,11 @@ heat_sources = ['HEATING_RATE',
                 'INFILTRATION_HEATING_RATE',
                 ]
 
-class PileBarGainLoss(DataPlotter):
+class HeatGainPileBar(DataPlotter):
 
     def __init__(self, building, color_chart):
         
-        super(PileBarGainLoss, self).__init__(building, color_chart)
+        super(HeatGainPileBar, self).__init__(building, color_chart)
 
         self._name = self.tr("Heat gains per source")
         

@@ -13,11 +13,11 @@ from .dataplotter import DataPlotter, DataPlotterError
 
 from simuplot.data import DataZoneError
 
-class ConsPerZonePie(DataPlotter):
+class HeatDemandPie(DataPlotter):
 
     def __init__(self, building, color_chart):
         
-        super(ConsPerZonePie, self).__init__(building, color_chart)
+        super(HeatDemandPie, self).__init__(building, color_chart)
 
         self._name = self.tr("Energy heat need per zone")
         

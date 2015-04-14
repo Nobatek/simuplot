@@ -25,11 +25,11 @@ hqe_tmax_per_usage = {
     'Entrepôts':35,
     }
 
-class ThermalComfHistog(DataPlotter):
+class ThermalComfortHistog(DataPlotter):
 
     def __init__(self, building, color_chart):
         
-        super(ThermalComfHistog, self).__init__(building, color_chart)
+        super(ThermalComfortHistog, self).__init__(building, color_chart)
 
         self._name = self.tr("Summer thermal comfort per zone")
         

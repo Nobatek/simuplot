@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ThermalComfHistog</class>
- <widget class="QWidget" name="ThermalComfHistog">
+ <class>ThermalComfortHistog</class>
+ <widget class="QWidget" name="ThermalComfortHistog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string notr="true">ThermalConfigZone DataPlotter</string>
+   <string notr="true">ThermalComfortHistog DataPlotter</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_3">
    <item>
