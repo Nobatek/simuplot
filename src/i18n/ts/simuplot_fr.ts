@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<!DOCTYPE TS><TS version="2.0" language="fr_FR" sourcelanguage="">
 <context>
     <name>AdaptiveComfortScatter</name>
     <message>
@@ -12,11 +11,6 @@
         <location filename="resources/ui/dataplotter/adaptivecomfortscatter.ui" line="35"/>
         <source>From</source>
         <translation>Du</translation>
-    </message>
-    <message>
-        <location filename="resources/ui/dataplotter/adaptivecomfortscatter.ui" line="119"/>
-        <source>dd/MM</source>
-        <translation>jj/MM</translation>
     </message>
     <message>
         <location filename="resources/ui/dataplotter/adaptivecomfortscatter.ui" line="82"/>
@@ -70,8 +64,8 @@
     </message>
     <message>
         <location filename="resources/ui/dataplotter/adaptivecomfortscatter.ui" line="157"/>
-        <source> Activate air fans (0-1.5 m/s)</source>
-        <translation>Activer la ventilation (0-1,5 m/s)</translation>
+        <source>Activate air fans (0.2 - 1.5 m/s)</source>
+        <translation>Activer la ventilation (0,2 - 1,5 m/s)</translation>
     </message>
 </context>
 <context>
@@ -118,11 +112,6 @@
         <location filename="resources/ui/dataplotter/customplot.ui" line="56"/>
         <source>From</source>
         <translation>Du</translation>
-    </message>
-    <message>
-        <location filename="resources/ui/dataplotter/customplot.ui" line="140"/>
-        <source>dd/MM</source>
-        <translation>jj/MM</translation>
     </message>
     <message>
         <location filename="resources/ui/dataplotter/customplot.ui" line="103"/>
@@ -427,12 +416,12 @@
 <context>
     <name>HeatGainPie</name>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="41"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="39"/>
         <source>Heat sources</source>
         <translation>Sources d&apos;apport</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="41"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="39"/>
         <source>Heat gains [kWh]</source>
         <translation>Gain [kWh]</translation>
     </message>
@@ -442,7 +431,7 @@
         <translation>Bâtiment</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpie.py" line="34"/>
+        <location filename="simuplot/dataplotter/heatgainpie.py" line="32"/>
         <source>Heat gains per source</source>
         <translation>Gains par source</translation>
     </message>
@@ -475,27 +464,27 @@
         <translation>Zone ou bâtiment entier</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="40"/>
+        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="38"/>
         <source>Heat sources</source>
         <translation>Sources d&apos;apport</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="78"/>
+        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="77"/>
         <source>Building</source>
         <translation>Bâtiment</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="200"/>
+        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="199"/>
         <source>Heat gains / loss [kWh]</source>
         <translation>Gains / pertes [kWh]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="206"/>
+        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="205"/>
         <source>Heat gains repartition</source>
         <translation>Répartition des gains</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="33"/>
+        <location filename="simuplot/dataplotter/heatgainpilebar.py" line="31"/>
         <source>Heat gains per month</source>
         <translation>Gains par mois</translation>
     </message>
@@ -541,7 +530,7 @@
         <translation>Chargement du fichier de données : {}</translation>
     </message>
 </context>
-<context>
+<context encoding="UTF-8">
     <name>ThermalComfortHistog</name>
     <message>
         <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="82"/>
@@ -583,12 +572,12 @@
         <source>Summer thermal comfort</source>
         <translation>Confort thermique d&apos;été</translation>
     </message>
-    <message utf8="true">
+    <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="89"/>
         <source>Max temp [°C]</source>
         <translation>Température maximale [°C]</translation>
     </message>
-    <message utf8="true">
+    <message encoding="UTF-8">
         <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="251"/>
         <source>% time beyond {}°C</source>
         <translation>% de temps au-delà de {}°C</translation>

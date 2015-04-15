@@ -50,7 +50,8 @@ class CustomPlot(DataPlotter):
 
         # Initialise predefinedPeriodComboBox with predefined values
         for dat in SEASONS:
-            self.predefinedPeriodComboBox.addItem(dat[0])
+            self.predefinedPeriodComboBox.addItem(
+                QtCore.QCoreApplication.translate('Data', dat[0]))
 
         # Connect "add row" button
         self.addButton.clicked.connect(self._add_row)

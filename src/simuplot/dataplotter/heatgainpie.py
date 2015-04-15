@@ -7,8 +7,6 @@ from __future__ import absolute_import
 
 from PyQt4 import QtCore, QtGui
 
-from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
-
 import numpy as np
 
 from .dataplotter import DataPlotter
@@ -47,7 +45,8 @@ class HeatGainPie(DataPlotter):
         self.dataTable.setRowCount(len(HEAT_SOURCES))
         for i, val in enumerate(HEAT_SOURCES):
             # DATATYPES is a dict of type:(unit, string)
-            hs_name = translate('Data', DATATYPES[val][1])
+            hs_name = QtCore.QCoreApplication.translate(
+                'Data', DATATYPES[val][1])
             name_item = QtGui.QTableWidgetItem(hs_name)
             name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                                QtCore.Qt.ItemIsEnabled)
@@ -57,7 +56,8 @@ class HeatGainPie(DataPlotter):
 
         # Set periodSelectBox
         for per in SEASONS:
-            self.periodSelectBox.addItem(per[0])
+            self.periodSelectBox.addItem(
+                QtCore.QCoreApplication.translate('Data', per[0]))
 
         # Refresh data when periodSelectBox is activated
         self.periodSelectBox.activated.connect(self.refresh_data)

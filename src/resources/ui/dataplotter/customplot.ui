@@ -90,7 +90,7 @@
                </datetime>
               </property>
               <property name="displayFormat">
-               <string>dd/MM</string>
+               <string notr="true">dd/MM</string>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>
@@ -137,7 +137,7 @@
                </datetime>
               </property>
               <property name="displayFormat">
-               <string>dd/MM</string>
+               <string notr="true">dd/MM</string>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>

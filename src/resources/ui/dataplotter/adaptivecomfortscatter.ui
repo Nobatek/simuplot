@@ -69,7 +69,7 @@
                </datetime>
               </property>
               <property name="displayFormat">
-               <string>dd/MM</string>
+               <string notr="true">dd/MM</string>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>
@@ -116,7 +116,7 @@
                </datetime>
               </property>
               <property name="displayFormat">
-               <string>dd/MM</string>
+               <string notr="true">dd/MM</string>
               </property>
               <property name="calendarPopup">
                <bool>true</bool>
@@ -154,7 +154,7 @@
          <item>
           <widget class="QCheckBox" name="fanCheckBox">
            <property name="text">
-            <string> Activate air fans (0-1.5 m/s)</string>
+            <string>Activate air fans (0.2 - 1.5 m/s)</string>
            </property>
           </widget>
          </item>
@@ -164,13 +164,13 @@
             <string notr="true"> m/s</string>
            </property>
            <property name="minimum">
-            <double>0.000000000000000</double>
+            <double>0.200000000000000</double>
            </property>
            <property name="maximum">
             <double>1.500000000000000</double>
            </property>
            <property name="singleStep">
-            <double>0.100000000000000</double>
+            <double>0.050000000000000</double>
            </property>
            <property name="value">
             <double>0.200000000000000</double>
