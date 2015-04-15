@@ -6,8 +6,11 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 # Define color charts
-NBK_color_chart = 16 * ['#E36C09','#7F7F7F','#1F497D','#A5A5A5','#F79646','#FAC08F']
-INEF4_color_chart = 16 * ['#8EC02F','#E47823','#FEA022','#6A4300','#868786','#1B461E','#000000']
+NBK_COLOR_CHART = 16 * ['#E36C09', '#7F7F7F', '#1F497D',
+                        '#A5A5A5', '#F79646', '#FAC08F']
+INEF4_COLOR_CHART = 16 * ['#8EC02F', '#E47823', '#FEA022',
+                          '#6A4300', '#868786', '#1B461E',
+                          '#000000']
 
 class Config(object):
 
@@ -19,7 +22,7 @@ class Config(object):
     def read(self):
         """Currently just a stub"""
 
-        self._params['color_chart'] = INEF4_color_chart
+        self._params['color_chart'] = INEF4_COLOR_CHART
 
     # TODO: Write config
     def write(self):

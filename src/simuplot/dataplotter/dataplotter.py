@@ -9,21 +9,19 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from simuplot import ui_path, SimuplotError
-
-ui_files_dir = os.path.join(ui_path, 'dataplotter')
+from simuplot import UI_PATH, SimuplotError
 
 class DataPlotter(QtGui.QWidget):
     """Virtual class
 
        Useless by itself. Implement in sub-clases
     """
-    
+
     # Signals
     warning = QtCore.pyqtSignal(unicode)
 
     def __init__(self, building, color_chart):
-        
+
         super(DataPlotter, self).__init__()
 
         # Reference to building instance
@@ -33,6 +31,7 @@ class DataPlotter(QtGui.QWidget):
         self._color_chart = color_chart
 
         # Setup UI
+        ui_files_dir = os.path.join(UI_PATH, 'dataplotter')
         ui_file_name = type(self).__name__.lower() + '.ui'
         uic.loadUi(os.path.join(ui_files_dir, ui_file_name), self)
 
@@ -75,7 +74,7 @@ class DataPlotter(QtGui.QWidget):
         for r in xrange(tw.rowCount()):
             html += '<tr>'
             for c in xrange(tw.columnCount()):
-                html += '<td>{}</td>'.format(tw.item(r,c).text())
+                html += '<td>{}</td>'.format(tw.item(r, c).text())
             html += '</tr>'
 
         html += '</table>'

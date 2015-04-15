@@ -18,10 +18,10 @@ sip.setapi('QString', 2)
 from PyQt4 import QtCore, QtGui
 
 from simuplot.mainwindow import MainWindow
-from simuplot import i18n_path 
+from simuplot import I18N_PATH
 
 if __name__ == "__main__":
-    
+
     app = QtGui.QApplication(sys.argv)
 
     # Internationalization
@@ -36,14 +36,14 @@ if __name__ == "__main__":
     app.installTranslator(translator_qt)
     # Load translator for own strings
     translator = QtCore.QTranslator()
-    translator.load(os.path.join(i18n_path, 'simuplot_' + locale))
+    translator.load(os.path.join(I18N_PATH, 'simuplot_' + locale))
     app.installTranslator(translator)
 
     # Let the interpreter run each 100 ms to catch SIGINT.
     signal.signal(signal.SIGINT, lambda *args : app.quit())
     timer = QtCore.QTimer()
     timer.start(100)
-    timer.timeout.connect(lambda: None)  
+    timer.timeout.connect(lambda: None)
 
     mySW = MainWindow(app)
     mySW.show()

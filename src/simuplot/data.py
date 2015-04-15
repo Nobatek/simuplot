@@ -14,7 +14,7 @@ from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
 from simuplot import SimuplotError
 
-DataTypes = {
+DATATYPES = {
     'AIR_DRYBULB_TEMPERATURE':
         ('°C', translate('Data', 'Air dry-bulb temperature')),
     'AIR_WETBULB_TEMPERATURE':
@@ -47,7 +47,7 @@ DataTypes = {
         ('W', translate('Data', 'Infiltrations heating rate')),
 }
 
-DataPeriods = [
+DATAPERIODS = [
     'HOUR',
     'DAY',
     'MONTH',
@@ -74,15 +74,15 @@ MONTHS = [
 SEASONS = [(translate('Data', 'Year'), ['01/01', '12/31']),
            (translate('Data', 'Summer'), ['04/01', '09/30']),
            (translate('Data', 'Winter'), ['10/01', '03/31']),
-           ]
+          ]
 
 def date2dt(date):
     """Returns a datetime corresponding to date
-    
+
        date: date as a string of the form 'MM/dd'
        e.g.: date2dt('31/12')
     """
-    
+
     try:
         [month, day] = string.split(date, '/')
         return dt.datetime(2005, int(month), int(day), 0, 0, 0)
@@ -92,53 +92,53 @@ def date2dt(date):
 class TimeInterval(QtCore.QObject):
     """A TimeInterval is defined by a list containing two boundaries
        if the first boundary is greater than the second, the time interval
-       be slitted. The boundaries must be date times object and its not 
+       be slitted. The boundaries must be date times object and its not
        necessary to specify hour or year info
        input :
       [begin_interval1, end_interval1]
     """
-    
+
     def __init__(self, beg_dt, next_dt):
-        
+
         super(TimeInterval, self).__init__()
 
         # TODO: check datetime is 2005 or 01/01/2006 ?
         # If beg_dt = next_dt, a whole wrapped year is returned
-        
+
         if beg_dt < next_dt:
             self._intervals = [[beg_dt, next_dt]]
         else:
             day0_dt = dt.datetime(2005, 1, 1, 0, 0, 0)
-            day365_dt =  dt.datetime(2006, 1, 1, 0, 0, 0)
+            day365_dt = dt.datetime(2006, 1, 1, 0, 0, 0)
             self._intervals = [[day0_dt, next_dt],
                                [beg_dt, day365_dt]]
 
     @classmethod
     def from_strings(cls, beg, end):
-        return cls(date2dt(beg), 
+        return cls(date2dt(beg),
                    date2dt(end) + dt.timedelta(days=1))
 
     @classmethod
     def from_string_seq(cls, beg_end):
         return cls.from_strings(beg_end[0], beg_end[1])
-            
+
     @classmethod
     def from_month_nb(cls, month_nb):
         # month_nb is in range(0,12)
         try:
             return cls.from_string_seq(MONTHS[month_nb][2])
         except IndexError:
-            raise DataDateError(self.tr(
+            raise DataDateError(cls.tr(
                 'Data', 'Invalid month number: {}').format(month_nb))
 
     def get_dt_interval_list(self):
         return self._intervals
 
     def get_indexes(self, period):
-        if period not in DataPeriods:
+        if period not in DATAPERIODS:
             raise DataTimeIntervalPeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
-                
+
         def dt2index(date_dt, period):
             if period == 'HOUR':
                 return(date_dt - dt.datetime(2005, 1, 1, 0, 0, 0)).days * 24
@@ -147,48 +147,45 @@ class TimeInterval(QtCore.QObject):
             else:
                 raise NotImplementedError
 
-        for beg_dt, end_dt in self._intervals:
-            beg_i = dt2index(beg_dt, period)
-            end_i = dt2index(end_dt, period)
-
         return np.concatenate([np.arange(dt2index(beg, period),
                                          dt2index(end, period))
                                for beg, end in self._intervals])
 
     def get_dt_range(self, period):
-        if period not in DataPeriods:
+        if period not in DATAPERIODS:
             raise DataTimeIntervalPeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
 
         if period == 'HOUR':
-            def dt_range(b, e):
-                return [b + dt.timedelta(hours=i) 
-                        for i in range((e - b).days * 24)]
+            def dt_range(beg, end):
+                return [beg + dt.timedelta(hours=i)
+                        for i in range((end - beg).days * 24)]
         elif period == 'DAY':
-            def dt_range(b, e):
-                return [b + dt.timedelta(days=i) 
-                        for i in range((e - b).days)]
+            def dt_range(beg, end):
+                return [beg + dt.timedelta(days=i)
+                        for i in range((end - beg).days)]
         else:
             raise NotImplementedError
 
-        return np.concatenate([dt_range(b, e) for b, e in self._intervals])
+        return np.concatenate([dt_range(beg, end)
+                               for beg, end in self._intervals])
 
 class Array(QtCore.QObject):
     """ Store numpy array and return values for time interval
         or perform calculation
     """
-    
+
     def __init__(self, values, period):
-        
+
         super(Array, self).__init__()
-        
+
         self._values = np.array(values)
-        self._period = period        
-    
+        self._period = period
+
     def apply(self, function):
         """Apply function to array of values"""
         self._values = function(self._values)
-    
+
     def values(self, t_interval=None):
         """Return a np.array containing the array values
 
@@ -198,48 +195,51 @@ class Array(QtCore.QObject):
         if t_interval is None:
             return self._values
         else:
-            return self._values[t_interval.get_indexes(self._period)]
+            try:
+                return self._values[t_interval.get_indexes(self._period)]
+            except IndexError:
+                raise DataArrayIndexError()
 
-    def sum(self, t_interval=None) :
+    def sum(self, t_interval=None):
         """Return sum over the desired interval"""
         return self.values(t_interval).sum()
 
-    def mean(self, t_interval=None) :
+    def mean(self, t_interval=None):
         """Return mean value over the desired interval"""
         return np.mean(self.values(t_interval))
-        
+
     def typical_day(self, t_interval=None):
         """Return typical days for desired interval"""
         # TODO: implement Array.typical_day
         raise NotImplementedError
-        
+
 class Variable(QtCore.QObject):
     """Stores an array of values for one physical parameter (temperature,
        heat demand,...)
     """
 
     def __init__(self, data_type):
-    
+
         super(Variable, self).__init__()
 
         # Data type
-        if data_type not in DataTypes:
+        if data_type not in DATATYPES:
             raise DataVariableTypeError(self.tr(
                 'Incorrect data type {}').format(data_type))
         self._data_type = data_type
-        
+
         # Values for each sampling period
         self._values = {}
-        
+
         # TODO: Start time
         # Which datatype for time?
-        # For now, we'll suppose that all outputs 
+        # For now, we'll suppose that all outputs
         # start at "01/01  01:00:00"
         # self.date_start = None
-        
+
     def __unicode__(self):
         return 'Variable "{}": {}'.format(self._data_type, self._values)
-    
+
     @property
     def data_type(self):
         return self._data_type
@@ -250,7 +250,7 @@ class Variable(QtCore.QObject):
         return self._values.keys()
 
     def get_array(self, period):
-        if period not in DataPeriods:
+        if period not in DATAPERIODS:
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
         try:
@@ -260,25 +260,25 @@ class Variable(QtCore.QObject):
                 'No value for sample period {}').format(period))
 
     def set_array(self, period, array):
-        if period not in DataPeriods:
+        if period not in DATAPERIODS:
             raise DataVariablePeriodError(self.tr(
                 'Incorrect sample period {}').format(period))
 
         self._values[period] = array
-    
+
 # TODO: Multi-buildings / Multi-versions
 # class Project(QtCore.QObject):
-# 
+#
 #     def __init__(self):
-#     
+#
 #         super(Project, self).__init__()
 #
 #         self.variants = {}
-# 
+#
 # class ProjectVariant(QtCore.QObject):
-# 
+#
 #     def __init__(self):
-# 
+#
 #         super(ProjectVariant, self).__init__()
 #
 #         self.name = []
@@ -287,7 +287,7 @@ class Variable(QtCore.QObject):
 class Building(QtCore.QObject):
 
     def __init__(self, name):
-    
+
         super(Building, self).__init__()
 
         self._name = name
@@ -315,9 +315,9 @@ class Building(QtCore.QObject):
             raise DataBuildingError(self.tr(
                 'Zone {} already in Building').format(name))
         else:
-            z = Zone(name)
-            self._zones[name] = z
-            return z
+            zone = Zone(name)
+            self._zones[name] = zone
+            return zone
 
     def del_zone(self, name):
         try:
@@ -334,9 +334,9 @@ class Building(QtCore.QObject):
             raise DataBuildingError(self.tr(
                 'Environment zone already in Building'))
         else:
-            o = Zone(self.tr('Environment'))
-            self._environment = o
-            return o
+            env = Zone(self.tr('Environment'))
+            self._environment = env
+            return env
 
     def del_environment(self):
         self._environment = None
@@ -347,7 +347,7 @@ class Building(QtCore.QObject):
 
 class Zone(QtCore.QObject):
     """Define a thermal zone
-    
+
        Public attributes:
        - name (unicode): name of the Zone
        - variables (unicode list): variable types available for the Zone
@@ -359,7 +359,7 @@ class Zone(QtCore.QObject):
        """
 
     def __init__(self, name):
-        
+
         super(Zone, self).__init__()
 
         self._name = name
@@ -398,7 +398,7 @@ class Zone(QtCore.QObject):
             else:
                 self._variables[data_type] = var
                 return var
-        
+
     def _del_variable(self, data_type):
 
         try:
@@ -433,7 +433,7 @@ class Zone(QtCore.QObject):
 
     def set_array(self, data_type, period, array):
         """Set Array of variable of type data_type for period
-        
+
             data_type (unicode): data type
             period (unicode): period
             array (Array): array of values
@@ -442,7 +442,7 @@ class Zone(QtCore.QObject):
             var = self._variables[data_type]
         else:
             var = self._add_variable(data_type)
-        
+
         try:
             var.set_array(period, array)
         except DataVariablePeriodError as e:
@@ -452,9 +452,9 @@ class Zone(QtCore.QObject):
 
 # class Surface(QtCore.QObject):
 #     """Defines an enveloppe element through which heat is loss"""
-# 
+#
 #     def __init__(self, name, surf, surf_type):
-#     
+#
 #         super(Surface, self).__init__()
 #
 #         self._name = name
@@ -473,6 +473,12 @@ class DataTimeIntervalError(DataError):
     pass
 
 class DataTimeIntervalPeriodError(DataTimeIntervalError):
+    pass
+
+class DataArrayError(DataError):
+    pass
+
+class DataArrayIndexError(DataArrayError):
     pass
 
 class DataVariableError(DataError):

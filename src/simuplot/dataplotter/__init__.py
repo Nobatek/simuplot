@@ -6,7 +6,7 @@
 # and add it to the list. The order of the list matters. It is the order
 # of the tabs to be created.
 
-# Each plotter should have 
+# Each plotter should have
 # - a "name" attribute
 # - a "refresh data" slot
 
@@ -22,7 +22,7 @@ from .thermalcomforthistog import ThermalComfortHistog
 from .adaptivecomfortscatter import AdaptiveComfortScatter
 from .customplot import CustomPlot
 
-plotters = [
+PLOTTERS = [
     HeatDemandPie,
     HeatGainPie,
     HeatGainPileBar,

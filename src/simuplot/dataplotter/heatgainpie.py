@@ -13,19 +13,17 @@ import numpy as np
 
 from .dataplotter import DataPlotter
 
-from simuplot.data import (DataTypes, SEASONS, 
-                           Array, TimeInterval, DataZoneError)
+from simuplot.data import (DATATYPES, SEASONS, TimeInterval,
+                           DataZoneError, DataArrayIndexError)
 
-# TODO: put this stuff somewhere else
-HEAT_SOURCES = [
-    'HEATING_RATE',
-    'PEOPLE_HEATING_RATE',
-    'LIGHTING_HEATING_RATE',
-    'EQUIPMENT_HEATING_RATE',
-    'WINDOWS_HEATING_RATE',
-    'OPAQUE_SURFACES_HEATING_RATE',
-    'INFILTRATION_HEATING_RATE',
-    ]
+HEAT_SOURCES = ['HEATING_RATE',
+                'PEOPLE_HEATING_RATE',
+                'LIGHTING_HEATING_RATE',
+                'EQUIPMENT_HEATING_RATE',
+                'WINDOWS_HEATING_RATE',
+                'OPAQUE_SURFACES_HEATING_RATE',
+                'INFILTRATION_HEATING_RATE',
+               ]
 
 class HeatGainPie(DataPlotter):
 
@@ -48,9 +46,8 @@ class HeatGainPie(DataPlotter):
         # Initialize table with one row per heat source with checkbox
         self.dataTable.setRowCount(len(HEAT_SOURCES))
         for i, val in enumerate(HEAT_SOURCES):
-            # DataTypes is a dict of type:(unit, string)
-            hs_name = QtCore.QCoreApplication.translate(
-                'Data', DataTypes[val][1])
+            # DATATYPES is a dict of type:(unit, string)
+            hs_name = translate('Data', DATATYPES[val][1])
             name_item = QtGui.QTableWidgetItem(hs_name)
             name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                                QtCore.Qt.ItemIsEnabled)
@@ -75,37 +72,6 @@ class HeatGainPie(DataPlotter):
     def name(self):
         return self._name
 
-    def compute_heat_gains(self, zone, t_int):
-        """Return heat gain for each source for specified time interval
-
-        Data is returned as a dict:
-
-        {'HEATING_RATE':value,
-         'PEOPLE_HEATING':value,
-         ...
-        }
-        """
-
-        gain_per_source = {}
-        for hs in HEAT_SOURCES:
-            # If hourly heat source data not available, "mark it zero, Donnie"
-            try:
-                array = zone.get_array(hs, 'HOUR')
-            except DataZoneError:
-                array = Array(np.zeros(8760), 'HOUR')
-            else:
-                # Only hourly year-long simulation data allowed
-                if array.values().size != 8760:
-                    self.warning.emit(self.tr(
-                        'Hourly {} data for Zone {} is not one year long'
-                        ).format(hs, zone.name))
-                    array = Array(np.zeros(8760), 'HOUR')
-
-            # Sum values for heat source on time interval and make it [kWh]
-            gain_per_source[hs] = array.sum(t_int) / 1000
-
-        return gain_per_source
-
     @QtCore.pyqtSlot()
     def refresh_data(self):
 
@@ -118,8 +84,7 @@ class HeatGainPie(DataPlotter):
         self.zoneSelectBox.clear()
         self.zoneSelectBox.addItems(zones)
         self.zoneSelectBox.addItem(self.tr('Building'))
-        self.zoneSelectBox.setCurrentIndex(
-            self.zoneSelectBox.count() - 1)
+        self.zoneSelectBox.setCurrentIndex(self.zoneSelectBox.count() - 1)
 
         # Make TimeInterval from study period in combobox
         t_int = TimeInterval.from_string_seq(
@@ -128,9 +93,24 @@ class HeatGainPie(DataPlotter):
         # Compute heat gain per source in each zone
         self._heat_build_zone = {}
         for name in zones:
+            zone = self._building.get_zone(name)
             # Compute heat gains for desired study period
-            self._heat_build_zone[name] = \
-                self.compute_heat_gains(self._building.get_zone(name), t_int)
+            self._heat_build_zone[name] = {}
+            for hs in HEAT_SOURCES:
+                try:
+                    # Sum values for heat source on time interval
+                    # and convert result from [Wh] to [kWh]
+                    heat_gains = zone.get_array(hs, 'HOUR').sum(t_int) / 1000
+                except DataZoneError:
+                    # If hourly heat source data not available,
+                    #"mark it zero, Donnie"
+                    heat_gains = 0
+                except DataArrayIndexError:
+                    self.warning.emit(self.tr(
+                        'Hourly {} data for Zone {} is not one year long'
+                        ).format(hs, name))
+                    heat_gains = 0
+                self._heat_build_zone[name][hs] = heat_gains
 
         # Compute heat gain per source for building by summing all zones
         self._heat_build_zone['Building'] = {}
@@ -146,7 +126,7 @@ class HeatGainPie(DataPlotter):
 
         # Current zone or building displayed
         if (self.zoneSelectBox.currentIndex() ==
-            self.zoneSelectBox.count() - 1):
+                self.zoneSelectBox.count() - 1):
             cur_zone = 'Building'
         else:
             cur_zone = self.zoneSelectBox.currentText()

@@ -9,7 +9,7 @@ import os
 
 from PyQt4 import QtCore, QtGui, uic
 
-from . import ui_path
+from . import UI_PATH
 from . import datareader as dr
 from . import dataplotter as dp
 
@@ -18,7 +18,7 @@ from .statusbar import StatusBar
 from .data import Building
 
 class MainWindow(QtGui.QMainWindow):
-    
+
     def __init__(self, app):
 
         super(MainWindow, self).__init__()
@@ -31,7 +31,7 @@ class MainWindow(QtGui.QMainWindow):
         self._config.read()
 
         # Setup UI
-        uic.loadUi(os.path.join(ui_path, 'mainwindow.ui'), self)
+        uic.loadUi(os.path.join(UI_PATH, 'mainwindow.ui'), self)
 
         # Setup status bar
         self.setStatusBar(StatusBar())
@@ -41,7 +41,7 @@ class MainWindow(QtGui.QMainWindow):
 
         # Instantiate all plotter widgets and add them as new tabs
         plotters = []
-        for plotter in dp.plotters:
+        for plotter in dp.PLOTTERS:
             p = plotter(self._building, self._config.params['color_chart'])
             plotters.append(p)
             self.tabWidget.addTab(p, p.name)
@@ -52,7 +52,7 @@ class MainWindow(QtGui.QMainWindow):
         self.set_plot_tabs_enabled(False)
 
         # Instantiate all reader widgets and add them to stacked widget
-        for reader in dr.readers:
+        for reader in dr.READERS:
             r = reader(self._building)
             self.loadSourceTypeSelectBox.addItem(r.name)
             self.loadStackedWidget.addWidget(r)
@@ -84,10 +84,10 @@ class MainWindow(QtGui.QMainWindow):
 
     def set_plot_tabs_enabled(self, enable):
         """Enable/disable all plot tabs
-        
+
             enable (bool): Disable or enable plot tabs
         """
-        
+
         for i in range(self.tabWidget.count()):
 
             w = self.tabWidget.widget(i)

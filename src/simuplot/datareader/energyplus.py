@@ -12,7 +12,7 @@ import re
 
 from PyQt4 import QtGui
 
-from simuplot.data import Array 
+from simuplot.data import Array
 from .datareader import DataReader, DataReaderReadError
 
 class EnergyPlus(DataReader):
@@ -88,9 +88,9 @@ class EnergyPlus(DataReader):
     def __init__(self, building):
 
         super(EnergyPlus, self).__init__(building)
-        
+
         self._name = 'Energy Plus'
-        
+
         # Connect browse and load buttons
         self.filePathBrowseButton.clicked.connect(self.browse_button_cbk)
         self.filePathButtonBox.accepted.connect(self.load_button_cbk)
@@ -110,7 +110,7 @@ class EnergyPlus(DataReader):
 
     def load_button_cbk(self):
         """Load button callback"""
-        
+
         # Get file path from filePathEdit
         file_path = self.filePathEdit.text()
 
@@ -119,7 +119,7 @@ class EnergyPlus(DataReader):
 
         # Clean Building
         self._building.clean()
-        
+
         # Read file
         self.loadingData.emit(file_path)
         try:
@@ -136,7 +136,7 @@ class EnergyPlus(DataReader):
     def read_data_files(self, file_path):
 
         messages = ['']
-        
+
         # Open file
         try:
             csv_file = open(file_path, "rb")
@@ -146,13 +146,13 @@ class EnergyPlus(DataReader):
         except UnicodeDecodeError:
             raise DataReaderReadError(self.tr(
                 "Unauthorized characters in data file"))
-        
+
         # Create CSV reader, store file size to track progress while reading
         # TODO: Unicode files ? (https://docs.python.org/2/library/csv.html)
         csv_reader = csv.reader(csv_file, delimiter=b",")
         file_size = os.path.getsize(file_path)
-        
-        # Except for the first ('Date/Time'), 
+
+        # Except for the first ('Date/Time'),
         # each column head should be of the form
         # ZONE_NAME:Variable Name [Unit](Periodicity)
         # Use a regular expression pattern to match column heads
@@ -169,25 +169,25 @@ class EnergyPlus(DataReader):
             (?P<period>.*?)         # Var periodicity
             \)                      # Closing parenthese
             .*""", re.VERBOSE)
-        
+
         # Initialize empty variable list
         variables = []
         # Variables store data as numpy arrays. Those can't be appended.
         # During the reading, store data in simple lists.
         tmp_variables = []
-        
+
         # Get header line
         header = [unicode(h, 'utf-8') for h in next(csv_reader)]
-    
+
         # Remove first column header ('Date/Time')
         # Incidentally check the file is an E+ file
         try:
             header.remove('Date/Time')
-        except ValueError :
+        except ValueError:
             raise DataReaderReadError(self.tr(
                 "Invalid file header: '{},...', E+ file begins with 'Date/Time'"
                 ).format(header[0]))
-        
+
         # Go through all columns heads
         for head in header:
             # Match colum head to extract values
@@ -203,7 +203,7 @@ class EnergyPlus(DataReader):
             except AttributeError:
                 raise DataReaderReadError(self.tr(
                     'Misformed column head: "{}"').format(head))
-            
+
             # Remove unwanted strings from name
             for s in self.strings_to_remove:
                 item_name_str = item_name_str.replace(s, '')
@@ -232,17 +232,17 @@ class EnergyPlus(DataReader):
 
             # If data type and unit are known, check item type
             if item_type_str == 'Zone':
-            
+
                 # Create zone if needed
                 if item_name_str in self._building.zones:
                     item = self._building.get_zone(item_name_str)
                 else:
                     item = self._building.add_zone(item_name_str)
-                
+
             elif item_type_str == 'Site':
-                
+
                 if item_name_str == 'Environment':
-                    
+
                     # Create environment "zone" if needed
                     item = self._building.get_environment()
                     if item is None:
@@ -250,11 +250,11 @@ class EnergyPlus(DataReader):
                 else:
                     # What ?
                     item = None
-            
+
             elif item_type_str == 'Surface':
                 # Ignore for now
                 item = None
-                
+
             else:
                 # What ?
                 item = None
@@ -265,15 +265,15 @@ class EnergyPlus(DataReader):
             except KeyError:
                 raise DataReaderReadError(self.tr(
                     'Unknown period {}').format(period_str))
-            
+
             # Store locally in variable list (one var per column)
             # before final insertion into Variable as a numpy array
             variables.append([item, data_type, data_unit, period])
             tmp_variables.append([])
- 
+
         # Go through all lines to store values in each variable
         nb_values_per_line = len(variables)
-        
+
         for row in csv_reader:
 
             # Skip first column ('Date/Time')
@@ -291,7 +291,7 @@ class EnergyPlus(DataReader):
             if len(vals) != nb_values_per_line:
                 raise DataReaderReadError(self.tr(
                     'Misformed line: {}').format(row))
-                
+
             # Store each value of known type in the line into its list
             try:
                 for i, val_list in enumerate(tmp_variables):
@@ -303,7 +303,7 @@ class EnergyPlus(DataReader):
 
             # Update progress bar
             self.dataLoadProgress.emit(100 * csv_file.tell() / file_size)
-        
+
         # Store all temporary value lists into numpy arrays in item variables
         for i, [item, data_type, data_unit, per] in enumerate(variables):
             if item is not None:
@@ -317,7 +317,7 @@ class EnergyPlus(DataReader):
                     continue
                 data_array = Array(tmp_variables[i], per)
                 data_array.apply(conv_func)
-                # TODO: check there is not data already 
+                # TODO: check there is not data already
                 # for this type and period in this zone ?
                 item.set_array(data_type, per, data_array)
 
