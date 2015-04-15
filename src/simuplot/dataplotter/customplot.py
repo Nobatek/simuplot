@@ -8,8 +8,6 @@ from __future__ import absolute_import
 
 from PyQt4 import QtCore, QtGui
 
-from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
-
 import datetime as dt
 
 import matplotlib.dates as dates
@@ -35,37 +33,35 @@ class CustomPlot(DataPlotter):
         self._period = None
         
         # Set column number and add headers
-        self.dataTable.setColumnCount(7)
+        self.dataTable.setColumnCount(5)
         self.dataTable.setHorizontalHeaderLabels([
-            self.tr('rm'),
+            '',
             self.tr('Zone'),
             self.tr('Variable'),
             self.tr('Line style'),
             self.tr('Marker style'),
-            self.tr('Show max'),
-            self.tr('Show min'),
+#            self.tr('Show max'),
+#            self.tr('Show min'),
             ])
         self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
             
-        # Initialise Period radio button to checked
+        # Set predefined period as default
         self.predefinedPeriodCheckBox.setChecked(True)
         
         # Initialise predefinedPeriodComboBox with predefined values
         for dat in SEASONS:
             self.predefinedPeriodComboBox.addItem(dat[0])
         
-        # Connect add line button
-        self.addButton.clicked.connect(self.AddLine)
+        # Connect "add row" button
+        self.addButton.clicked.connect(self._addRow)
         
         # Connect update period signals
-        self.predefinedPeriodComboBox.activated.connect(self.update_period)
-        self.predefinedPeriodCheckBox.clicked.connect(self.update_period)
-        self.customPeriodCheckBox.clicked.connect(self.update_period)
-        self.beginDateEdit.dateChanged.connect(self.update_period)
-        self.endDateEdit.dateChanged.connect(self.update_period)
-        
-        self.update_period()
+        self.predefinedPeriodComboBox.activated.connect(self.refresh_plot)
+        self.predefinedPeriodCheckBox.clicked.connect(self.refresh_plot)
+        self.customPeriodCheckBox.clicked.connect(self.refresh_plot)
+        self.beginDateEdit.dateChanged.connect(self.refresh_plot)
+        self.endDateEdit.dateChanged.connect(self.refresh_plot)
         
     @property
     def name(self):
@@ -83,37 +79,27 @@ class CustomPlot(DataPlotter):
         if outdoor is not None:
             self._zone_list.append("Environment")
         
-    def AddLine(self):
-        # Actual number of row:
-        act_row = self.dataTable.rowCount()
+        # Remove all rows from dataTable
+        self.dataTable.clearContents()
+
+    def _addRow(self):
         
-        # Add one row to table
-        #self.dataTable.setRowCount(act_row + 1)
-        self.dataTable.insertRow(act_row)
+        # Insert row at bottom of dataTable
+        row_index = self.dataTable.rowCount()
+        self.dataTable.insertRow(row_index)
         
-        # Creates the zone combobox
+        # Get persistent row index
+        # (http://stackoverflow.com/questions/29633311/)
+        index = QtCore.QPersistentModelIndex(
+            self.dataTable.model().index(row_index, 0))
+        
+        # Initialize Zone combobox
         zone_combo = QtGui.QComboBox()
-        # Initialise zone names in combobox
         for zname in self._zone_list:
             zone_combo.addItem(zname)
             
-        # Create the variable combobox
+        # Create Variable combobox
         var_combo = QtGui.QComboBox()
-        
-        # Initialise variable in combobox
-        # First get the current zone variables
-        zone_name = zone_combo.currentText()
-        
-        # Check if it s building zone or environment
-        if zone_name in self._building.zones:
-            zone = self._building.get_zone(zone_name)
-        else:
-            zone = self._building.get_environment()
-        var_list = zone.variables
-        
-        # Assign variables to variable combobox
-        for var in var_list:
-            var_combo.addItem(var)     
 
         # Initialise line style combobox
         line_combo = QtGui.QComboBox()
@@ -125,107 +111,87 @@ class CustomPlot(DataPlotter):
         for dat in marker_style :
             marker_combo.addItem(dat)
             
-        # Create check box for rm (remove line)
-        rm_chkbx = QtGui.QCheckBox()
-        
-        # Create checkbox and layout for min and max
-        # Create the checkbox
-        min_chkbx = QtGui.QCheckBox()
-        max_chkbx = QtGui.QCheckBox()
-        # Create the global widget
-        min_wi = QtGui.QWidget()
-        max_wi = QtGui.QWidget()
-        # Create a layout for the widget
-        min_lay = QtGui.QHBoxLayout(min_wi)
-        max_lay = QtGui.QHBoxLayout(max_wi)
-        # Add the checkbox to the layout 
-        min_lay.addWidget(min_chkbx)
-        max_lay.addWidget(max_chkbx)
-        # Align the checkbox in the layout
-        min_lay.setAlignment(QtCore.Qt.AlignCenter)
-        max_lay.setAlignment(QtCore.Qt.AlignCenter)
-        
-        # Add combobox and check boxes to the table        
-        self.dataTable.setCellWidget(act_row, 0, rm_chkbx)
-        self.dataTable.setCellWidget(act_row, 1, zone_combo)
-        self.dataTable.setCellWidget(act_row, 2, var_combo)
-        self.dataTable.setCellWidget(act_row, 3, line_combo)
-        self.dataTable.setCellWidget(act_row, 4, marker_combo)
-        self.dataTable.setCellWidget(act_row, 5, min_wi)
-        self.dataTable.setCellWidget(act_row, 6, max_wi)
-        
+        # Create "remove row" Button
+        rm_button = QtGui.QPushButton()
+        rm_button.setIcon(QtGui.qApp.style().standardIcon(
+            QtGui.QStyle.SP_DialogDiscardButton))
+
+# Remove this until min and max are implemented
+#         # Create checkbox and layout for min and max
+#         # Create the checkbox
+#         min_chkbx = QtGui.QCheckBox()
+#         max_chkbx = QtGui.QCheckBox()
+#         # Create the global widget
+#         min_wi = QtGui.QWidget()
+#         max_wi = QtGui.QWidget()
+#         # Create a layout for the widget
+#         min_lay = QtGui.QHBoxLayout(min_wi)
+#         max_lay = QtGui.QHBoxLayout(max_wi)
+#         # Add the checkbox to the layout 
+#         min_lay.addWidget(min_chkbx)
+#         max_lay.addWidget(max_chkbx)
+#         # Align the checkbox in the layout
+#         min_lay.setAlignment(QtCore.Qt.AlignCenter)
+#         max_lay.setAlignment(QtCore.Qt.AlignCenter)
+
+        # Add items to table row
+        self.dataTable.setCellWidget(row_index, 0, rm_button)
+        self.dataTable.setCellWidget(row_index, 1, zone_combo)
+        self.dataTable.setCellWidget(row_index, 2, var_combo)
+        self.dataTable.setCellWidget(row_index, 3, line_combo)
+        self.dataTable.setCellWidget(row_index, 4, marker_combo)
+#         self.dataTable.setCellWidget(act_row, 5, min_wi)
+#         self.dataTable.setCellWidget(act_row, 6, max_wi)
+
         # Resize column to fit zone name and variables
         self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
 
-        # Connect zone combobox to signal to update Available variable for zone 
-        zone_combo.activated.connect(self.UpdateVar)
+        # Update Variables when Zone changed
+        zone_combo.activated.connect(lambda: self._updateVariable(index))
         
-        # Connect var, line and marker combobox to signal to update plot
+        # Refresh plot when Variable, line style or marker style changed
         var_combo.activated.connect(self.refresh_plot)
         line_combo.activated.connect(self.refresh_plot)
         marker_combo.activated.connect(self.refresh_plot)
         
-        # Connect rm checkbox to remove the corresponding line
-        rm_chkbx.stateChanged.connect(self.RemoveLine)
+        # Remove row when rm Button clicked
+        rm_button.clicked.connect(lambda: self._removeLine(index))
         
-        # Execute load and draw
-        self.refresh_plot()
+        # Set variables according to selected zone
+        self._updateVariable(index)
 
-    def RemoveLine(self):
-        # Find the table current index
-        clickme = QtGui.qApp.focusWidget()
-        index = self.dataTable.indexAt(clickme.pos())
+    def _removeLine(self, index):
         
-        # Remove corresponding line
-        self.dataTable.removeRow(index.row())
+        if index.isValid():
         
-        # Call Load and draw
-        self.refresh_plot()
+            # Remove corresponding row 
+            self.dataTable.removeRow(index.row())
+
+            # Call Load and draw
+            self.refresh_plot()
     
-    def UpdateVar(self):
-        # Find the table current index
-        clickme = QtGui.qApp.focusWidget()
-        index = self.dataTable.indexAt(clickme.pos())
+    def _updateVariable(self, index):
+        
+        if index.isValid():
+        
+            # Get zone variables
+            zone_name = self.dataTable.cellWidget(index.row(),1).currentText()
+            if zone_name in self._building.zones:
+                zone = self._building.get_zone(zone_name)
+            else:
+                # If selected Zone is Environment
+                zone = self._building.get_environment()
+            var_list = zone.variables
+            
+            # Assign new variables to the combobox
+            var_combo = self.dataTable.cellWidget(index.row(),2)
+            var_combo.clear()
+            for var in var_list:
+                var_combo.addItem(var)
 
-        # Get the zone name
-        zone_combo = self.dataTable.cellWidget(index.row(),1)
-        zone_name = zone_combo.currentText()
-        
-        # Check if it s building zone or environment
-        if zone_name in self._building.zones :
-            zone = self._building.get_zone(zone_name)
-        else :
-            zone = self._building.get_environment()
-        var_list = zone.variables
-        
-        # Assign variables to the combobox
-        # Remove existing variables 
-        var_combo = self.dataTable.cellWidget(index.row(),2)
-        var_combo.clear()
-        
-        # Assign new variables 
-        for var in var_list:
-            var_combo.addItem(var)
-
-        # Update the plot
-        self.refresh_plot()
-        
-    @QtCore.pyqtSlot()
-    def update_period(self) :
-        """Set self._period from GUI"""
-        
-        if self.predefinedPeriodCheckBox.isChecked():
-            # Predefined periods
-            self._period = SEASONS[
-                self.predefinedPeriodComboBox.currentIndex()][1]
-        else :
-            # Custom dates
-            self._period = [self.beginDateEdit.date().toString('MM/dd'),
-                            self.endDateEdit.date().toString('MM/dd')]
-        
-        # Update the plot
-        self.refresh_plot()
+            # Update plot
+            self.refresh_plot()
         
     @QtCore.pyqtSlot()    
     def refresh_plot(self):
@@ -242,8 +208,18 @@ class CustomPlot(DataPlotter):
         # If there is at least one data to plot
         if self.dataTable.rowCount():
 
-            # Make TimeInterval from self._period 
-            t_interval = TimeInterval.from_string_seq(self._period)
+            # Get selected period from GUI
+            if self.predefinedPeriodCheckBox.isChecked():
+                # Predefined periods
+                period = SEASONS[
+                    self.predefinedPeriodComboBox.currentIndex()][1]
+            else :
+                # Custom dates
+                period = [self.beginDateEdit.date().toString('MM/dd'),
+                          self.endDateEdit.date().toString('MM/dd')]
+            
+            # Make TimeInterval from period 
+            t_interval = TimeInterval.from_string_seq(period)
             
             # Go through table to get all variables to plot
             #zone_list = []
