@@ -30,7 +30,7 @@ class HeatGainPileBar(DataPlotter):
 
         super(HeatGainPileBar, self).__init__(building, color_chart)
 
-        self._name = self.tr("Heat gains per source")
+        self._name = self.tr("Heat gains per month")
 
         # Results dict
         self._heat_build_zone = None

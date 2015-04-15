@@ -26,7 +26,7 @@ class CustomPlot(DataPlotter):
         super(CustomPlot, self).__init__(building, color_chart)
 
         # Plot name
-        self._name = self.tr("Time Interval Plotting")
+        self._name = self.tr("Custom plot")
 
         self._zone_list = None
         self._period = None

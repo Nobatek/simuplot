@@ -35,7 +35,7 @@ class AdaptiveComfortScatter(DataPlotter):
         super(AdaptiveComfortScatter, self).__init__(building, color_chart)
 
         # Plot name
-        self._name = self.tr("Brager comfort")
+        self._name = self.tr("Adaptive comfort")
 
         # Set column number and add headers
         self.dataTable.setColumnCount(3)

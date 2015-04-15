@@ -19,7 +19,7 @@ class HeatDemandPie(DataPlotter):
 
         super(HeatDemandPie, self).__init__(building, color_chart)
 
-        self._name = self.tr("Energy heat need per zone")
+        self._name = self.tr("Heat demand per zone")
 
         # Initialize total building heat need
         self._build_total_hn = 0
