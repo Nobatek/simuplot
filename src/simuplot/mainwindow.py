@@ -127,7 +127,11 @@ class MainWindow(QtGui.QMainWindow):
         if isinstance(w, dp.dataplotter.DataPlotter):
 
             # Cram HTML string into clipboard, setting proper Mime type
-            mimeData = QtCore.QMimeData()
-            mimeData.setData("text/html", w.data.encode('utf-8'))
-            self._app.clipboard().setMimeData(mimeData)
+            html_table = w.data
+            if html_table is None:
+                self._app.clipboard().clear()
+            else:
+                mimeData = QtCore.QMimeData()
+                mimeData.setData("text/html", html_table.encode('utf-8'))
+                self._app.clipboard().setMimeData(mimeData)
 

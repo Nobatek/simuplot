@@ -66,6 +66,11 @@ class CustomPlot(DataPlotter):
     def name(self):
         return self._name
 
+    @property
+    def data(self):
+        """Return None as CustomPlot has no table data to return"""
+        return None
+
     @QtCore.pyqtSlot()
     def refresh_data(self):
 

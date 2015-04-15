@@ -57,7 +57,7 @@ class DataPlotter(QtGui.QWidget):
     def data(self):
         """Return the table data as an HTML table"""
 
-        #TODO: copy selected cells only ?
+        #TODO: This is broken if dataTable is not made of QWidgetTableItem only
 
         tw = self.dataTable
 
