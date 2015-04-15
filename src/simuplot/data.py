@@ -128,7 +128,7 @@ class TimeInterval(QtCore.QObject):
         try:
             return cls.from_string_seq(MONTHS[month_nb][2])
         except IndexError:
-            raise DataDateError(cls.tr(
+            raise DataDateError(translate(
                 'Data', 'Invalid month number: {}').format(month_nb))
 
     def get_dt_interval_list(self):

@@ -128,7 +128,7 @@
           <item>
            <widget class="QCheckBox" name="occupCheckBox">
             <property name="text">
-             <string>Only display points corresponding to zone occupation</string>
+             <string>Only display points corresponding to occupation time</string>
             </property>
            </widget>
           </item>
@@ -154,7 +154,7 @@
          <item>
           <widget class="QCheckBox" name="fanCheckBox">
            <property name="text">
-            <string> Activate air fans (0-1.5m/s)</string>
+            <string> Activate air fans (0-1.5 m/s)</string>
            </property>
           </widget>
          </item>
