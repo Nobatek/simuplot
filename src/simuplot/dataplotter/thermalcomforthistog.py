@@ -13,10 +13,11 @@ from .dataplotter import DataPlotter, DataPlotterError
 
 from simuplot.data import DataZoneError
 
-RT_CLIMATIC_ZONE = {'H1a - H1b - H2a - H2b': [2, 1],
-                    'H1c - H2c': [2.5, 1.5],
-                    'H2d - H3': [3, 2],
-                   }
+RT_CLIMATIC_ZONE = {
+    'H1a - H1b - H2a - H2b': [2, 1],
+    'H1c - H2c': [2.5, 1.5],
+    'H2d - H3': [3, 2],
+}
 
 HQE_TMAX_PER_USAGE = {
     'Bureau - Enseignement': 28,
@@ -24,6 +25,7 @@ HQE_TMAX_PER_USAGE = {
     'Commun - Circulation commerce et baignade': 30,
     'Entrepôts': 35,
     }
+
 
 def eval_thermal_comfort(zone, ref_temp):
     """Evaluate thermal comfort in Zone during occupation time
@@ -151,7 +153,7 @@ class ThermalComfortHistog(DataPlotter):
             # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
             # If comfort values known, make zone checkable and check it
-            if pct_over != None:
+            if pct_over is not None:
                 name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                                    QtCore.Qt.ItemIsEnabled)
                 name_item.setCheckState(QtCore.Qt.Checked)
@@ -287,4 +289,3 @@ class ThermalComfortHistog(DataPlotter):
 
         # Draw plot
         canvas.draw()
-
