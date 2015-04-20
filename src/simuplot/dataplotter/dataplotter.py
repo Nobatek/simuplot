@@ -17,14 +17,14 @@ class DataPlotter(QtGui.QWidget):
        Useless by itself. Implement in sub-clases
     """
 
-    # Signals
+    # Signals
     warning = QtCore.pyqtSignal(unicode)
 
     def __init__(self, building, color_chart):
 
         super(DataPlotter, self).__init__()
 
-        # Reference to building instance
+        # Reference to building instance
         self._building = building
 
         # Get color chart
@@ -61,10 +61,10 @@ class DataPlotter(QtGui.QWidget):
 
         tw = self.dataTable
 
-        # Create an HTML table from the TableWidget
+        # Create an HTML table from the TableWidget
         html = '<table>'
 
-        # Headers
+        # Headers
         html += '<tr>'
         for c in xrange(tw.columnCount()):
             html += '<th>{}</th>'.format(tw.horizontalHeaderItem(c).text())

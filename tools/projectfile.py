@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 # Use this script to create or delete the project file
-# Usage: 
-# ./project_file.py --create
-# ./project_file.py --delete
+# Usage: 
+# ./project_file.py --create
+# ./project_file.py --delete
 
 from __future__ import unicode_literals
 from __future__ import division
@@ -20,18 +20,18 @@ import fnmatch
 # Project name (this is the name of the .pro file)
 project = 'simuplot'
 
-# List or languages
-# ts files for these languages will be generated/updated
+# List or languages
+# ts files for these languages will be generated/updated
 languages = ['fr',]
 
 class ProjectFileManager(object):
 
     def __init__(self):
 
-        # Application absolute base path
+        # Application absolute base path
         self._base_path = join(dirname(dirname(abspath(__file__))), 'src')
 
-        # Project file path
+        # Project file path
         self._project_file_path = join(self._base_path, 'simuplot.pro')
 
     @property
@@ -40,7 +40,7 @@ class ProjectFileManager(object):
     
     def create(self):
 
-        # Relatives paths inside application
+        # Relatives paths inside application
         simuplot_relpath = 'simuplot'
         ui_files_relpath = 'resources/ui'
         ts_files_relpath = 'i18n/ts'
@@ -54,8 +54,8 @@ class ProjectFileManager(object):
         pf.write('CODECFORTR = UTF-8')
         pf.write('\n')
 
-        # Source files and ui files are stored in different directories
-        # with the same directory structure
+        # Source files and ui files are stored in different directories
+        # with the same directory structure
         subdirs = ['', 'datareader/', 'dataplotter/']
 
         def add_files(categ, rel_base, ext):
@@ -74,13 +74,13 @@ class ProjectFileManager(object):
             
             pf.write('\n')
 
-        # FORMS
+        # FORMS
         add_files('FORMS', ui_files_relpath, ['ui',])
 
-        # SOURCES
+        # SOURCES
         add_files('SOURCES', simuplot_relpath, ['py',])
 
-        # TRANSLATIONS
+        # TRANSLATIONS
         pf.write('TRANSLATIONS = ')
         for l in languages:
             pf.write(join(ts_files_relpath, project + '_' + l + '.ts '))
@@ -106,15 +106,15 @@ if __name__ == "__main__":
                               help='Delete project file {}.pro'.format(project))
     args = parser.parse_args()
 
-    # Instantiate ProjectFileManager
+    # Instantiate ProjectFileManager
     pfm = ProjectFileManager()
     
-    # Create project file
+    # Create project file
     if args.create:
 
         pfm.create()
 
-    # Delete project file
+    # Delete project file
     elif args.delete:
 
         pfm.delete()

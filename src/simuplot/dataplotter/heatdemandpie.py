@@ -24,14 +24,14 @@ class HeatDemandPie(DataPlotter):
         # Initialize total building heat need
         self._build_total_hn = 0
 
-        # Set column number and add headers
+        # Set column number and add headers
         self.dataTable.setColumnCount(2)
         self.dataTable.setHorizontalHeaderLabels(
             [self.tr('Zone'), self.tr('Heat need [kWh]')])
         self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
 
-        # Refresh plot when zone is clicked/unclicked or sort order changed
+        # Refresh plot when zone is clicked/unclicked or sort order changed
         self.dataTable.itemClicked.connect(self.refresh_plot)
         self.dataTable.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
@@ -53,10 +53,10 @@ class HeatDemandPie(DataPlotter):
         self.dataTable.clearContents()
         self.dataTable.setSortingEnabled(False)
 
-        # Create one empty row per zone
+        # Create one empty row per zone
         self.dataTable.setRowCount(len(zones))
 
-        # For each zone
+        # For each zone
         for i, name in enumerate(zones):
 
             # Compute heat demand for zone
@@ -75,19 +75,19 @@ class HeatDemandPie(DataPlotter):
             # Add zone heat demand to total heat need
             self._build_total_hn += heat_demand
 
-            # Firts column: zone name + checkbox
+            # Firts column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
 
             name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                                QtCore.Qt.ItemIsEnabled)
 
-            # By default, display zone on chart only if value not 0
+            # By default, display zone on chart only if value not 0
             if heat_demand != 0:
                 name_item.setCheckState(QtCore.Qt.Checked)
             else:
                 name_item.setCheckState(QtCore.Qt.Unchecked)
 
-            # Second column: heat need value
+            # Second column: heat need value
             val_item = QtGui.QTableWidgetItem()
             val_item.setData(QtCore.Qt.DisplayRole, heat_demand)
 
@@ -101,7 +101,7 @@ class HeatDemandPie(DataPlotter):
         self.dataTable.sortItems(1, QtCore.Qt.DescendingOrder)
         self.dataTable.setSortingEnabled(True)
 
-        # Draw plot
+        # Draw plot
         self.refresh_plot()
 
     @QtCore.pyqtSlot()
@@ -113,7 +113,7 @@ class HeatDemandPie(DataPlotter):
         canvas.axes.cla()
         canvas.set_tight_layout_on_resize(False)
 
-        # Get checked rows and corresponding (name, value)
+        # Get checked rows and corresponding (name, value)
         values = []
         names = []
         for i in range(self.dataTable.rowCount()):
@@ -136,7 +136,7 @@ class HeatDemandPie(DataPlotter):
         # If total heat need is 0, do not plot anything.
         if self._build_total_hn != 0:
 
-            # Create pie chart
+            # Create pie chart
             # (Make zone heat need non dimensional to avoid pie expansion)
             canvas.axes.pie(np.array(values) / self._build_total_hn,
                             labels=names,

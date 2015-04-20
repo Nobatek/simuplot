@@ -31,7 +31,7 @@ class CustomPlot(DataPlotter):
         self._zone_list = None
         self._period = None
 
-        # Set column number and add headers
+        # Set column number and add headers
         self.dataTable.setColumnCount(5)
         self.dataTable.setHorizontalHeaderLabels([
             '',
@@ -93,8 +93,8 @@ class CustomPlot(DataPlotter):
         row_index = self.dataTable.rowCount()
         self.dataTable.insertRow(row_index)
 
-        # Get persistent row index
-        # (http://stackoverflow.com/questions/29633311/)
+        # Get persistent row index
+        # (http://stackoverflow.com/questions/29633311/)
         index = QtCore.QPersistentModelIndex(
             self.dataTable.model().index(row_index, 0))
 
@@ -121,7 +121,7 @@ class CustomPlot(DataPlotter):
         rm_button.setIcon(QtGui.qApp.style().standardIcon(
             QtGui.QStyle.SP_DialogDiscardButton))
 
-# Remove this until min and max are implemented
+# Remove this until min and max are implemented
 #         # Create checkbox and layout for min and max
 #         # Create the checkbox
 #         min_chkbx = QtGui.QCheckBox()
@@ -163,7 +163,7 @@ class CustomPlot(DataPlotter):
         # Remove row when rm Button clicked
         rm_button.clicked.connect(lambda: self.remove_row(index))
 
-        # Set variables according to selected zone
+        # Set variables according to selected zone
         self.update_variable(index)
 
     @QtCore.pyqtSlot()
@@ -203,7 +203,7 @@ class CustomPlot(DataPlotter):
     @QtCore.pyqtSlot()
     def refresh_plot(self):
 
-        # TODO: add legend
+        # TODO: add legend
 
         # Define canvas
         canvas = self.plotWidget.canvas
@@ -215,9 +215,9 @@ class CustomPlot(DataPlotter):
         # If there is at least one data to plot
         if self.dataTable.rowCount():
 
-            # Get selected period from GUI
+            # Get selected period from GUI
             if self.predefinedPeriodCheckBox.isChecked():
-                # Predefined periods
+                # Predefined periods
                 period = SEASONS[
                     self.predefinedPeriodComboBox.currentIndex()][1]
             else:
@@ -225,7 +225,7 @@ class CustomPlot(DataPlotter):
                 period = [self.beginDateEdit.date().toString('MM/dd'),
                           self.endDateEdit.date().toString('MM/dd')]
 
-            # Make TimeInterval from period
+            # Make TimeInterval from period
             t_interval = TimeInterval.from_string_seq(period)
 
             # Go through table to get all variables to plot
@@ -261,7 +261,7 @@ class CustomPlot(DataPlotter):
             #minutes = dates.MinuteLocator()
 
             # List of hourly dates from start to end
-            # TODO: faster with dates.drange ?
+            # TODO: faster with dates.drange ?
             dates_list = dates.date2num(t_interval.get_dt_range('HOUR'))
 
             # Define x axis

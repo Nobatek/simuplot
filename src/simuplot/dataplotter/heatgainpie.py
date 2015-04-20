@@ -34,7 +34,7 @@ class HeatGainPie(DataPlotter):
         # Results dict
         self._heat_build_zone = None
 
-        # Set column number and add headers
+        # Set column number and add headers
         self.dataTable.setColumnCount(2)
         self.dataTable.setHorizontalHeaderLabels(
             [self.tr('Heat sources'), self.tr('Heat gains [kWh]')])
@@ -44,7 +44,7 @@ class HeatGainPie(DataPlotter):
         # Initialize table with one row per heat source with checkbox
         self.dataTable.setRowCount(len(HEAT_SOURCES))
         for i, val in enumerate(HEAT_SOURCES):
-            # DATATYPES is a dict of type:(unit, string)
+            # DATATYPES is a dict of type:(unit, string)
             hs_name = QtCore.QCoreApplication.translate(
                 'Data', DATATYPES[val][1])
             name_item = QtGui.QTableWidgetItem(hs_name)
@@ -65,7 +65,7 @@ class HeatGainPie(DataPlotter):
         # Refresh plot when zoneSelectBox is modified
         self.zoneSelectBox.activated.connect(self.refresh_table_and_plot)
 
-        # Refresh plot when zone is clicked/unclicked
+        # Refresh plot when zone is clicked/unclicked
         self.dataTable.itemClicked.connect(self.refresh_plot)
 
     @property
@@ -90,7 +90,7 @@ class HeatGainPie(DataPlotter):
         t_int = TimeInterval.from_string_seq(
             SEASONS[self.periodSelectBox.currentIndex()][1])
 
-        # Compute heat gain per source in each zone
+        # Compute heat gain per source in each zone
         self._heat_build_zone = {}
         for name in zones:
             zone = self._building.get_zone(name)
@@ -98,11 +98,11 @@ class HeatGainPie(DataPlotter):
             self._heat_build_zone[name] = {}
             for hs in HEAT_SOURCES:
                 try:
-                    # Sum values for heat source on time interval
-                    # and convert result from [Wh] to [kWh]
+                    # Sum values for heat source on time interval
+                    # and convert result from [Wh] to [kWh]
                     heat_gains = zone.get_array(hs, 'HOUR').sum(t_int) / 1000
                 except DataZoneError:
-                    # If hourly heat source data not available,
+                    # If hourly heat source data not available,
                     #"mark it zero, Donnie"
                     heat_gains = 0
                 except DataArrayIndexError:
@@ -112,13 +112,13 @@ class HeatGainPie(DataPlotter):
                     heat_gains = 0
                 self._heat_build_zone[name][hs] = heat_gains
 
-        # Compute heat gain per source for building by summing all zones
+        # Compute heat gain per source for building by summing all zones
         self._heat_build_zone['Building'] = {}
         for hs in HEAT_SOURCES:
             self._heat_build_zone['Building'][hs] = \
                 sum([self._heat_build_zone[zone][hs] for zone in zones])
 
-        # Write in Table and draw plot
+        # Write in Table and draw plot
         self.refresh_table_and_plot()
 
     @QtCore.pyqtSlot()
@@ -177,7 +177,7 @@ class HeatGainPie(DataPlotter):
         # If sum is 0, heat gain are 0. Do not plot anything.
         if sum_value != 0:
 
-            # Create pie chart
+            # Create pie chart
             # (Make zone heat need non dimensional to avoid pie expansion)
             canvas.axes.pie(np.array(value_plot) / sum_value,
                             labels=name_plot,

@@ -47,7 +47,7 @@ def eval_thermal_comfort(zone, ref_temp):
         nb_people = zone.get_array(
             'PEOPLE_COUNT', 'HOUR').values()
     except DataZoneError:
-        # Return None as thermal confort % and None as max temperature
+        # Return None as thermal confort % and None as max temperature
         return None, None
     else:
 
@@ -55,7 +55,7 @@ def eval_thermal_comfort(zone, ref_temp):
         io_people = np.where(nb_people > 0, 1, 0)
 
         # If occupation is always 0 (zone always empty),
-        # return None as thermal confort % and None as max temperature
+        # return None as thermal confort % and None as max temperature
         nb_h_occup = np.count_nonzero(io_people)
         if nb_h_occup == 0:
             return None, None
@@ -81,10 +81,10 @@ class ThermalComfortHistog(DataPlotter):
 
         self._name = self.tr("Summer thermal comfort per zone")
 
-        # Reference temperature
+        # Reference temperature
         self._ref_temp = None
 
-        # Set column number and add headers
+        # Set column number and add headers
         self.dataTable.setColumnCount(3)
         self.dataTable.setHorizontalHeaderLabels([
             self.tr('Zone'),
@@ -102,7 +102,7 @@ class ThermalComfortHistog(DataPlotter):
         for dat in HQE_TMAX_PER_USAGE:
             self.hqeStudyTypeSelectBox.addItem(dat)
 
-        # Refresh plot when zone is clicked/unclicked or sort order changed
+        # Refresh plot when zone is clicked/unclicked or sort order changed
         self.dataTable.itemClicked.connect(self.refresh_plot)
         self.dataTable.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
@@ -131,7 +131,7 @@ class ThermalComfortHistog(DataPlotter):
         self.dataTable.clearContents()
         self.dataTable.setSortingEnabled(False)
 
-        # Create one empty row per zone
+        # Create one empty row per zone
         self.dataTable.setRowCount(len(zones))
 
         # Get reference temperature for thermal comfort
@@ -141,28 +141,28 @@ class ThermalComfortHistog(DataPlotter):
         else:
             self._ref_temp = self.customStudySpinBox.value()
 
-        # For each zone
+        # For each zone
         for i, name in enumerate(zones):
 
             # Compute all comfort and max temperature
             pct_over, max_temp = eval_thermal_comfort(
                 self._building.get_zone(name), self._ref_temp)
 
-            # First column: zone name + checkbox
+            # First column: zone name + checkbox
             name_item = QtGui.QTableWidgetItem(name)
-            # If comfort values known, make zone checkable and check it
+            # If comfort values known, make zone checkable and check it
             if pct_over != None:
                 name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                                    QtCore.Qt.ItemIsEnabled)
                 name_item.setCheckState(QtCore.Qt.Checked)
 
-            # Second column: % thermal comfort
+            # Second column: % thermal comfort
             val_item1 = QtGui.QTableWidgetItem()
             val_item1.setData(QtCore.Qt.DisplayRole, pct_over)
 
             val_item1.setFlags(QtCore.Qt.ItemIsEnabled)
 
-            # Third column: zone max temperature in occupation
+            # Third column: zone max temperature in occupation
             val_item2 = QtGui.QTableWidgetItem()
             val_item2.setData(QtCore.Qt.DisplayRole, max_temp)
 
@@ -177,7 +177,7 @@ class ThermalComfortHistog(DataPlotter):
         self.dataTable.sortItems(1, QtCore.Qt.DescendingOrder)
         self.dataTable.setSortingEnabled(True)
 
-        # Draw plot
+        # Draw plot
         self.refresh_plot()
 
     @QtCore.pyqtSlot()
@@ -192,7 +192,7 @@ class ThermalComfortHistog(DataPlotter):
         canvas.axes.cla()
         canvas.set_tight_layout_on_resize(False)
 
-        # Get checked rows and corresponding (name, value)
+        # Get checked rows and corresponding (name, value)
         for i in range(self.dataTable.rowCount()):
             if self.dataTable.item(i, 0).checkState() == QtCore.Qt.Checked:
                 name = self.dataTable.item(i, 0).text()
@@ -213,7 +213,7 @@ class ThermalComfortHistog(DataPlotter):
         # If no data in vals, no zone was checked. Do not plot anything.
         if vals != []:
 
-            # Store values as np array
+            # Store values as np array
             values = np.array(vals)
 
             # TODO: shall we display HQE levels if not in HQE mode ?
@@ -224,7 +224,7 @@ class ThermalComfortHistog(DataPlotter):
             self._hqetp = RT_CLIMATIC_ZONE[unicode(
                 self.climaticZoneSelectBox.currentText())][1]
 
-            # Create and draw bar chart
+            # Create and draw bar chart
             ind = np.arange(values.size)
             rectangle = canvas.axes.bar(ind, values, edgecolor='white')
 
@@ -285,6 +285,6 @@ class ThermalComfortHistog(DataPlotter):
 
             canvas.set_tight_layout_on_resize(True)
 
-        # Draw plot
+        # Draw plot
         canvas.draw()
 

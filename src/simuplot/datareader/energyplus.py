@@ -52,7 +52,7 @@ class EnergyPlus(DataReader):
             'PEOPLE_HEATING_RATE',
         'Lights Total Heating Rate':
             'LIGHTING_HEATING_RATE',
-        # TODO: Gas, Hot Water, Steam, Other Equipment
+        # TODO: Gas, Hot Water, Steam, Other Equipment
         'Electric Equipment Total Heating Rate':
             'EQUIPMENT_HEATING_RATE',
         'Windows Total Heat Gain Rate':
@@ -72,14 +72,14 @@ class EnergyPlus(DataReader):
         'J':'J',
     }
 
-    # Sampling period conversion
+    # Sampling period conversion
     # TODO: Complete. Externalize in some config file ?
     # TODO: Manage RunPeriod. Currently breaks input filter.
     DataPeriods = {
         'Hourly':'HOUR',
     }
 
-    # Strings to remove from item names in column headers
+    # Strings to remove from item names in column headers
     # Watch the trailing/leading spaces
     strings_to_remove = [' IDEAL LOADS AIR',
                          'PEOPLE ',
@@ -102,7 +102,7 @@ class EnergyPlus(DataReader):
     def browse_button_cbk(self):
         """Browse button callback"""
 
-        # Launch file selection dialog, get file path,
+        # Launch file selection dialog, get file path,
         # and print it in file path text widget
         file_path = QtGui.QFileDialog.getOpenFileName()
         if file_path != '':
@@ -111,13 +111,13 @@ class EnergyPlus(DataReader):
     def load_button_cbk(self):
         """Load button callback"""
 
-        # Get file path from filePathEdit
+        # Get file path from filePathEdit
         file_path = self.filePathEdit.text()
 
         # Initialize progress bar
         self.dataLoadProgress.emit(0)
 
-        # Clean Building
+        # Clean Building
         self._building.clean()
 
         # Read file
@@ -130,7 +130,7 @@ class EnergyPlus(DataReader):
             self.dataLoadError.emit(self.tr("[Error] {}").format(e))
         else:
             # Signal data was loaded
-            # Return last message in queue
+            # Return last message in queue
             self.dataLoaded.emit(messages[-1])
 
     def read_data_files(self, file_path):
@@ -147,21 +147,21 @@ class EnergyPlus(DataReader):
             raise DataReaderReadError(self.tr(
                 "Unauthorized characters in data file"))
 
-        # Create CSV reader, store file size to track progress while reading
-        # TODO: Unicode files ? (https://docs.python.org/2/library/csv.html)
+        # Create CSV reader, store file size to track progress while reading
+        # TODO: Unicode files ? (https://docs.python.org/2/library/csv.html)
         csv_reader = csv.reader(csv_file, delimiter=b",")
         file_size = os.path.getsize(file_path)
 
         # Except for the first ('Date/Time'),
         # each column head should be of the form
         # ZONE_NAME:Variable Name [Unit](Periodicity)
-        # Use a regular expression pattern to match column heads
+        # Use a regular expression pattern to match column heads
         # Warning: this regexp is broken by files with "DistrictHeating"
         pattern = re.compile(r"""
             (?P<item_name>.*)       # Item name
             :                       # Colon
-            (?P<item_type>[^ ]*)    # Item type (Zone, Site, etc)
-            \                       # 1 whitespace
+            (?P<item_type>[^ ]*)    # Item type (Zone, Site, etc)
+            \                       # 1 whitespace
             (?P<var>.*?)            # Var name
             \ \[                    # 1 whitespace, opening square bracket
             (?P<unit>.*?)           # Var unit
@@ -172,7 +172,7 @@ class EnergyPlus(DataReader):
 
         # Initialize empty variable list
         variables = []
-        # Variables store data as numpy arrays. Those can't be appended.
+        # Variables store data as numpy arrays. Those can't be appended.
         # During the reading, store data in simple lists.
         tmp_variables = []
 
@@ -188,12 +188,12 @@ class EnergyPlus(DataReader):
                 "Invalid file header: '{},...', E+ file begins with 'Date/Time'"
                 ).format(header[0]))
 
-        # Go through all columns heads
+        # Go through all columns heads
         for head in header:
             # Match colum head to extract values
             try:
                 match = pattern.match(head)
-                # E+ replaces '_' with '%' in zone names. We want our '_' back.
+                # E+ replaces '_' with '%' in zone names. We want our '_' back.
                 item_name_str = match.group('item_name').replace('%', '_')
                 item_type_str = match.group('item_type')
                 var_str = match.group('var')
@@ -204,7 +204,7 @@ class EnergyPlus(DataReader):
                 raise DataReaderReadError(self.tr(
                     'Misformed column head: "{}"').format(head))
 
-            # Remove unwanted strings from name
+            # Remove unwanted strings from name
             for s in self.strings_to_remove:
                 item_name_str = item_name_str.replace(s, '')
 
@@ -230,7 +230,7 @@ class EnergyPlus(DataReader):
                     '[Warning] Unknown unit: [{}]').format(unit_str))
                 continue
 
-            # If data type and unit are known, check item type
+            # If data type and unit are known, check item type
             if item_type_str == 'Zone':
 
                 # Create zone if needed
@@ -266,33 +266,33 @@ class EnergyPlus(DataReader):
                 raise DataReaderReadError(self.tr(
                     'Unknown period {}').format(period_str))
 
-            # Store locally in variable list (one var per column)
+            # Store locally in variable list (one var per column)
             # before final insertion into Variable as a numpy array
             variables.append([item, data_type, data_unit, period])
             tmp_variables.append([])
 
-        # Go through all lines to store values in each variable
+        # Go through all lines to store values in each variable
         nb_values_per_line = len(variables)
 
         for row in csv_reader:
 
-            # Skip first column ('Date/Time')
+            # Skip first column ('Date/Time')
             vals = row[1:]
-            # No need to encode as UTF-8 considering following operations
-            # if would only slow down the processing
+            # No need to encode as UTF-8 considering following operations
+            # if would only slow down the processing
             #vals = [unicode(c, 'utf-8') for c in row[1:]]
 
-            # Ignore empty line ("It's alright, no big deal")
+            # Ignore empty line ("It's alright, no big deal")
             if vals == []:
                 continue
 
-            # Check correct number of values in the line
+            # Check correct number of values in the line
             # This is broken if file contains "DistrictHeating"
             if len(vals) != nb_values_per_line:
                 raise DataReaderReadError(self.tr(
                     'Misformed line: {}').format(row))
 
-            # Store each value of known type in the line into its list
+            # Store each value of known type in the line into its list
             try:
                 for i, val_list in enumerate(tmp_variables):
                     if val_list is not None:
@@ -307,7 +307,7 @@ class EnergyPlus(DataReader):
         # Store all temporary value lists into numpy arrays in item variables
         for i, [item, data_type, data_unit, per] in enumerate(variables):
             if item is not None:
-                # Unit conversion
+                # Unit conversion
                 try:
                     conv_func = self.conversions[data_type][data_unit]
                 except KeyError:
@@ -317,7 +317,7 @@ class EnergyPlus(DataReader):
                     continue
                 data_array = Array(tmp_variables[i], per)
                 data_array.apply(conv_func)
-                # TODO: check there is not data already
+                # TODO: check there is not data already
                 # for this type and period in this zone ?
                 item.set_array(data_type, per, data_array)
 

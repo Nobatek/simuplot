@@ -54,7 +54,7 @@ DATAPERIODS = [
     'YEAR',
 ]
 
-# TODO: translate short names as well
+# TODO: translate short names as well
 MONTHS = [
     ('Jan', 31, ['01/01', '01/31'], (translate('Data', 'January'))),
     ('Fev', 28, ['02/01', '02/28'], (translate('Data', 'February'))),
@@ -70,7 +70,7 @@ MONTHS = [
     ('Dec', 31, ['12/01', '12/31'], (translate('Data', 'December'))),
 ]
 
-# TODO: move to user settings
+# TODO: move to user settings
 SEASONS = [(translate('Data', 'Year'), ['01/01', '12/31']),
            (translate('Data', 'Summer'), ['04/01', '09/30']),
            (translate('Data', 'Winter'), ['10/01', '03/31']),
@@ -102,7 +102,7 @@ class TimeInterval(QtCore.QObject):
 
         super(TimeInterval, self).__init__()
 
-        # TODO: check datetime is 2005 or 01/01/2006 ?
+        # TODO: check datetime is 2005 or 01/01/2006 ?
         # If beg_dt = next_dt, a whole wrapped year is returned
 
         if beg_dt < next_dt:
@@ -124,7 +124,7 @@ class TimeInterval(QtCore.QObject):
 
     @classmethod
     def from_month_nb(cls, month_nb):
-        # month_nb is in range(0,12)
+        # month_nb is in range(0,12)
         try:
             return cls.from_string_seq(MONTHS[month_nb][2])
         except IndexError:
@@ -210,7 +210,7 @@ class Array(QtCore.QObject):
 
     def typical_day(self, t_interval=None):
         """Return typical days for desired interval"""
-        # TODO: implement Array.typical_day
+        # TODO: implement Array.typical_day
         raise NotImplementedError
 
 class Variable(QtCore.QObject):
@@ -228,12 +228,12 @@ class Variable(QtCore.QObject):
                 'Incorrect data type {}').format(data_type))
         self._data_type = data_type
 
-        # Values for each sampling period
+        # Values for each sampling period
         self._values = {}
 
-        # TODO: Start time
+        # TODO: Start time
         # Which datatype for time?
-        # For now, we'll suppose that all outputs
+        # For now, we'll suppose that all outputs
         # start at "01/01  01:00:00"
         # self.date_start = None
 

@@ -23,22 +23,22 @@ def convert_J_to_kWh(val):
 
 class DataReader(QtGui.QWidget):
 
-    # Signals
+    # Signals
     # Before loading data
     loadingData = QtCore.pyqtSignal(unicode)
     # When data is successfully loaded
     dataLoaded = QtCore.pyqtSignal(unicode)
     # When an error occurred while loading data
     dataLoadError = QtCore.pyqtSignal(unicode)
-    # Data loading progress
+    # Data loading progress
     dataLoadProgress = QtCore.pyqtSignal(int)
 
-    # Unit conversions
+    # Unit conversions
     # If expected unit is provided, conversion is identity
-    # DATATYPES is a dict of type:(unit, string)
+    # DATATYPES is a dict of type:(unit, string)
     conversions = {data_type: {data_props[0]: lambda x: x}
                    for data_type, data_props in DATATYPES.iteritems()}
-    # Otherwise, specify conversion
+    # Otherwise, specify conversion
     conversions['AIR_DRYBULB_TEMPERATURE']['°F'] = convert_F_to_C
     conversions['AIR_WETBULB_TEMPERATURE']['°F'] = convert_F_to_C
     conversions['OPERATIVE_TEMPERATURE']['°F'] = convert_F_to_C

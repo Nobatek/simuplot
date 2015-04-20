@@ -34,7 +34,7 @@ class MplCanvas(FigureCanvas):
         # Notify the system of updated policy
         FigureCanvas.updateGeometry(self)
 
-        # 'resize event' connection cid
+        # 'resize event' connection cid
         self.resize_cid = None
 
     def set_tight_layout_on_resize(self, value):

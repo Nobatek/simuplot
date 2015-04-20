@@ -33,7 +33,7 @@ class HeatGainPileBar(DataPlotter):
         # Results dict
         self._heat_build_zone = None
 
-        # Set column number and add headers
+        # Set column number and add headers
         self.dataTable.setColumnCount(13)
         self.dataTable.setHorizontalHeaderLabels(
             [self.tr('Heat sources')] + [m[0] for m in MONTHS])
@@ -43,7 +43,7 @@ class HeatGainPileBar(DataPlotter):
         # Initialize table with one row per heat source with checkbox
         self.dataTable.setRowCount(len(HEAT_SOURCES))
         for i, val in enumerate(HEAT_SOURCES):
-            # DATATYPES is a dict of type:(unit, string)
+            # DATATYPES is a dict of type:(unit, string)
             hs_name = QtCore.QCoreApplication.translate(
                 'Data', DATATYPES[val][1])
             name_item = QtGui.QTableWidgetItem(hs_name)
@@ -56,7 +56,7 @@ class HeatGainPileBar(DataPlotter):
         # Refresh plot when zoneSelectBox is modified
         self.zoneSelectBox.activated.connect(self.refresh_table_and_plot)
 
-        # Refresh plot when zone is clicked/unclicked
+        # Refresh plot when zone is clicked/unclicked
         self.dataTable.itemClicked.connect(self.refresh_plot)
 
     @property
@@ -77,7 +77,7 @@ class HeatGainPileBar(DataPlotter):
         self.zoneSelectBox.addItem(self.tr('Building'))
         self.zoneSelectBox.setCurrentIndex(self.zoneSelectBox.count() - 1)
 
-        # Compute heat gain per source in each zone
+        # Compute heat gain per source in each zone
         self._heat_build_zone = {}
         for name in zones:
             zone = self._building.get_zone(name)
@@ -88,7 +88,7 @@ class HeatGainPileBar(DataPlotter):
                     # Get the Array object for current heat source
                     val_array = zone.get_array(hs, 'HOUR')
                 except DataZoneError:
-                    # If hourly heat source data not available,
+                    # If hourly heat source data not available,
                     # "mark it zero, Donnie", for each month
                     self._heat_build_zone[name][hs] = np.zeros(12)
                 else:
@@ -97,7 +97,7 @@ class HeatGainPileBar(DataPlotter):
                         [val_array.sum(TimeInterval.from_month_nb(m))
                          for m in range(len(MONTHS))]) / 1000
 
-        # Compute heat gain per source for building by summing all zones
+        # Compute heat gain per source for building by summing all zones
         self._heat_build_zone['Building'] = {}
         if len(zones):
             for hs in HEAT_SOURCES:
@@ -109,7 +109,7 @@ class HeatGainPileBar(DataPlotter):
             for hs in HEAT_SOURCES:
                 self._heat_build_zone['Building'][hs] = np.zeros(12)
 
-        # Write in Table and draw plot
+        # Write in Table and draw plot
         self.refresh_table_and_plot()
 
     @QtCore.pyqtSlot()
@@ -178,11 +178,11 @@ class HeatGainPileBar(DataPlotter):
             ind = np.arange(len(MONTHS))
 
             # Create a colormap adapted to HEAT_SOURCES
-            # TODO: move to __init__ ?
+            # TODO: move to __init__ ?
             hs_cmap = {hs_names[i] : self._color_chart[i]
                        for i in range(len(HEAT_SOURCES))}
 
-            # Create and draw bar chart
+            # Create and draw bar chart
             prev_height = np.zeros(len(MONTHS))
             width = 0.8
             for i, (hs_name, hs_vals) in enumerate(zip(name_plot, value_plot)):

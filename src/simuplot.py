@@ -11,7 +11,7 @@ import sys
 import signal
 
 # Forbid use of QString
-# http://pyqt.sourceforge.net/Docs/PyQt4/incompatible_apis.html
+# http://pyqt.sourceforge.net/Docs/PyQt4/incompatible_apis.html
 import sip
 sip.setapi('QString', 2)
 
@@ -24,8 +24,8 @@ if __name__ == "__main__":
 
     app = QtGui.QApplication(sys.argv)
 
-    # Internationalization
-    # Specify codec for translation
+    # Internationalization
+    # Specify codec for translation
     QtCore.QTextCodec.setCodecForTr(QtCore.QTextCodec.codecForName("utf-8"))
     # Use system locale
     locale = QtCore.QLocale.system().name()
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     translator_qt.load('qt_{}'.format(locale),
         QtCore.QLibraryInfo.location(QtCore.QLibraryInfo.TranslationsPath))
     app.installTranslator(translator_qt)
-    # Load translator for own strings
+    # Load translator for own strings
     translator = QtCore.QTranslator()
     translator.load(os.path.join(I18N_PATH, 'simuplot_' + locale))
     app.installTranslator(translator)

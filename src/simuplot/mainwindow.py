@@ -23,10 +23,10 @@ class MainWindow(QtGui.QMainWindow):
 
         super(MainWindow, self).__init__()
 
-        # Application
+        # Application
         self._app = app
 
-        # Get parameters
+        # Get parameters
         self._config = Config()
         self._config.read()
 
@@ -36,16 +36,16 @@ class MainWindow(QtGui.QMainWindow):
         # Setup status bar
         self.setStatusBar(StatusBar())
 
-        # Instantiate a Building
+        # Instantiate a Building
         self._building = Building('My Building')
 
-        # Instantiate all plotter widgets and add them as new tabs
+        # Instantiate all plotter widgets and add them as new tabs
         plotters = []
         for plotter in dp.PLOTTERS:
             p = plotter(self._building, self._config.params['color_chart'])
             plotters.append(p)
             self.tabWidget.addTab(p, p.name)
-            # Connect signals to status bar
+            # Connect signals to status bar
             p.warning.connect(self.statusBar().warning)
 
         # Disable all plotter tabs
@@ -56,7 +56,7 @@ class MainWindow(QtGui.QMainWindow):
             r = reader(self._building)
             self.loadSourceTypeSelectBox.addItem(r.name)
             self.loadStackedWidget.addWidget(r)
-            # Connect signals to status bar
+            # Connect signals to status bar
             r.loadingData.connect(self.statusBar().loadingData)
             r.dataLoaded.connect(self.statusBar().dataLoaded)
             r.dataLoadError.connect(self.statusBar().dataLoadError)
@@ -69,17 +69,17 @@ class MainWindow(QtGui.QMainWindow):
             r.dataLoaded.connect(lambda: self.set_plot_tabs_enabled(True))
             r.dataLoadError.connect(lambda: self.set_plot_tabs_enabled(False))
 
-        # Connect comboBox activated signal to stackedWidget set index slot
+        # Connect comboBox activated signal to stackedWidget set index slot
         self.loadSourceTypeSelectBox.activated.connect(
             self.loadStackedWidget.setCurrentIndex)
 
-        # Connect menu signals
+        # Connect menu signals
         self.copyPlotToClipboardAction.triggered.connect(
             self.copy_plot_to_clipboard)
         self.copyTableToClipboardAction.triggered.connect(
             self.copy_table_to_clipboard)
 
-        # Connect tab selection changed signal
+        # Connect tab selection changed signal
         self.tabWidget.currentChanged.connect(self.tab_selection_changed)
 
     def set_plot_tabs_enabled(self, enable):
@@ -98,8 +98,8 @@ class MainWindow(QtGui.QMainWindow):
     @QtCore.pyqtSlot()
     def tab_selection_changed(self):
 
-        # Enable copy(Plot|Table)ToClipboard if and only if
-        # selected widget is a DataPlotter
+        # Enable copy(Plot|Table)ToClipboard if and only if
+        # selected widget is a DataPlotter
         w = self.tabWidget.currentWidget()
         enable = isinstance(w, dp.dataplotter.DataPlotter)
         self.copyPlotToClipboardAction.setEnabled(enable)
@@ -112,7 +112,7 @@ class MainWindow(QtGui.QMainWindow):
         w = self.tabWidget.currentWidget()
 
         # If current tab is a plotter
-        # TODO: disable menu action if current tab is not a plotter
+        # TODO: disable menu action if current tab is not a plotter
         if isinstance(w, dp.dataplotter.DataPlotter):
             self._app.clipboard().setPixmap(w.plot)
 
@@ -123,10 +123,10 @@ class MainWindow(QtGui.QMainWindow):
         w = self.tabWidget.currentWidget()
 
         # If current tab is a plotter
-        # TODO: disable menu action if current tab is not a plotter
+        # TODO: disable menu action if current tab is not a plotter
         if isinstance(w, dp.dataplotter.DataPlotter):
 
-            # Cram HTML string into clipboard, setting proper Mime type
+            # Cram HTML string into clipboard, setting proper Mime type
             html_table = w.data
             if html_table is None:
                 self._app.clipboard().clear()

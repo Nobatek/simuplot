@@ -15,17 +15,17 @@ class TsFilesUpdater(object):
 
     def __init__(self):
 
-        # Instantiate ProjectFileManager
+        # Instantiate ProjectFileManager
         self.pfm = ProjectFileManager()
 
     def update(self):
 
-        # 1/ Create project file
+        # 1/ Create project file
         self.pfm.create()
 
-        # 2 - Update .ts files
+        # 2 - Update .ts files
         # Assume pylupdate4 is in the path
-        # TODO: what about Windows installations ?
+        # TODO: what about Windows installations ?
         try:
             call(['pylupdate4', '-verbose', '-noobsolete', self.pfm.file_path])
         except OSError as e:
@@ -39,7 +39,7 @@ class TsFilesUpdater(object):
 
 if __name__ == "__main__":
 
-    # Instantiate TsFilesUpdater
+    # Instantiate TsFilesUpdater
     tfu = TsFilesUpdater()
  
     # Update ts files

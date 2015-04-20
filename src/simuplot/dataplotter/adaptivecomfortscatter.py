@@ -37,7 +37,7 @@ class AdaptiveComfortScatter(DataPlotter):
         # Plot name
         self._name = self.tr("Adaptive comfort")
 
-        # Set column number and add headers
+        # Set column number and add headers
         self.dataTable.setColumnCount(3)
         self.dataTable.setHorizontalHeaderLabels([
             self.tr('Below [%]'),
@@ -55,7 +55,7 @@ class AdaptiveComfortScatter(DataPlotter):
             self.tr('Category III'),
             ])
 
-        # Mean outdoor temperature and Zone operative temperature
+        # Mean outdoor temperature and Zone operative temperature
         self._teta_mean = None
         self._teta_op = None
 
@@ -102,15 +102,15 @@ class AdaptiveComfortScatter(DataPlotter):
 
         else:
 
-            # Instantiate TimeInterval for summer period
+            # Instantiate TimeInterval for summer period
             time_int = TimeInterval.from_string_seq(
                 [self.beginDateEdit.date().toString('MM/dd'),
                  self.endDateEdit.date().toString('MM/dd')])
 
             # Create a list of mean ext temp for the period
-            # t_out_mean associates to each hour the averate temperature
-            # of the last 7 entire days.
-            # (Therefore, for a given day, all values are the same.)
+            # t_out_mean associates to each hour the averate temperature
+            # of the last 7 entire days.
+            # (Therefore, for a given day, all values are the same.)
             t_out = environment.get_array('AIR_DRYBULB_TEMPERATURE', 'HOUR')
             t_out_mean = np.repeat(
                 [t_out.mean(
@@ -127,7 +127,7 @@ class AdaptiveComfortScatter(DataPlotter):
                 self._teta_mean = None
             else:
                 # If "zone occupation" is activated,
-                # only consider times when occupation is not 0
+                # only consider times when occupation is not 0
                 if self.occupCheckBox.isChecked():
                     occupation = zone.get_array(
                         'PEOPLE_COUNT', 'HOUR').values(time_int) > 0
@@ -151,7 +151,7 @@ class AdaptiveComfortScatter(DataPlotter):
         # Clear data table
         self.dataTable.clearContents()
 
-        # If there is data to plot
+        # If there is data to plot
         if self._teta_op is not None:
 
             # If fans are present in zone, correct comfort temperature
@@ -187,15 +187,15 @@ class AdaptiveComfortScatter(DataPlotter):
                 CATEGORY_COLOR['out'])
 
             # Fill data table
-            # High or low limit is valid on limit definition interval only.
-            # A point is considered in comfort zone if it is not below limit
+            # High or low limit is valid on limit definition interval only.
+            # A point is considered in comfort zone if it is not below limit
             # in the limit's definition interval. Outside the definition
-            # interval, it is considered in comfort zone by default.
+            # interval, it is considered in comfort zone by default.
             low_def = ((self._teta_mean >= DEF_INTERVALS['LOW'][0]) &
                        (self._teta_mean <= DEF_INTERVALS['LOW'][1]))
             high_def = ((self._teta_mean >= DEF_INTERVALS['HIGH'][0]) &
                         (self._teta_mean <= DEF_INTERVALS['HIGH'][1]))
-            # Values are expressed in percentage of all points, even those
+            # Values are expressed in percentage of all points, even those
             # outside of definition interval.
             nb_vals = self._teta_op.size
             for i, category in enumerate(['I', 'II', 'III']):
