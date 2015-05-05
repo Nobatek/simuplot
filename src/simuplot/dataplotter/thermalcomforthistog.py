@@ -6,6 +6,7 @@ from __future__ import print_function
 from __future__ import absolute_import
 
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
 
 import numpy as np
 
@@ -13,18 +14,34 @@ from .dataplotter import DataPlotter, DataPlotterError
 
 from simuplot.data import DataZoneError
 
-RT_CLIMATIC_ZONE = {
-    'H1a - H1b - H2a - H2b': [2, 1],
-    'H1c - H2c': [2.5, 1.5],
-    'H2d - H3': [3, 2],
-}
+RT_CLIMATIC_ZONE = [
+    ('H1a - H1b - H2a - H2b', [2, 1]),
+    ('H1c - H2c', [2.5, 1.5]),
+    ('H2d - H3', [3, 2]),
+]
 
-HQE_TMAX_PER_USAGE = {
-    'Bureau - Enseignement': 28,
-    'Hôtel': 26,
-    'Commun - Circulation commerce et baignade': 30,
-    'Entrepôts': 35,
+HQE_TMAX_PER_USAGE = [
+    ('Bureau - Enseignement', 28),
+    ('Hôtel', 26),
+    ('Commun - Circulation commerce et baignade', 30),
+    ('Entrepôts', 35),
+]
+
+STUDY_TYPES = [
+    ('CUSTOM', translate('ThermalComfortHistog', 'Custom study')),
+    ('HQE', translate('ThermalComfortHistog', 'HQE study')),
+    ]
+
+COLORS = {
+    'BASE': '#868786',
+    'GOOD': '#E47823',
+    'BETTER': '#8EC02F',
     }
+
+# TODO: set level 1 max value according to level 2 value / enabled state
+# and conversely
+
+# TODO: optimize code to avoid refreshing plot so many times
 
 
 def eval_thermal_comfort(zone, ref_temp):
@@ -96,32 +113,119 @@ class ThermalComfortHistog(DataPlotter):
         self.dataTable.horizontalHeader().setResizeMode(
             QtGui.QHeaderView.ResizeToContents)
 
-        # Initialize climaticZoneSelectBox
-        for dat in RT_CLIMATIC_ZONE:
-            self.climaticZoneSelectBox.addItem(dat)
+        # Initialize studyTypeSelectBox
+        for _, type_name in STUDY_TYPES:
+            self.studyTypeSelectBox.addItem(self.tr(type_name))
 
-        # Initialize hqeStudyTypeSelectBox
-        for dat in HQE_TMAX_PER_USAGE:
-            self.hqeStudyTypeSelectBox.addItem(dat)
+        # Initialize HQE parameters box
+        self.hqeParametersBox.hide()
+        for name, _ in RT_CLIMATIC_ZONE:
+            self.hqeClimaticZoneSelectBox.addItem(name)
+        for name, _ in HQE_TMAX_PER_USAGE:
+            self.hqeZoneTypeSelectBox.addItem(name)
+
+        # Connect GUI signals
+        self.comfortLevel1CheckBox.stateChanged.connect(
+            self.comfortLevel1NameEdit.setEnabled)
+        self.comfortLevel1CheckBox.stateChanged.connect(
+            self.comfortLevel1DoubleSpinBox.setEnabled)
+        self.comfortLevel2CheckBox.stateChanged.connect(
+            self.comfortLevel2NameEdit.setEnabled)
+        self.comfortLevel2CheckBox.stateChanged.connect(
+            self.comfortLevel2DoubleSpinBox.setEnabled)
+
+        self.studyTypeSelectBox.currentIndexChanged.connect(
+            self.study_type_changed)
+        self.hqeZoneTypeSelectBox.currentIndexChanged.connect(
+            self.hqe_zone_type_changed)
+        self.hqeClimaticZoneSelectBox.currentIndexChanged.connect(
+            self.rt_climatic_zone_changed)
+
+        # Refresh data when maximum comfort temperature is changed
+        self.maxComfortTemperatureDoubleSpinBox.valueChanged.connect(
+            self.refresh_data)
 
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self.dataTable.itemClicked.connect(self.refresh_plot)
         self.dataTable.horizontalHeader().sectionClicked.connect(
             self.refresh_plot)
 
-        # Refresh plot when RT_CLIMATIC_ZONE is changed
-        self.climaticZoneSelectBox.activated.connect(
-            self.refresh_plot)
-
-        # Refresh data when maximum comfort temperature is changed
-        self.hqeStudyRadioButton.clicked.connect(self.refresh_data)
-        self.customStudyRadioButton.clicked.connect(self.refresh_data)
-        self.hqeStudyTypeSelectBox.activated.connect(self.refresh_data)
-        self.customStudySpinBox.valueChanged.connect(self.refresh_data)
+        # Refresh plot when comfort levels are changed
+        self.comfortLevel1DoubleSpinBox.valueChanged.connect(self.refresh_plot)
+        self.comfortLevel2DoubleSpinBox.valueChanged.connect(self.refresh_plot)
+        self.comfortLevel1CheckBox.clicked.connect(self.refresh_plot)
+        self.comfortLevel2CheckBox.clicked.connect(self.refresh_plot)
+        self.comfortLevel1NameEdit.editingFinished.connect(
+            self._level_names_editing_finished)
+        self.comfortLevel2NameEdit.editingFinished.connect(
+            self._level_names_editing_finished)
 
     @property
     def name(self):
         return self._name
+
+    def _level_names_editing_finished(self):
+        # When leaving LineEdit widget,
+        # refresh plot only if text was really modified
+        if (self.comfortLevel1NameEdit.isModified() or
+            self.comfortLevel2NameEdit.isModified()):
+            self.comfortLevel1NameEdit.setModified(False)
+            self.comfortLevel2NameEdit.setModified(False)
+            self.refresh_plot()
+
+    @QtCore.pyqtSlot(int)
+    def study_type_changed(self, index):
+
+        study_type, _ = STUDY_TYPES[index]
+
+        def set_comfort_conditions_widgets_enabled(enable):
+            # Enable/disable widgets in the "Comfort conditions" box
+            # typically to disable them if study type is not custom
+            self.maxComfortTemperatureDoubleSpinBox.setEnabled(enable)
+            self.comfortLevel1DoubleSpinBox.setEnabled(enable)
+            self.comfortLevel2DoubleSpinBox.setEnabled(enable)
+            self.comfortLevel1CheckBox.setEnabled(enable)
+            self.comfortLevel2CheckBox.setEnabled(enable)
+            self.comfortLevel1NameEdit.setEnabled(enable)
+            self.comfortLevel2NameEdit.setEnabled(enable)
+
+        if study_type == 'HQE':
+
+            # Set comfort temperature and levels
+            self.hqe_zone_type_changed(
+                self.hqeZoneTypeSelectBox.currentIndex())
+            self.rt_climatic_zone_changed(
+                self.hqeClimaticZoneSelectBox.currentIndex())
+            # Show HQE parameters box
+            self.hqeParametersBox.show()
+            # Disable custom comfort conditions widgets
+            set_comfort_conditions_widgets_enabled(False)
+            # Set comfort conditions widgets with HQE values
+            self.comfortLevel1CheckBox.setCheckState(QtCore.Qt.Checked)
+            self.comfortLevel2CheckBox.setCheckState(QtCore.Qt.Checked)
+            self.comfortLevel1NameEdit.setText(self.tr('P level'))
+            self.comfortLevel2NameEdit.setText(self.tr('TP level'))
+            # Force plot refresh in case comfort conditions were changed
+            self.refresh_plot()
+
+        else:
+
+            self.hqeParametersBox.hide()
+            set_comfort_conditions_widgets_enabled(True)
+
+    @QtCore.pyqtSlot(int)
+    def hqe_zone_type_changed(self, index):
+
+        _, hqe_comf_temp = HQE_TMAX_PER_USAGE[index]
+        self.maxComfortTemperatureDoubleSpinBox.setValue(hqe_comf_temp)
+
+    @QtCore.pyqtSlot(int)
+    def rt_climatic_zone_changed(self, index):
+
+        _, hqe_comfort_levels = RT_CLIMATIC_ZONE[index]
+
+        self.comfortLevel1DoubleSpinBox.setValue(hqe_comfort_levels[0])
+        self.comfortLevel2DoubleSpinBox.setValue(hqe_comfort_levels[1])
 
     @QtCore.pyqtSlot()
     def refresh_data(self):
@@ -137,11 +241,7 @@ class ThermalComfortHistog(DataPlotter):
         self.dataTable.setRowCount(len(zones))
 
         # Get reference temperature for thermal comfort
-        if self.hqeStudyRadioButton.isChecked():
-            self._ref_temp = \
-                HQE_TMAX_PER_USAGE[self.hqeStudyTypeSelectBox.currentText()]
-        else:
-            self._ref_temp = self.customStudySpinBox.value()
+        self._ref_temp = self.maxComfortTemperatureDoubleSpinBox.value()
 
         # For each zone
         for i, name in enumerate(zones):
@@ -218,21 +318,24 @@ class ThermalComfortHistog(DataPlotter):
             # Store values as np array
             values = np.array(vals)
 
-            # TODO: shall we display HQE levels if not in HQE mode ?
-
-            # Get "Performant" and "Très Performant" levels
-            self._hqep = RT_CLIMATIC_ZONE[unicode(
-                self.climaticZoneSelectBox.currentText())][0]
-            self._hqetp = RT_CLIMATIC_ZONE[unicode(
-                self.climaticZoneSelectBox.currentText())][1]
+            # Get comfort levels check states, values and names
+            level_1_checked = self.comfortLevel1CheckBox.checkState()
+            level_2_checked = self.comfortLevel2CheckBox.checkState()
+            level_1 = self.comfortLevel1DoubleSpinBox.value()
+            level_2 = self.comfortLevel2DoubleSpinBox.value()
+            level_1_name = self.comfortLevel1NameEdit.text()
+            level_2_name = self.comfortLevel2NameEdit.text()
 
             # Create and draw bar chart
             ind = np.arange(values.size)
             rectangle = canvas.axes.bar(ind, values, edgecolor='white')
 
             # Create rectangle color map
-            rect_colors = np.where(values < self._hqetp, '#8EC02F', '#E47823')
-            rect_colors[values > self._hqep] = '#868786'
+            rect_colors = np.array(values.size * [COLORS['BASE']])
+            if level_1_checked:
+                rect_colors[values < level_1] = COLORS['GOOD']
+            if level_2_checked:
+                rect_colors[values < level_2] = COLORS['BETTER']
 
             # Set rectangle color
             for rec, val in zip(rectangle, rect_colors):
@@ -255,32 +358,34 @@ class ThermalComfortHistog(DataPlotter):
             canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
             canvas.axes.set_xticklabels(names, ind, ha='right', rotation=75)
 
-            # Plot "Très performant" and "Performant" values
-            # Create x vector ind2 and y vectors dr_*
+            # Plot GOOD and BETTER level lines
             ind2 = np.append(ind, values.size)
-            dr_hqep = np.ones(len(ind2)) * self._hqep
-            dr_hqetp = np.ones(len(ind2)) * self._hqetp
-            # Plot lines
-            canvas.axes.plot(ind2,
-                             dr_hqetp,
-                             '--',
-                             color='#8EC02F',
-                             linewidth=2,
-                             label=self.tr(
-                                 '{:.1f}% TP level').format(self._hqetp))
-            canvas.axes.plot(ind2,
-                             dr_hqep,
-                             '--',
-                             color='#E47823',
-                             linewidth=2,
-                             label=self.tr(
-                                 '{:.1f}% P level').format(self._hqep))
+            if level_1_checked:
+                canvas.axes.plot(ind2,
+                                 np.ones(len(ind2)) * level_1,
+                                 '--',
+                                 color=COLORS['GOOD'],
+                                 linewidth=2,
+                                 label=(('{:.1f}% ').format(level_1) +
+                                        level_1_name))
+            if level_2_checked:
+                canvas.axes.plot(ind2,
+                                 np.ones(len(ind2)) * level_2,
+                                 '--',
+                                 color=COLORS['BETTER'],
+                                 linewidth=2,
+                                 label=(('{:.1f}% ').format(level_2) +
+                                        level_2_name))
 
             # Add legend
-            l = canvas.axes.legend()
-            l.texts[0].set_color('#8EC02F')
-            l.texts[1].set_color('#E47823')
-            l.texts[0].set_style('italic')
+            if level_1_checked or level_2_checked:
+                l = canvas.axes.legend()
+                if level_1_checked:
+                    l.texts[0].set_color(COLORS['GOOD'])
+                    if level_2_checked:
+                        l.texts[1].set_color(COLORS['BETTER'])
+                else:
+                    l.texts[0].set_color(COLORS['BETTER'])
 
             # Set title
             canvas.axes.set_title(self.tr('Summer thermal comfort'))

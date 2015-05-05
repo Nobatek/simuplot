@@ -22,80 +22,149 @@
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="dataLayout">
        <item>
-        <layout class="QHBoxLayout" name="climaticZoneLayout">
+        <layout class="QHBoxLayout" name="studyTypeLayout">
          <item>
-          <widget class="QLabel" name="climaticZoneSelectLabel">
+          <widget class="QLabel" name="studyTypeLabel">
            <property name="text">
-            <string>RT2012 climatic zone</string>
+            <string>Type of study</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="climaticZoneSelectBox"/>
+          <widget class="QComboBox" name="studyTypeSelectBox"/>
          </item>
         </layout>
        </item>
        <item>
-        <spacer name="verticalSpacer_2">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="maxComfortTemperatureGroupBox">
+        <widget class="QGroupBox" name="comfortConditionsBox">
          <property name="title">
-          <string>Maximum comfort temperature</string>
+          <string>Comfort conditions</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <layout class="QHBoxLayout" name="maxComfortTemperatureHqeStudyLayout">
+           <layout class="QHBoxLayout" name="maxComfortTemperatureLayout">
             <item>
-             <widget class="QRadioButton" name="hqeStudyRadioButton">
+             <widget class="QLabel" name="maxComfortTemperatureLabel">
               <property name="text">
-               <string>HQE study</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
+               <string>Maximum comfort temperature</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="hqeStudyTypeSelectBox"/>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="maxComfortTemperatureCustomStudyLayout">
-            <item>
-             <widget class="QRadioButton" name="customStudyRadioButton">
-              <property name="text">
-               <string>Custom study</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="customStudySpinBox">
+             <widget class="QDoubleSpinBox" name="maxComfortTemperatureDoubleSpinBox">
               <property name="keyboardTracking">
                <bool>false</bool>
               </property>
               <property name="suffix">
                <string notr="true">°C</string>
               </property>
+              <property name="decimals">
+               <number>1</number>
+              </property>
               <property name="minimum">
-               <number>-50</number>
+               <double>-50.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
               </property>
               <property name="value">
-               <number>28</number>
+               <double>28.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Comfort levels (% of time above maximum comfort temperature)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="comfortLevel1Layout">
+            <item>
+             <widget class="QCheckBox" name="comfortLevel1CheckBox">
+              <property name="text">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="comfortLevel1NameEdit">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Good</string>
+              </property>
+              <property name="placeholderText">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="comfortLevel1DoubleSpinBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="keyboardTracking">
+               <bool>false</bool>
+              </property>
+              <property name="suffix">
+               <string notr="true">%</string>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.500000000000000</double>
+              </property>
+              <property name="value">
+               <double>2.500000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="comfortLevel2Layout">
+            <item>
+             <widget class="QCheckBox" name="comfortLevel2CheckBox">
+              <property name="text">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="comfortLevel2NameEdit">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>Excellent</string>
+              </property>
+              <property name="placeholderText">
+               <string notr="true"/>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="comfortLevel2DoubleSpinBox">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="keyboardTracking">
+               <bool>false</bool>
+              </property>
+              <property name="suffix">
+               <string notr="true">%</string>
+              </property>
+              <property name="maximum">
+               <double>100.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.500000000000000</double>
               </property>
              </widget>
             </item>
@@ -105,20 +174,44 @@
         </widget>
        </item>
        <item>
-        <spacer name="verticalSpacer_1">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
+        <widget class="QGroupBox" name="hqeParametersBox">
+         <property name="enabled">
+          <bool>true</bool>
          </property>
-         <property name="sizeType">
-          <enum>QSizePolicy::Fixed</enum>
+         <property name="title">
+          <string>HQE parameters</string>
          </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QHBoxLayout" name="hqeClimaticZoneLayout">
+            <item>
+             <widget class="QLabel" name="hqeClimaticZoneSelectLabel">
+              <property name="text">
+               <string>RT2012 climatic zone</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="hqeClimaticZoneSelectBox"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="hqeZoneTypeLayout">
+            <item>
+             <widget class="QLabel" name="hqeZoneTypeLabel">
+              <property name="text">
+               <string>Zone type</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="hqeZoneTypeSelectBox"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <widget class="QTableWidget" name="dataTable">

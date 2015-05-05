@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="fr_FR" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="fr_FR">
 <context>
     <name>AdaptiveComfortScatter</name>
     <message>
@@ -530,77 +531,112 @@
         <translation>Chargement du fichier de données : {}</translation>
     </message>
 </context>
-<context encoding="UTF-8">
+<context>
     <name>ThermalComfortHistog</name>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="82"/>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>Summer thermal comfort per zone</source>
         <translation>Confort d&apos;été par zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="89"/>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>Zone</source>
         <translation>Zone</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="89"/>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>Discomfort[%]</source>
         <translation>Inconfort [%]</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="203"/>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>Invalid discomfort value type for row {} ({}): {}</source>
         <translation>Type de la valeur d&apos;inconfort invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="207"/>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>Invalid discomfort value for row {} ({}): {}</source>
         <translation>Valeur d&apos;inconfort invalide pour la ligne {} ({}): {}</translation>
     </message>
     <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="262"/>
-        <source>{:.1f}% TP level</source>
-        <translation>{:.1f}% niveau TP</translation>
-    </message>
-    <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="269"/>
-        <source>{:.1f}% P level</source>
-        <translation>{:.1f}% niveau P</translation>
-    </message>
-    <message>
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="284"/>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>Summer thermal comfort</source>
         <translation>Confort thermique d&apos;été</translation>
     </message>
-    <message encoding="UTF-8">
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="89"/>
+    <message utf8="true">
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>Max temp [°C]</source>
         <translation>Température maximale [°C]</translation>
     </message>
-    <message encoding="UTF-8">
-        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="251"/>
+    <message utf8="true">
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
         <source>% time beyond {}°C</source>
         <translation>% de temps au-delà de {}°C</translation>
     </message>
     <message>
-        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="29"/>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="190"/>
         <source>RT2012 climatic zone</source>
         <translation>Zone climatique RT2012</translation>
     </message>
     <message>
-        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="57"/>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="31"/>
+        <source>Custom study</source>
+        <translation>Étude personnalisée</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="29"/>
+        <source>Type of study</source>
+        <translation>Type d&apos;étude</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="41"/>
+        <source>Comfort conditions</source>
+        <translation>Conditions de confort</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="99"/>
+        <source>Good</source>
+        <translation>Bon</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="145"/>
+        <source>Excellent</source>
+        <translation>Excellent</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="182"/>
+        <source>HQE parameters</source>
+        <translation>Paramètres HQE</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="204"/>
+        <source>Zone type</source>
+        <translation>Type de zone</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
+        <source>P level</source>
+        <translation>Niveau P</translation>
+    </message>
+    <message>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
+        <source>TP level</source>
+        <translation>Niveau TP</translation>
+    </message>
+    <message>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="49"/>
         <source>Maximum comfort temperature</source>
         <translation>Température maximum de confort</translation>
     </message>
     <message>
-        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="65"/>
-        <source>HQE study</source>
-        <translation>Étude HQE</translation>
+        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="80"/>
+        <source>Comfort levels (% of time above maximum comfort temperature)</source>
+        <translation>Niveaux de confort (% de temps au-dessus de la température maximum de confort)</translation>
     </message>
     <message>
-        <location filename="resources/ui/dataplotter/thermalcomforthistog.ui" line="82"/>
-        <source>Custom study</source>
-        <translation>Étude personnalisée</translation>
+        <location filename="simuplot/dataplotter/thermalcomforthistog.py" line="32"/>
+        <source>HQE study</source>
+        <translation>Étude HQE</translation>
     </message>
 </context>
 <context>
