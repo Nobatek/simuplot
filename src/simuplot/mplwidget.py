@@ -9,10 +9,7 @@ from PyQt4 import QtGui
 
 from matplotlib.figure import Figure
 
-from matplotlib.backends.backend_qt4agg import (
-    FigureCanvasQTAgg as FigureCanvas)
-
-from matplotlib.backends.backend_qt4agg import (
+from matplotlib.backends.backend_qt4agg import (FigureCanvas,
     NavigationToolbar2QT as NavigationToolbar)
 
 class MplCanvas(FigureCanvas):
