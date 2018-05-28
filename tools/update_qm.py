@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 from subprocess import call
@@ -23,10 +17,8 @@ class QmFilesUpdater(object):
         # 1/ Create project file
         self.pfm.create()
 
-        # 2 - Update .ts files
-        # Assume pylupdate4 is in the path
+        # 2 - Update .qm files
         # TODO: what about Windows installations ?
-        # TODO: lrelease or lrelease-qt4 ?
         try:
             call(['lrelease', self.pfm.file_path])
         except OSError as e:
@@ -42,7 +34,7 @@ if __name__ == "__main__":
 
     # Instantiate TsFilesUpdater
     qfu = QmFilesUpdater()
- 
+
     # Update ts files
     qfu.update()
 

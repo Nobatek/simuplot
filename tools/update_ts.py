@@ -1,10 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 from subprocess import call
@@ -24,13 +18,13 @@ class TsFilesUpdater(object):
         self.pfm.create()
 
         # 2 - Update .ts files
-        # Assume pylupdate4 is in the path
+        # Assume pylupdate5 is in the path
         # TODO: what about Windows installations ?
         try:
-            call(['pylupdate4', '-verbose', '-noobsolete', self.pfm.file_path])
+            call(['pylupdate5', '-verbose', '-noobsolete', self.pfm.file_path])
         except OSError as e:
             if e.errno == os.errno.ENOENT:
-                print('[Error] pylupdate4 not found')
+                print('[Error] pylupdate5 not found')
             else:
                 raise OSError(e)
 
@@ -41,7 +35,7 @@ if __name__ == "__main__":
 
     # Instantiate TsFilesUpdater
     tfu = TsFilesUpdater()
- 
+
     # Update ts files
     tfu.update()
 

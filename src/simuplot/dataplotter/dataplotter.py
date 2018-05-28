@@ -1,24 +1,17 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
 import os
 
-from PyQt4 import QtCore, QtGui, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 from simuplot import UI_PATH, SimuplotError
 
-class DataPlotter(QtGui.QWidget):
+class DataPlotter(QtWidgets.QWidget):
     """Virtual class
 
        Useless by itself. Implement in sub-clases
     """
 
     # Signals
-    warning = QtCore.pyqtSignal(unicode)
+    warning = QtCore.pyqtSignal(str)
 
     def __init__(self, building, color_chart):
 

@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 import numpy as np
 
@@ -38,8 +31,8 @@ class HeatGainPie(DataPlotter):
         self.dataTable.setColumnCount(2)
         self.dataTable.setHorizontalHeaderLabels(
             [self.tr('Heat sources'), self.tr('Heat gains [kWh]')])
-        self.dataTable.horizontalHeader().setResizeMode(
-            QtGui.QHeaderView.ResizeToContents)
+        self.dataTable.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
         # Initialize table with one row per heat source with checkbox
         self.dataTable.setRowCount(len(HEAT_SOURCES))
@@ -47,7 +40,7 @@ class HeatGainPie(DataPlotter):
             # DATATYPES is a dict of type:(unit, string)
             hs_name = QtCore.QCoreApplication.translate(
                 'Data', DATATYPES[val][1])
-            name_item = QtGui.QTableWidgetItem(hs_name)
+            name_item = QtWidgets.QTableWidgetItem(hs_name)
             name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                                QtCore.Qt.ItemIsEnabled)
             name_item.setCheckState(QtCore.Qt.Checked)
@@ -138,7 +131,7 @@ class HeatGainPie(DataPlotter):
             hs_value = int(self._heat_build_zone[cur_zone][hs])
 
             # Set item value for 2nd column
-            val_item = QtGui.QTableWidgetItem()
+            val_item = QtWidgets.QTableWidgetItem()
             val_item.setData(QtCore.Qt.DisplayRole, hs_value)
             val_item.setFlags(QtCore.Qt.ItemIsEnabled)
             self.dataTable.setItem(i, 1, val_item)

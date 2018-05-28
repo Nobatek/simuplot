@@ -1,16 +1,9 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
 import string
 import datetime as dt
 import numpy as np
 
-from PyQt4 import QtCore
-from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
+from PyQt5 import QtCore
+from PyQt5.QtCore import QT_TRANSLATE_NOOP as translate
 
 from simuplot import SimuplotError
 
@@ -84,7 +77,7 @@ def date2dt(date):
     """
 
     try:
-        [month, day] = string.split(date, '/')
+        [month, day] = date.split('/')
         return dt.datetime(2005, int(month), int(day), 0, 0, 0)
     except (TypeError, ValueError):
         raise DataDateError(translate('Data', 'Invalid date: {}').format(date))
@@ -237,7 +230,7 @@ class Variable(QtCore.QObject):
         # start at "01/01  01:00:00"
         # self.date_start = None
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Variable "{}": {}'.format(self._data_type, self._values)
 
     @property
@@ -247,7 +240,7 @@ class Variable(QtCore.QObject):
     @property
     def periods(self):
         """Return list of periods for which Variable holds a set of value"""
-        return self._values.keys()
+        return list(self._values.keys())
 
     def get_array(self, period):
         if period not in DATAPERIODS:
@@ -301,7 +294,7 @@ class Building(QtCore.QObject):
     @property
     def zones(self):
         """Return zone names"""
-        return self._zones.keys()
+        return list(self._zones.keys())
 
     def get_zone(self, name):
         try:
@@ -349,8 +342,8 @@ class Zone(QtCore.QObject):
     """Define a thermal zone
 
        Public attributes:
-       - name (unicode): name of the Zone
-       - variables (unicode list): variable types available for the Zone
+       - name (str): name of the Zone
+       - variables (str list): variable types available for the Zone
 
        Public methods:
        - get_variable_periods
@@ -373,7 +366,7 @@ class Zone(QtCore.QObject):
     @property
     def variables(self):
         """Return variable names"""
-        return self._variables.keys()
+        return list(self._variables.keys())
 
     def _get_variable(self, data_type):
         """Return variable of type data_type"""
@@ -434,8 +427,8 @@ class Zone(QtCore.QObject):
     def set_array(self, data_type, period, array):
         """Set Array of variable of type data_type for period
 
-            data_type (unicode): data type
-            period (unicode): period
+            data_type (str): data type
+            period (str): period
             array (Array): array of values
             """
         if data_type in self.variables:

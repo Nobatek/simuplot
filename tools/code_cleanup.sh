@@ -5,4 +5,3 @@ for f in `find $(dirname $BASH_SOURCE)/../src/ -name "*.py"`; do sed -i 's/[ ]*$
 
 # Change 'Alt-Gr + space' into 'space' (common typo)
 for f in `find $(dirname $BASH_SOURCE)/../src/ -name "*.py"`; do sed -i 's/ / /' $f; done
-

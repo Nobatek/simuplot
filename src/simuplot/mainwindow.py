@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
 import os
 
-from PyQt4 import QtCore, QtGui, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 from . import UI_PATH
 from . import datareader as dr
@@ -17,7 +10,7 @@ from .config import Config
 from .statusbar import StatusBar
 from .data import Building
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, app):
 

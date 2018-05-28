@@ -1,16 +1,9 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
 import os
 
 import csv
 import re
 
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 from simuplot.data import Array
 from .datareader import DataReader, DataReaderReadError
@@ -104,7 +97,7 @@ class EnergyPlus(DataReader):
 
         # Launch file selection dialog, get file path,
         # and print it in file path text widget
-        file_path = QtGui.QFileDialog.getOpenFileName()
+        file_path = QtWidgets.QFileDialog.getOpenFileName()[0]
         if file_path != '':
             self.filePathEdit.setText(file_path)
 
@@ -137,9 +130,13 @@ class EnergyPlus(DataReader):
 
         messages = ['']
 
+        # Count total number of data lines (excluding header) to show progress
+        with open(file_path, 'r') as f:
+            nb_lines = sum(1 for line in f) - 1
+
         # Open file
         try:
-            csv_file = open(file_path, "rb")
+            csv_file = open(file_path, "r")
         except IOError:
             raise DataReaderReadError(self.tr(
                 "Wrong filepath: {}").format(file_path))
@@ -148,8 +145,7 @@ class EnergyPlus(DataReader):
                 "Unauthorized characters in data file"))
 
         # Create CSV reader, store file size to track progress while reading
-        # TODO: Unicode files ? (https://docs.python.org/2/library/csv.html)
-        csv_reader = csv.reader(csv_file, delimiter=b",")
+        csv_reader = csv.reader(csv_file, delimiter=',')
         file_size = os.path.getsize(file_path)
 
         # Except for the first ('Date/Time'),
@@ -177,7 +173,7 @@ class EnergyPlus(DataReader):
         tmp_variables = []
 
         # Get header line
-        header = [unicode(h, 'utf-8') for h in next(csv_reader)]
+        header = list(next(csv_reader))
 
         # Remove first column header ('Date/Time')
         # Incidentally check the file is an E+ file
@@ -274,13 +270,10 @@ class EnergyPlus(DataReader):
         # Go through all lines to store values in each variable
         nb_values_per_line = len(variables)
 
-        for row in csv_reader:
+        for line_nb, row in enumerate(csv_reader):
 
             # Skip first column ('Date/Time')
             vals = row[1:]
-            # No need to encode as UTF-8 considering following operations
-            # if would only slow down the processing
-            #vals = [unicode(c, 'utf-8') for c in row[1:]]
 
             # Ignore empty line ("It's alright, no big deal")
             if vals == []:
@@ -302,7 +295,9 @@ class EnergyPlus(DataReader):
                     'Invalid value in line: {}').format(row))
 
             # Update progress bar
-            self.dataLoadProgress.emit(100 * csv_file.tell() / file_size)
+            self.dataLoadProgress.emit(100 * (line_nb + 1) / nb_lines)
+
+        csv_file.close()
 
         # Store all temporary value lists into numpy arrays in item variables
         for i, [item, data_type, data_unit, per] in enumerate(variables):

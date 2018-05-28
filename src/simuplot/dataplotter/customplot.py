@@ -1,12 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
-
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 import matplotlib.dates as dates
 
@@ -42,8 +34,8 @@ class CustomPlot(DataPlotter):
 #            self.tr('Show max'),
 #            self.tr('Show min'),
             ])
-        self.dataTable.horizontalHeader().setResizeMode(
-            QtGui.QHeaderView.ResizeToContents)
+        self.dataTable.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
         # Set predefined period as default
         self.predefinedPeriodCheckBox.setChecked(True)
@@ -99,27 +91,27 @@ class CustomPlot(DataPlotter):
             self.dataTable.model().index(row_index, 0))
 
         # Initialize Zone combobox
-        zone_combo = QtGui.QComboBox()
+        zone_combo = QtWidgets.QComboBox()
         for zname in self._zone_list:
             zone_combo.addItem(zname)
 
         # Create Variable combobox
-        var_combo = QtGui.QComboBox()
+        var_combo = QtWidgets.QComboBox()
 
         # Initialise line style combobox
-        line_combo = QtGui.QComboBox()
+        line_combo = QtWidgets.QComboBox()
         for dat in LINE_STYLE:
             line_combo.addItem(dat)
 
         # Initialise marker combobox
-        marker_combo = QtGui.QComboBox()
+        marker_combo = QtWidgets.QComboBox()
         for dat in MARKER_STYLE:
             marker_combo.addItem(dat)
 
         # Create "remove row" Button
-        rm_button = QtGui.QPushButton()
-        rm_button.setIcon(QtGui.qApp.style().standardIcon(
-            QtGui.QStyle.SP_DialogDiscardButton))
+        rm_button = QtWidgets.QPushButton()
+        rm_button.setIcon(QtWidgets.QApplication.style().standardIcon(
+            QtWidgets.QStyle.SP_DialogDiscardButton))
 
 # Remove this until min and max are implemented
 #         # Create checkbox and layout for min and max
@@ -149,8 +141,8 @@ class CustomPlot(DataPlotter):
 #         self.dataTable.setCellWidget(act_row, 6, max_wi)
 
         # Resize column to fit zone name and variables
-        self.dataTable.horizontalHeader().setResizeMode(
-            QtGui.QHeaderView.ResizeToContents)
+        self.dataTable.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
         # Update Variables when Zone changed
         zone_combo.activated.connect(lambda: self.update_variable(index))

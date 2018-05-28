@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
-from PyQt4 import QtGui
+from PyQt5 import QtGui, QtWidgets
 
 from matplotlib.figure import Figure
 
@@ -25,8 +18,8 @@ class MplCanvas(FigureCanvas):
 
         # Define the widget as expandable
         FigureCanvas.setSizePolicy(self,
-                                   QtGui.QSizePolicy.Expanding,
-                                   QtGui.QSizePolicy.Expanding)
+                                   QtWidgets.QSizePolicy.Expanding,
+                                   QtWidgets.QSizePolicy.Expanding)
 
         # Notify the system of updated policy
         FigureCanvas.updateGeometry(self)
@@ -51,12 +44,12 @@ class MplCanvas(FigureCanvas):
         try:
             self.fig.tight_layout()
         except ValueError as e:
-            if unicode(e) == 'left cannot be >= right':
+            if str(e) == 'left cannot be >= right':
                 pass
             else:
                 raise
 
-class MplWidget(QtGui.QWidget):
+class MplWidget(QtWidgets.QWidget):
     """Widget defined in Qt Designer"""
     def __init__(self, parent=None):
 
@@ -67,7 +60,7 @@ class MplWidget(QtGui.QWidget):
         self.ntb = NavigationToolbar(self.canvas, self)
 
         # Layout as vertical box
-        self.vbl = QtGui.QVBoxLayout()
+        self.vbl = QtWidgets.QVBoxLayout()
         self.vbl.addWidget(self.canvas)
         self.vbl.addWidget(self.ntb)
         self.setLayout(self.vbl)

@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
 import os
 
-from PyQt4 import QtCore, QtGui, uic
+from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
 from simuplot import UI_PATH, SimuplotError
 from simuplot.data import DATATYPES
@@ -21,15 +14,15 @@ def convert_J_to_Wh(val):
 def convert_J_to_kWh(val):
     return val * 2.78e-7
 
-class DataReader(QtGui.QWidget):
+class DataReader(QtWidgets.QWidget):
 
     # Signals
     # Before loading data
-    loadingData = QtCore.pyqtSignal(unicode)
+    loadingData = QtCore.pyqtSignal(str)
     # When data is successfully loaded
-    dataLoaded = QtCore.pyqtSignal(unicode)
+    dataLoaded = QtCore.pyqtSignal(str)
     # When an error occurred while loading data
-    dataLoadError = QtCore.pyqtSignal(unicode)
+    dataLoadError = QtCore.pyqtSignal(str)
     # Data loading progress
     dataLoadProgress = QtCore.pyqtSignal(int)
 
@@ -37,7 +30,7 @@ class DataReader(QtGui.QWidget):
     # If expected unit is provided, conversion is identity
     # DATATYPES is a dict of type:(unit, string)
     conversions = {data_type: {data_props[0]: lambda x: x}
-                   for data_type, data_props in DATATYPES.iteritems()}
+                   for data_type, data_props in DATATYPES.items()}
     # Otherwise, specify conversion
     conversions['AIR_DRYBULB_TEMPERATURE']['°F'] = convert_F_to_C
     conversions['AIR_WETBULB_TEMPERATURE']['°F'] = convert_F_to_C

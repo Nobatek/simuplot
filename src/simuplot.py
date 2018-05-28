@@ -1,32 +1,18 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
 import os
 import sys
 import signal
 
-# Forbid use of QString
-# http://pyqt.sourceforge.net/Docs/PyQt4/incompatible_apis.html
-import sip
-sip.setapi('QString', 2)
-
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 from simuplot.mainwindow import MainWindow
 from simuplot import I18N_PATH
 
 if __name__ == "__main__":
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     # Internationalization
-    # Specify codec for translation
-    QtCore.QTextCodec.setCodecForTr(QtCore.QTextCodec.codecForName("utf-8"))
     # Use system locale
     locale = QtCore.QLocale.system().name()
     # Load default translator for Qt strings

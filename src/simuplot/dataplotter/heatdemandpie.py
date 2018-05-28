@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 import numpy as np
 
@@ -28,8 +21,8 @@ class HeatDemandPie(DataPlotter):
         self.dataTable.setColumnCount(2)
         self.dataTable.setHorizontalHeaderLabels(
             [self.tr('Zone'), self.tr('Heat need [kWh]')])
-        self.dataTable.horizontalHeader().setResizeMode(
-            QtGui.QHeaderView.ResizeToContents)
+        self.dataTable.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
         # Refresh plot when zone is clicked/unclicked or sort order changed
         self.dataTable.itemClicked.connect(self.refresh_plot)
@@ -76,7 +69,7 @@ class HeatDemandPie(DataPlotter):
             self._build_total_hn += heat_demand
 
             # Firts column: zone name + checkbox
-            name_item = QtGui.QTableWidgetItem(name)
+            name_item = QtWidgets.QTableWidgetItem(name)
 
             name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
                                QtCore.Qt.ItemIsEnabled)
@@ -88,7 +81,7 @@ class HeatDemandPie(DataPlotter):
                 name_item.setCheckState(QtCore.Qt.Unchecked)
 
             # Second column: heat need value
-            val_item = QtGui.QTableWidgetItem()
+            val_item = QtWidgets.QTableWidgetItem()
             val_item.setData(QtCore.Qt.DisplayRole, heat_demand)
 
             val_item.setFlags(QtCore.Qt.ItemIsEnabled)

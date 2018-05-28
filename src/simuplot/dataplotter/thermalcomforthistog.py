@@ -1,12 +1,5 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtCore import QT_TRANSLATE_NOOP as translate
+from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtCore import QT_TRANSLATE_NOOP as translate
 
 import numpy as np
 
@@ -110,8 +103,8 @@ class ThermalComfortHistog(DataPlotter):
             self.tr('Discomfort[%]'),
             self.tr('Max temp [°C]')
             ])
-        self.dataTable.horizontalHeader().setResizeMode(
-            QtGui.QHeaderView.ResizeToContents)
+        self.dataTable.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
         # Initialize studyTypeSelectBox
         for _, type_name in STUDY_TYPES:
@@ -251,7 +244,7 @@ class ThermalComfortHistog(DataPlotter):
                 self._building.get_zone(name), self._ref_temp)
 
             # First column: zone name + checkbox
-            name_item = QtGui.QTableWidgetItem(name)
+            name_item = QtWidgets.QTableWidgetItem(name)
             # If comfort values known, make zone checkable and check it
             if pct_over is not None:
                 name_item.setFlags(QtCore.Qt.ItemIsUserCheckable |
@@ -259,13 +252,13 @@ class ThermalComfortHistog(DataPlotter):
                 name_item.setCheckState(QtCore.Qt.Checked)
 
             # Second column: % thermal comfort
-            val_item1 = QtGui.QTableWidgetItem()
+            val_item1 = QtWidgets.QTableWidgetItem()
             val_item1.setData(QtCore.Qt.DisplayRole, pct_over)
 
             val_item1.setFlags(QtCore.Qt.ItemIsEnabled)
 
             # Third column: zone max temperature in occupation
-            val_item2 = QtGui.QTableWidgetItem()
+            val_item2 = QtWidgets.QTableWidgetItem()
             val_item2.setData(QtCore.Qt.DisplayRole, max_temp)
 
             val_item2.setFlags(QtCore.Qt.ItemIsEnabled)
@@ -356,7 +349,7 @@ class ThermalComfortHistog(DataPlotter):
             canvas.axes.set_ylabel(self.tr(
                 '% time beyond {}°C').format(self._ref_temp))
             canvas.axes.set_xticks(ind + rectangle[0].get_width()/2)
-            canvas.axes.set_xticklabels(names, ind, ha='right', rotation=75)
+            canvas.axes.set_xticklabels(names, ha='right', rotation=75)
 
             # Plot GOOD and BETTER level lines
             ind2 = np.append(ind, values.size)

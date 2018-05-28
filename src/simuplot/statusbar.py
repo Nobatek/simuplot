@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
+from PyQt5 import QtCore, QtGui, QtWidgets
 
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
-from PyQt4 import QtCore, QtGui
-
-class StatusBar(QtGui.QStatusBar):
+class StatusBar(QtWidgets.QStatusBar):
 
     def __init__(self):
 
@@ -17,13 +10,13 @@ class StatusBar(QtGui.QStatusBar):
 
         # Create and add labels for normal and
         # permanent indicators
-        self._norm_indic = QtGui.QLabel()
-        self._perm_indic = QtGui.QLabel()
+        self._norm_indic = QtWidgets.QLabel()
+        self._perm_indic = QtWidgets.QLabel()
         self.addWidget(self._norm_indic, 3)
         self.addPermanentWidget(self._perm_indic)
 
         # Create and hide progress bar
-        self._progress_bar = QtGui.QProgressBar()
+        self._progress_bar = QtWidgets.QProgressBar()
         self._progress_bar.hide()
         self.addWidget(self._progress_bar, 1)
 
@@ -37,19 +30,19 @@ class StatusBar(QtGui.QStatusBar):
         else:
             self._perm_indic.setText(self.tr('No data loaded'))
 
-    @QtCore.pyqtSlot(unicode)
+    @QtCore.pyqtSlot(str)
     def dataLoaded(self, string):
         self._set_data_loaded(True)
         self._norm_indic.setText(string)
         self._progress_bar.hide()
 
-    @QtCore.pyqtSlot(unicode)
+    @QtCore.pyqtSlot(str)
     def dataLoadError(self, string):
         self._set_data_loaded(False)
         self._norm_indic.setText(string)
         self._progress_bar.hide()
 
-    @QtCore.pyqtSlot(unicode)
+    @QtCore.pyqtSlot(str)
     def loadingData(self, string):
         self._norm_indic.setText(self.tr(
             'Loading data file: {}').format(string))
@@ -59,7 +52,7 @@ class StatusBar(QtGui.QStatusBar):
         self._progress_bar.show()
         self._progress_bar.setValue(value)
 
-    @QtCore.pyqtSlot(unicode)
+    @QtCore.pyqtSlot(str)
     def warning(self, string):
         self._norm_indic.setText(string)
 

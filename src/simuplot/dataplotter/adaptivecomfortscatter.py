@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
-
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 import datetime as dt
 import numpy as np
@@ -44,8 +37,8 @@ class AdaptiveComfortScatter(DataPlotter):
             self.tr('Comfort [%]'),
             self.tr('Over [%]')
             ])
-        self.dataTable.horizontalHeader().setResizeMode(
-            QtGui.QHeaderView.ResizeToContents)
+        self.dataTable.horizontalHeader().setSectionResizeMode(
+            QtWidgets.QHeaderView.ResizeToContents)
 
         # Set row number and category names
         self.dataTable.setRowCount(3)
@@ -208,19 +201,19 @@ class AdaptiveComfortScatter(DataPlotter):
                             nb_vals)
                     in_zone = 1 - (below + over)
 
-                    below_item = QtGui.QTableWidgetItem()
+                    below_item = QtWidgets.QTableWidgetItem()
                     below_item.setData(QtCore.Qt.DisplayRole,
                                        round(100 * below, 2))
-                    over_item = QtGui.QTableWidgetItem()
+                    over_item = QtWidgets.QTableWidgetItem()
                     over_item.setData(QtCore.Qt.DisplayRole,
                                       round(100 * over, 2))
-                    in_zone_item = QtGui.QTableWidgetItem()
+                    in_zone_item = QtWidgets.QTableWidgetItem()
                     in_zone_item.setData(QtCore.Qt.DisplayRole,
                                          round(100 * in_zone, 2))
                 else:
-                    below_item = QtGui.QTableWidgetItem('')
-                    over_item = QtGui.QTableWidgetItem('')
-                    in_zone_item = QtGui.QTableWidgetItem('')
+                    below_item = QtWidgets.QTableWidgetItem('')
+                    over_item = QtWidgets.QTableWidgetItem('')
+                    in_zone_item = QtWidgets.QTableWidgetItem('')
 
                 self.dataTable.setItem(i, 0, below_item)
                 self.dataTable.setItem(i, 1, in_zone_item)

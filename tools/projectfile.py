@@ -1,15 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 # Use this script to create or delete the project file
 # Usage: 
 # ./project_file.py --create
 # ./project_file.py --delete
-
-from __future__ import unicode_literals
-from __future__ import division
-from __future__ import print_function
-from __future__ import absolute_import
 
 import os
 from os.path import join, dirname, abspath
@@ -37,7 +31,7 @@ class ProjectFileManager(object):
     @property
     def file_path(self):
         return self._project_file_path
-    
+
     def create(self):
 
         # Relatives paths inside application
@@ -46,7 +40,7 @@ class ProjectFileManager(object):
         ts_files_relpath = 'i18n/ts'
 
         try:
-            pf = open(self._project_file_path, "wb")
+            pf = open(self._project_file_path, "w")
         except IOError:
             raise IOError("Can't open project file.")
 
@@ -71,7 +65,7 @@ class ProjectFileManager(object):
                     for e in ext:
                         if fnmatch.fnmatch(f, '*.' + e):
                             pf.write(join(rel_base, sdir, f) + ' ')
-            
+
             pf.write('\n')
 
         # FORMS
@@ -100,15 +94,15 @@ if __name__ == "__main__":
     # Command line arguments parser
     parser = argparse.ArgumentParser(description='Project file management')
     action_group = parser.add_mutually_exclusive_group(required=True)
-    action_group.add_argument("--create", action="store_true", 
+    action_group.add_argument("--create", action="store_true",
                               help='Create project file {}.pro'.format(project))
-    action_group.add_argument("--delete", action="store_true", 
+    action_group.add_argument("--delete", action="store_true",
                               help='Delete project file {}.pro'.format(project))
     args = parser.parse_args()
 
     # Instantiate ProjectFileManager
     pfm = ProjectFileManager()
-    
+
     # Create project file
     if args.create:
 
