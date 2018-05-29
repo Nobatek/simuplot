@@ -9,7 +9,7 @@ from .data import Building
 from .paths import UI_PATH
 
 
-__version__ = '1.1b1'
+__version__ = '1.1b2'
 
 
 class MainWindow(QtWidgets.QMainWindow):

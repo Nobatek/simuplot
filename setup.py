@@ -8,7 +8,7 @@ with open('README.rst') as readme_file:
 
 setup(
     name='simuplot',
-    version='0.1b1',
+    version='0.1b2',  # Modify __version__ in mainwindow.py accordingly
     description='SimuPlot',
     long_description=LONG_DESCRIPTION,
     author='Jérôme Lafréchoux',
