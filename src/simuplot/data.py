@@ -5,7 +5,8 @@ import numpy as np
 from PyQt5 import QtCore
 from PyQt5.QtCore import QT_TRANSLATE_NOOP as translate
 
-from simuplot import SimuplotError
+from .exceptions import SimuplotError
+
 
 DATATYPES = {
     'AIR_DRYBULB_TEMPERATURE':

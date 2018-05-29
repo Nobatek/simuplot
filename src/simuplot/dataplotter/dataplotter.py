@@ -1,8 +1,8 @@
-import os
-
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
-from simuplot import UI_PATH, SimuplotError
+from simuplot.paths import UI_PATH
+from simuplot.exceptions import SimuplotError
+
 
 class DataPlotter(QtWidgets.QWidget):
     """Virtual class
@@ -24,9 +24,8 @@ class DataPlotter(QtWidgets.QWidget):
         self._color_chart = color_chart
 
         # Setup UI
-        ui_files_dir = os.path.join(UI_PATH, 'dataplotter')
         ui_file_name = type(self).__name__.lower() + '.ui'
-        uic.loadUi(os.path.join(ui_files_dir, ui_file_name), self)
+        uic.loadUi(str(UI_PATH / 'dataplotter' / ui_file_name), self)
 
     @QtCore.pyqtSlot()
     def refresh_data(self):

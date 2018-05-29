@@ -1,9 +1,9 @@
-import os
-
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
-from simuplot import UI_PATH, SimuplotError
 from simuplot.data import DATATYPES
+from simuplot.paths import UI_PATH
+from simuplot.exceptions import SimuplotError
+
 
 def convert_F_to_C(val):
     return (val - 32) * 5 / 9
@@ -45,9 +45,8 @@ class DataReader(QtWidgets.QWidget):
         self._building = building
 
         # Setup UI
-        ui_files_dir = os.path.join(UI_PATH, 'datareader')
         ui_file_name = type(self).__name__.lower() + '.ui'
-        uic.loadUi(os.path.join(ui_files_dir, ui_file_name), self)
+        uic.loadUi(str(UI_PATH / 'datareader' / ui_file_name), self)
 
 class DataReaderError(SimuplotError):
     pass

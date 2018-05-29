@@ -1,14 +1,13 @@
-import os
-
 from PyQt5 import QtCore, QtGui, QtWidgets, uic
 
-from . import UI_PATH
 from . import datareader as dr
 from . import dataplotter as dp
 
 from .config import Config
 from .statusbar import StatusBar
 from .data import Building
+from .paths import UI_PATH
+
 
 class MainWindow(QtWidgets.QMainWindow):
 
@@ -24,7 +23,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self._config.read()
 
         # Setup UI
-        uic.loadUi(os.path.join(UI_PATH, 'mainwindow.ui'), self)
+        uic.loadUi(str(UI_PATH / 'mainwindow.ui'), self)
 
         # Setup status bar
         self.setStatusBar(StatusBar())
