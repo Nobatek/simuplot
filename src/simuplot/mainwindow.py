@@ -9,6 +9,9 @@ from .data import Building
 from .paths import UI_PATH
 
 
+__version__ = '1.1b1'
+
+
 class MainWindow(QtWidgets.QMainWindow):
 
     def __init__(self, app):
@@ -24,6 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         # Setup UI
         uic.loadUi(str(UI_PATH / 'mainwindow.ui'), self)
+        self.setWindowTitle('Simuplot v{}'.format(__version__))
 
         # Setup status bar
         self.setStatusBar(StatusBar())

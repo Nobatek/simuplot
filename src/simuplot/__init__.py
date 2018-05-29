@@ -3,7 +3,7 @@ import signal
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from .mainwindow import MainWindow
+from .mainwindow import MainWindow, __version__  # noqa
 from .paths import I18N_PATH
 
 
