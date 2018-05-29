@@ -201,15 +201,12 @@ class AdaptiveComfortScatter(DataPlotter):
                             nb_vals)
                     in_zone = 1 - (below + over)
 
-                    below_item = QtWidgets.QTableWidgetItem()
-                    below_item.setData(QtCore.Qt.DisplayRole,
-                                       round(100 * below, 2))
-                    over_item = QtWidgets.QTableWidgetItem()
-                    over_item.setData(QtCore.Qt.DisplayRole,
-                                      round(100 * over, 2))
-                    in_zone_item = QtWidgets.QTableWidgetItem()
-                    in_zone_item.setData(QtCore.Qt.DisplayRole,
-                                         round(100 * in_zone, 2))
+                    below_item = QtWidgets.QTableWidgetItem(
+                        str(round(100 * below, 2)))
+                    over_item = QtWidgets.QTableWidgetItem(
+                        str(round(100 * over, 2)))
+                    in_zone_item = QtWidgets.QTableWidgetItem(
+                        str(round(100 * in_zone, 2)))
                 else:
                     below_item = QtWidgets.QTableWidgetItem('')
                     over_item = QtWidgets.QTableWidgetItem('')
